@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<!-- Breadcrumb -->
+<nav aria-label="breadcrumb ">
+  <ol class="breadcrumb border-bottom">
+    <li class="breadcrumb-item"><a class="text-dark" href="/"><u>Home</u></a></li>
+    <li class="breadcrumb-item"><a class="text-dark" href="/c/{{product.category.slug}}"><u>{{product.category|title}}</u></a></li>
+    <li class="breadcrumb-item active" aria-current="page">{{product.title|title}}</li>
+  </ol>
+</nav>
+
+<!-- Image -->
+<div class="row m-1">
+  <div class="col-lg-8 col-md-8 col-sm-12">
+    <img src="{{product.image_src}}" class="img-fluid" alt="Responsive image">
+  </div>
+
+  <div class="col-lg-4 col-md-4 col-sm-12">
+    <h3>{{product.title|title}}</h3>
+    <h4><b>£49</b></h4>
+
+<!-- Form  -->
+    <form>
+      {% csrf_token %}
+      <div class="form-group row">
+        <div class="col-12">
+        <label for="size">Size:</label>
+        <select class="form-control" id="size">
+          <option>Please select</option>
+          <option>S</option>
+          <option>M</option>
+          <option>L</option>
+        </select>
+      </div>
+    </div>
+  <div class="form-group row">
+    <div class="col-12">
+      <button type="submit" class="btn btn-success w-50"><i class="fas fa-shopping-bag mr-2"></i><b>Add to cart</b></button>
+    </div>
+  </div>
+
+
+  </div>
+</div>
+
+
+
+
+
+{% endblock %}

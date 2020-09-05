@@ -1,0 +1,110 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block dashboard %}
+
+<div class="row mb-3">
+	{% if messages %}
+	{% for message in messages %}
+
+	{% if message.tags == 'success' %}
+	<div class="col-12 d-flex justify-content-center">
+	<div class="w-100 mt-3 alert alert-success alert-dismissible fade show" role="alert">
+	  {{message}}
+	  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+	    <span aria-hidden="true">&times;</span>
+	  </button>
+	</div>
+    </div>
+    {% endif %}
+
+	{% endfor %}
+	{% endif %}
+	<div class="col-sm-6 mt-3 d-flex justify-content-center">
+
+	<!-- Messages -->
+
+
+		<!-- Form Practice -->
+
+		<form class="w-100" action="/dashboard/settings" method="post">
+			{% csrf_token %}
+			<div class="form-group">
+				{{form.first_name.label}}
+				{{form.first_name}}
+			</div>
+			<div class="form-group">
+				{{form.surname.label}}
+				{{form.surname}}
+			</div>
+			<div class="form-group">
+				{{form.email.label}}
+				{{form.email}}
+				<small id="emailHelp" class="form-text text-muted">Please set this to the contact email of your store</small>
+			</div>
+			<div class="form-group">
+				{{form.vendor.label}}
+				{{form.vendor}}
+			</div>
+			<div class="form-group">
+				{{form.platform.label}}
+				{{form.platform}}
+			</div>
+			<div class="form-group">
+				{{form.api_username.label}}
+				{{form.api_username}}
+			</div>
+			<div class="form-group">
+				{{form.api_password.label}}
+				{{form.api_password}}
+			</div>
+			<div class="form-group">
+				{{form.api_access_token.label}}
+				{{form.api_access_token}}
+			</div>
+			<div class="form-group text-center">										
+				<button type="submit" class="btn btn-primary font-weight-bold" name="form_name" value="update_settings">Update Details</button>
+			</div>
+			{% if form.errors %}
+			<div class="alert alert-danger" role="alert">
+			  {{form.errors|title}}
+			</div>
+		    {% endif %}
+		</form>
+	</div>
+	<div class="col-sm-6 mt-3 bg-light">
+		<h3 class="text-center mt-2 font-weight-bold">Categories</h3>
+			{% if messages %}
+			{% for message in messages %}
+
+			{% if message.tags == 'error' %}
+			<div class="alert alert-danger" role="alert">
+			  {{message}}
+			</div>
+		    {% endif %}
+		    {% endfor %}
+		    {% endif %}
+
+		    {% if product_types %}
+		    <div class="text-center text-muted"> Tick the categories from your store that you wish to allow to be sold on Vestem</div>
+		    <form class="">
+		    	{% csrf_token %}
+		    	{% for type in product_types %}
+		    	<div class="form-check mt-3">
+		    	  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+		    	  <label class="form-check-label" for="defaultCheck1">
+		    	    {{type.node|title}}
+		    	  </label>
+		    	</div>
+		    	{% endfor %}
+		    <div class="form-group text-center mt-3">										
+		    	<button type="submit" class="btn btn-success font-weight-bold" name="form_name" value="update_settings">Update Categories</button>
+		    </div>
+		    </form>
+		    {% endif %}
+		
+		
+	</div>
+  </div>
+
+
+{% endblock %}

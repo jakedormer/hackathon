@@ -1,0 +1,7 @@
+To create a new app in a folder:
+
+>python manage.py startapp cart apps/<folder_name>s
+
+You must create the new folder name first
+
+SUPERUSER - jake emoclew30

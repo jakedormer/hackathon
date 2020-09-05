@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'dashboard/css/login.css' %}" crossorigin="anonymous">
+{% endblock %}
+
+{% block body %}
+
+<h1 class="display-3 font-weight-normal text-center font-italic font-weight-bold fade-in mt-5">V</h1>
+
+<form class="form-signin" action="/login" method="post">
+	{% csrf_token %}
+	<label for="inputUsername" class="sr-only">Username</label>
+	<input type="username" name="inputUsername" class="form-control mb-2" placeholder="Username" required autofocus>
+	<label for="inputPassword" class="sr-only">Password</label>
+	<input type="password" name="inputPassword" class="form-control" placeholder="Password" required>
+	<div class="checkbox mb-3 text-center">
+		<label>
+			<input type="checkbox" value="remember-me"> Remember me
+		</label>
+	</div>
+	<button class="btn btn-lg btn-dark btn-block" type="submit" name="form_name" value="login">Sign in</button>
+
+	<!-- Alert -->
+	{% if messages %}
+	{% for message in messages %}
+		<div class="alert alert-danger alert-dismissible fade show mt-2 text-center" role="alert">
+			{{message}}
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+		</div>
+	{% endfor %}
+	{% endif %}
+
+
+	<p class="mt-5 mb-3 text-muted text-center">&copy; 2020</p>
+</form>
+
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "dashboard/dashboard.html" %}
+
+{% block dashboard %}
+
+<div class="row">
+	<div class="col-12">
+
+	<table class="table">
+	  <thead class="thead-dark">
+	    <tr>
+	      <th scope="col">Image</th>
+	      <th scope="col">ID</th>
+	      <th scope="col">Title</th>
+	      <th scope="col">Type</th>
+	    </tr>
+	  </thead>
+	  <tbody>
+	  	{% for product in products %}
+	    <tr>
+	      {% for image in product.node.images.edges %}
+	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{image.node.transformedSrc}}" alt="Card image cap" style="width: 50px; height: 50px"></td>
+	      {% endfor %}
+	      <td>{{product.node.id}}</td>
+	      <td>{{product.node.title}}</td>
+	      <td>{{product.node.productType}}</td>
+	    </tr>
+	   {% endfor %}
+	  </tbody>
+	</table>	
+
+	</div>
+</div>
+
+{% endblock %}

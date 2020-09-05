@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'product/css/category.css' %}" crossorigin="anonymous">
+{% endblock %}
+
+{% block body %}
+<h1 class="text-bold display-5 text-center fade-in">{{category.get_name_display}}</h1>
+<p class="text-center fade-in"><small class="text-muted">{{category.description}}</small></p>
+
+<div class="row mt-4">
+  {% for product in products %}
+
+  <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-6">
+  <div class="card shadow mb-2">
+    <a href="/p/{{product.slug}}">
+      <img class="card-img-top img-responsive" src="{{product.image_src}}" alt="Card image cap" onmouseover="this.src='https://cdn.shopify.com/s/files/1/1150/4230/products/IMG_3969_2d77fd01-8294-46f1-b814-7653cdcad91d_460x.jpg?v=1598525706'" onmouseout="this.src='{{product.image_src}}'">
+    </a>
+      <div class="card-body">
+        <a class="text-dark font-weight-bold" href="/p/{{product.slug}}"><p class="card-title text-center">{{product.title|title}}</p></a>
+        <hr>
+        <!-- <button class="btn btn-light">View Product</button> -->
+        <p class="card-text text-center text-secondary">£59</p>
+      </div>
+      <div class="card-footer text-center">
+        <small class="text-muted">{{product.vendor.get_name_display}}</small>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
+
+<!-- Card -->
+{% endblock %}
