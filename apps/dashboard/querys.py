@@ -9,6 +9,7 @@ product_query = """
           id
           title
           productType
+          onlineStoreUrl
           images(first: 1) {
             edges {
               node {
@@ -34,5 +35,33 @@ q_productTypes = """
       }
     }
   }
+
+  """
+
+
+example = """
+  {
+    shop {
+      name
+    }
+    products(first:100, query:"product_type:coats OR product_type:'T Shirts'") {
+      edges {
+        node {
+          id
+          title
+          productType
+          images(first: 1) {
+            edges {
+              node {
+                altText
+                transformedSrc
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
 
   """

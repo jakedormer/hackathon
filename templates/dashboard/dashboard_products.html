@@ -12,6 +12,7 @@
 	      <th scope="col">ID</th>
 	      <th scope="col">Title</th>
 	      <th scope="col">Type</th>
+	      <th scope="col">Vestem Category</th>
 	    </tr>
 	  </thead>
 	  <tbody>
@@ -21,8 +22,9 @@
 	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{image.node.transformedSrc}}" alt="Card image cap" style="width: 50px; height: 50px"></td>
 	      {% endfor %}
 	      <td>{{product.node.id}}</td>
-	      <td>{{product.node.title}}</td>
+	      <td><a href="{{product.onlineStorePreviewUrl}}">{{product.node.title}}</a></td>
 	      <td>{{product.node.productType}}</td>
+	      <td></td>
 	    </tr>
 	   {% endfor %}
 	  </tbody>

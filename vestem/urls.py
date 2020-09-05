@@ -33,6 +33,7 @@ urlpatterns = [
     path('dashboard', views_dashboard.dashboard, name='dashboard'),
     path('dashboard/products', views_dashboard.dashboard_products, name='dashboard_products'),
     path('dashboard/settings', views_dashboard.dashboard_settings, name='dashboard_settings'),
+    path('dashboard/sizes', views_dashboard.dashboard_sizes, name='dashboard_sizes'),
 
 
 ]

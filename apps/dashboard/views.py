@@ -67,6 +67,11 @@ def dashboard(request):
 	template = 'dashboard/dashboard.html'
 	return render(request, template, context=locals())
 
+@login_required()
+def dashboard_sizes(request):
+
+	template = 'dashboard/dashboard_sizes.html'
+	return render(request, template, context=locals())
 
 @login_required
 def dashboard_products(request):
@@ -84,33 +89,10 @@ def dashboard_products(request):
 
 	# products(first:100, query:"product_type:coats OR product_type:'T Shirts'")
 
-	query = """
-	  {
-	    shop {
-	      name
-	    }
-	    products(first:100, query:"product_type:coats OR product_type:'T Shirts'") {
-	      edges {
-	        node {
-	          id
-	          title
-	          productType
-	          images(first: 1) {
-	            edges {
-	              node {
-	                altText
-	                transformedSrc
-	              }
-	            }
-	          }
-	        }
-	      }
-	    }
-	  }
 
-
-	  """
 	r = requests.post("https://" + request.user.profile.vendor.name + ".myshopify.com/api/2020-04/graphql", json={'query': product_query}, headers=headers)
+	print(r.status_code)
+	print("hi" + r.text)
 
 	json_response = r.json()
 
@@ -119,8 +101,7 @@ def dashboard_products(request):
 	shop = json_response['data']['shop']
 
 	print(r.json)
-	print("hi" + r.text)
-	print(r.status_code)
+	
 
 	context = {
 		'products': products,
@@ -132,6 +113,31 @@ def dashboard_products(request):
 
 	return render(request, template, context=context)
 
+
+def api_connect(platform, vendor_name, access_token, query):
+
+	headers = {
+	      'Accept': 'application/json',
+	      'Content-Type': 'application/json',
+	      'X-Shopify-Storefront-Access-Token': access_token,
+	  }
+
+
+	r = requests.post("https://" + vendor_name + ".myshopify.com/api/2020-04/graphql", json={'query': query}, headers=headers)
+
+	try:
+
+		json_response = r.json()
+		print(r.status_code)
+
+		data = json_response['data']
+		print(data)
+
+		return [r.status_code, data]
+
+	except JSONDecodeError:
+
+		return [r.status_code, " - Could not connect to shopify, please check your API details are correct. Categories will appear below upon a successful connection"]
 
 @login_required
 def dashboard_settings(request):
@@ -145,10 +151,11 @@ def dashboard_settings(request):
 		'surname': request.user.last_name,
 		'email': request.user.email,
 		'vendor': request.user.profile.vendor.name,
-		'platform': 'shopify',
+		'platform': 'Shopify',
 	}
 
 	platform_object = Platform.objects.get(name='shopify')
+
 
 	# See if vendor platform exists and then populate initial data and check API is working
 	try:
@@ -162,31 +169,6 @@ def dashboard_settings(request):
 
 		# Run API to shopify to get collections
 
-		headers = {
-		      'Accept': 'application/json',
-		      'Content-Type': 'application/json',
-		      'X-Shopify-Storefront-Access-Token': api_credentials.access_token,
-		  }
-
-
-		r = requests.post("https://" + vendor_object.name + ".myshopify.com/api/2020-04/graphql", json={'query': q_productTypes}, headers=headers)
-
-		# r = requests.get(url)
-		# print(r.status_code)
-		try:
-
-			json_response = r.json()
-			print(r.status_code)
-
-			product_types = json_response['data']['shop']['productTypes']['edges']
-			print(product_types)
-
-			context['product_types'] = product_types
-			
-
-		except JSONDecodeError:
-			messages.error(request, (str(r.status_code) + " - Could not connect to shopify, please check your API details are correct. Categories will appear below upon a successful connection"))
-		
 	except ObjectDoesNotExist:
 		pass
 
@@ -237,7 +219,16 @@ def dashboard_settings(request):
 
 					APICredential.objects.create(vendor=vendor_object, platform=platform_object, username=api_username, password=api_password, access_token=api_access_token)
 
+
+				c = api_connect(platform='shopify', vendor_name=vendor_object.name, access_token = api_access_token, query=q_productTypes)
+
+				if c[0] == 200:
+					context['product_types'] = c[1]['shop']['productTypes']['edges']
+				else:
+					 messages.error(request, str(c[0]) + c[1])
+				
 				return render(request, template, context)
+					
 
 			else:
 
@@ -248,34 +239,17 @@ def dashboard_settings(request):
 
 		# if a GET (or any other method) we'll create a blank form
 	else:
-		
 
+		c = api_connect(platform='shopify', vendor_name=vendor_object.name, access_token = api_credentials.access_token, query=q_productTypes)
+
+		if c[0] == 200:
+			context['product_types'] = c[1]['shop']['productTypes']['edges']
+		else:
+			 messages.error(request, str(c[0]) + c[1])
+		
 		return render(request, template, context)
 
-		
-	# if request.POST:
-	# 	name = request.POST['form_name']
-
-	# 	if name == "update_setti":
-	# 		username = request.POST['inputUsername']
-	# 		password = request.POST['inputPassword']
-	# 		auth_user = authenticate(request, username=username, password=password)
-
-	# 		if auth_user is not None:
-
-	# 			login(request, auth_user)
-
-	# 			return redirect('/dashboard')
-
-	# 		else:
-
-	# 			messages.error(request, "Incorrect username or password")
-
-	# 			return render(request, template, context=locals())
-
-	# else:
-
-	# 	return render(request, template, context=locals())
+	
 			
 
 
