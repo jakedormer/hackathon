@@ -87,12 +87,9 @@ def dashboard_products(request):
 	      'X-Shopify-Storefront-Access-Token': api_credentials.access_token,
 	  }
 
-	# products(first:100, query:"product_type:coats OR product_type:'T Shirts'")
-
-
 	r = requests.post("https://" + request.user.profile.vendor.name + ".myshopify.com/api/2020-04/graphql", json={'query': product_query}, headers=headers)
-	print(r.status_code)
-	print("hi" + r.text)
+	# print(r.status_code)
+	# print("hi" + r.text)
 
 	json_response = r.json()
 
@@ -100,7 +97,7 @@ def dashboard_products(request):
 	products = json_response['data']['products']['edges']
 	shop = json_response['data']['shop']
 
-	print(r.json)
+	# print(r.json)
 	
 
 	context = {
@@ -128,10 +125,10 @@ def api_connect(platform, vendor_name, access_token, query):
 	try:
 
 		json_response = r.json()
-		print(r.status_code)
+		# print(r.status_code)
 
 		data = json_response['data']
-		print(data)
+		# print(data)
 
 		return [r.status_code, data]
 
@@ -197,7 +194,7 @@ def dashboard_settings(request):
 
 				request.user.save()
 
-				messages.success(request, "Details Updated")
+				messages.info(request, "Details Updated")
 
 				# Update Vendor & Platform details
 
@@ -224,8 +221,9 @@ def dashboard_settings(request):
 
 				if c[0] == 200:
 					context['product_types'] = c[1]['shop']['productTypes']['edges']
+					messages.success(request, 'API connected successfully')
 				else:
-					 messages.error(request, str(c[0]) + c[1])
+					messages.error(request, str(c[0]) + c[1])
 				
 				return render(request, template, context)
 					
@@ -244,6 +242,7 @@ def dashboard_settings(request):
 
 		if c[0] == 200:
 			context['product_types'] = c[1]['shop']['productTypes']['edges']
+			messages.success(request, 'API connected successfully')
 		else:
 			 messages.error(request, str(c[0]) + c[1])
 		

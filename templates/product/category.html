@@ -9,6 +9,12 @@
 <h1 class="text-bold display-5 text-center fade-in">{{category.get_name_display}}</h1>
 <p class="text-center fade-in"><small class="text-muted">{{category.description}}</small></p>
 
+{% for filter in filters %}
+<p>{{filter.get_attributes}}</p>
+{% for attr in filter.attribute_set.all %}
+<p>{{ attr }}</p>
+{% endfor %}
+{% endfor %}
 <div class="row mt-4">
   {% for product in products %}
 
@@ -24,7 +30,7 @@
         <p class="card-text text-center text-secondary">£59</p>
       </div>
       <div class="card-footer text-center">
-        <small class="text-muted">{{product.vendor.get_name_display}}</small>
+        <small class="text-muted">{{product.vendor.name|title}}</small>
       </div>
     </div>
   </div>

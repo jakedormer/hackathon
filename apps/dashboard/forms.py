@@ -11,5 +11,3 @@ class UpdateDetailsForm(forms.Form):
     api_password = forms.CharField(label='API Password', required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'password'}))
     api_access_token = forms.CharField(label='API Access Token', max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
-
-    # first_name.widget.attrs.update({'class': 'form-input'})

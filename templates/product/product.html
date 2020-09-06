@@ -18,7 +18,7 @@
   </div>
 
   <div class="col-lg-4 col-md-4 col-sm-12">
-    <h3>{{product.title|title}}</h3>
+    <h3>{{product|title}}</h3>
     <h4><b>£49</b></h4>
 
 <!-- Form  -->
@@ -40,6 +40,15 @@
       <button type="submit" class="btn btn-success w-50"><i class="fas fa-shopping-bag mr-2"></i><b>Add to cart</b></button>
     </div>
   </div>
+
+  {% for child in children %}
+  <p><b>{{child.title}}</b></p>
+  {% for attr in child.attributes.all %}
+  {% for val in attr.attributevalue_set.all %}
+  {% endfor %}
+  <p>{{attr}} | {{val.value_float}}</p>
+  {% endfor %}
+  {% endfor %}
 
 
   </div>

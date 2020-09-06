@@ -18,7 +18,7 @@ class Category(models.Model):
 	description = models.TextField(null=True, blank=True)
 
 	def __str__(self):
-		return self.name
+		return self.name.title()
 	
 	def save(self, *args, **kwargs):
 		self.slug = slugify(self.name)
@@ -27,7 +27,7 @@ class Category(models.Model):
 
 class Product(models.Model):
 
-	title = models.CharField(max_length=128, blank=True, unique=True)
+	title = models.CharField(max_length=128, blank=True)
 	description = models.TextField(null=True, blank=True)
 	slug = models.SlugField(null=True, unique=True, blank=True)
 	vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
@@ -68,43 +68,120 @@ class Product(models.Model):
 			"This flag indicates if this product can be used in an offer "
 			"or not")
 		)
-	#Images
 
 	image_src = models.URLField(null=True)
+	attributes = models.ManyToManyField(
+	        'product.Attribute',
+	        through='AttributeValue',
+	        verbose_name= "Attributes",
+	        help_text= "A product attribute is something that this product may "
+	                    "have, such as a size, as specified by its class")
 
-	# def _clean_standalone(self):
-	#     """
-	#     Validates a stand-alone product
-	#     """
-	#     if not self.title:
-	#         raise ValidationError(_("Your product must have a title."))
-	#     if not self.product_class:
-	#         raise ValidationError(_("Your product must have a product class."))
-	#     if self.parent_id:
-	#         raise ValidationError(_("Only child products can have a parent."))
+	def clean(self):
+	    """
+	    Validate a product. Those are the rules:
+
+	    +---------------+-------------+--------------+--------------+
+	    |               | stand alone | parent       | child        |
+	    +---------------+-------------+--------------+--------------+
+	    | title         | required    | required     | optional     |
+	    +---------------+-------------+--------------+--------------+
+	    | product class | required    | required     | must be None |
+	    +---------------+-------------+--------------+--------------+
+	    | parent        | forbidden   | forbidden    | required     |
+	    +---------------+-------------+--------------+--------------+
+	    | stockrecords  | 0 or more   | forbidden    | 0 or more    |
+	    +---------------+-------------+--------------+--------------+
+	    | categories    | 1 or more   | 1 or more    | forbidden    |
+	    +---------------+-------------+--------------+--------------+
+	    | attributes    | optional    | optional     | optional     |
+	    +---------------+-------------+--------------+--------------+
+	    | options       | optional    | optional     | forbidden    |
+	    +---------------+-------------+--------------+--------------+
+
+	    Because the validation logic is quite complex, validation is delegated
+	    to the sub method appropriate for the product's product_type.
+	    """
+	    if self.product_type:
+	    	getattr(self, '_clean_%s' % self.product_type)()
+
+	def _clean_standalone(self):
+	    """
+	    Validates a stand-alone product
+	    """
+	    if not self.title:
+	        raise ValidationError(("Your product must have a title."))
+	    if not self.category:
+	        raise ValidationError(("Your product must have a category."))
+	    if self.parent:
+	        raise ValidationError(("Only child products can have a parent."))
 
 	def _clean_child(self):
 	    """
 	    Validates a child product
 	    """
-	    if not self.parent_id:
-	        raise ValidationError(_("A child product needs a parent."))
-	    if self.parent_id and not self.parent.is_parent:
+	    if not self.parent:
+	        raise ValidationError(("A child product needs a parent."))
+	    if self.parent and not self.parent.is_parent:
 	        raise ValidationError(
-	            _("You can only assign child products to parent products."))
-	    if self.product_class:
+	            ("You can only assign child products to parent products."))
+	    if self.category:
 	        raise ValidationError(
-	            _("A child product can't have a product class."))
-	    if self.pk and self.categories.exists():
+	            ("A child product can't have a product class."))
+	    if self.slug:
 	        raise ValidationError(
-	            _("A child product can't have a category assigned."))
+	            ("A child product can't have a url slug."))
+
 	    # Note that we only forbid options on product level
-	    if self.pk and self.product_options.exists():
-	        raise ValidationError(
-	            _("A child product can't have options."))
+
+
+	def _clean_parent(self):
+	    """
+	    Validates a parent product.
+	    """
+	    self._clean_standalone()
+	    # if self.has_stockrecords:
+	    #     raise ValidationError(
+	    #         ("A parent product can't have stockrecords."))
+
+	def get_product_category(self):
+		"""
+		Return a product's item class. Child products inherit their parent's.
+		"""
+		if self.is_child:
+		    return self.parent.category
+		else:
+		    return self.category
+
+
+	# Properties
+
+	@property
+	def is_standalone(self):
+		return self.product_type == self.STANDALONE
+
+	@property
+	def is_parent(self):
+		return self.product_type == self.PARENT
+
+	@property
+	def is_child(self):
+		return self.product_type == self.CHILD
+
 
 	def __str__(self):
 		return self.title
+
+	def save(self, *args, **kwargs):
+		if self.parent:
+			self.slug == None
+
+			if self.title == '':
+				self.title = self.parent.title
+		else:
+			self.slug = slugify(self.title) + "-" + str(self.id)
+			
+		super(Product, self).save(*args, **kwargs)
 
 	# def save(self, *args, **kwargs):
 	# 	if self.product_type == "parent" or self.product_type == "standalone":
@@ -118,9 +195,8 @@ class Product(models.Model):
 
 class Attribute(models.Model):
 
-	name = models.CharField(max_length=128)
+	name = models.CharField(max_length=128, null=False, unique=True)
 	
-
 	#Attribute Choices
 	TEXT = "text"
 	INTEGER = "integer"
@@ -155,6 +231,27 @@ class Attribute(models.Model):
 
 	def __str__(self):
 		return self.name
+
+
+class AttributeGroup(models.Model):
+	category = models.ForeignKey(Category, on_delete=models.CASCADE, null=False)
+	attribute = models.ManyToManyField(Attribute)
+
+	def __str__(self):
+		return self.category.name.title()
+
+	def get_attributes(self):
+	    return ", ".join([a.name for a in self.attribute.all()])
+
+
+class AttributeValue(models.Model):
+
+    attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, verbose_name= "Attribute")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='attribute_values', verbose_name="Product")
+
+    value_text = models.TextField('Text', blank=True, null=True)
+    value_float = models.FloatField('Float', blank=True, null=True, db_index=True)
+
 
 
 

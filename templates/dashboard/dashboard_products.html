@@ -5,7 +5,7 @@
 <div class="row">
 	<div class="col-12">
 
-	<table class="table">
+	<table class="table table-striped table-hover table-responsive-lg">
 	  <thead class="thead-dark">
 	    <tr>
 	      <th scope="col">Image</th>
@@ -22,7 +22,7 @@
 	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{image.node.transformedSrc}}" alt="Card image cap" style="width: 50px; height: 50px"></td>
 	      {% endfor %}
 	      <td>{{product.node.id}}</td>
-	      <td><a href="{{product.onlineStorePreviewUrl}}">{{product.node.title}}</a></td>
+	      <td><a href="{{product.onlineStorePreviewUrl}}">{{product.node.title}}<i class="fas fa-external-link-alt ml-2 fa-sm"></i></a></td>
 	      <td>{{product.node.productType}}</td>
 	      <td></td>
 	    </tr>

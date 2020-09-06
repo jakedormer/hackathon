@@ -8,6 +8,7 @@ def category(request, slug):
 	products = Product.objects.filter(category__slug=slug, product_type="parent") | Product.objects.filter(category__slug=slug, product_type="standalone")
 	context = {
 		'category': category,
+		'filters': category.attributegroup_set.all(),
 		'products': products,
 	}
 	template = 'product/category.html'
@@ -15,10 +16,12 @@ def category(request, slug):
 	return render(request,template,context)
 
 def product(request, slug):
-	product = Product.objects.get(slug=slug)
+	parent = Product.objects.get(slug=slug)
+	children = Product.objects.filter(parent=parent)
 
 	context = {
-		'product': product,
+		'product': parent,
+		'children': children,
 	}
 
 	template = 'product/product.html'

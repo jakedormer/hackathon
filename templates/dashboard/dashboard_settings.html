@@ -3,10 +3,13 @@
 {% block dashboard %}
 
 <div class="row mb-3">
+
+	<!-- Messages -->
+
 	{% if messages %}
 	{% for message in messages %}
 
-	{% if message.tags == 'success' %}
+	{% if message.tags == 'info' %}
 	<div class="col-12 d-flex justify-content-center">
 	<div class="w-100 mt-3 alert alert-success alert-dismissible fade show" role="alert">
 	  {{message}}
@@ -21,7 +24,7 @@
 	{% endif %}
 	<div class="col-sm-6 mt-3 d-flex justify-content-center">
 
-	<!-- Messages -->
+
 
 
 		<!-- Form Practice -->
@@ -80,6 +83,10 @@
 			<div class="alert alert-danger" role="alert">
 			  {{message}}
 			</div>
+			{% elif message.tags == 'success' %}
+			<div class="alert alert-success text-center" role="alert">
+			  <i class="fab fa-connectdevelop mr-2"></i>{{message}}
+			</div>
 		    {% endif %}
 		    {% endfor %}
 		    {% endif %}
@@ -97,7 +104,7 @@
 		    	</div>
 		    	{% endfor %}
 		    <div class="form-group text-center mt-3">										
-		    	<button type="submit" class="btn btn-success font-weight-bold" name="form_name" value="update_settings">Update Categories</button>
+		    	<button type="submit" class="btn btn-success font-weight-bold" name="form_name" value="update_categories">Update Categories</button>
 		    </div>
 		    </form>
 		    {% endif %}
