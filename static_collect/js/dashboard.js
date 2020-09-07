@@ -1,3 +1,3 @@
-$(".alert-dismissible").delay(4000).slideUp(200, function() {
-    $(this).alert('close');
+$(document).ready(function() {
+	$(".alert-dismissible").delay(4000).fadeOut();
 });

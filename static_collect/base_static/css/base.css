@@ -50,3 +50,8 @@ body {
     background-color: transparent;
 }
 
+.bg-home {
+  background: url("https://blog.closetmaid.com/hubfs/FeaturedImage.jpg");
+  filter: grayscale(100%);
+  background-size: cover;
+}

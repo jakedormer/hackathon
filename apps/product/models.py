@@ -13,6 +13,7 @@ class Category(models.Model):
 		('shirts', 'Shirts'),
 	]
 
+
 	name = models.CharField(max_length=30, choices=CATEGORY_CHOICES, unique=True)
 	slug = models.SlugField(unique=True, null=True)
 	description = models.TextField(null=True, blank=True)
@@ -27,6 +28,7 @@ class Category(models.Model):
 
 class Product(models.Model):
 
+	code = models.CharField(max_length=100, null=False, blank=False)
 	title = models.CharField(max_length=128, blank=True)
 	description = models.TextField(null=True, blank=True)
 	slug = models.SlugField(null=True, unique=True, blank=True)
@@ -131,6 +133,9 @@ class Product(models.Model):
 	    if self.slug:
 	        raise ValidationError(
 	            ("A child product can't have a url slug."))
+	    if self.parent and self.vendor != self.parent.vendor:
+	        raise ValidationError(
+	            ("A child product must have the same vendor as its parent product."))
 
 	    # Note that we only forbid options on product level
 
@@ -173,20 +178,15 @@ class Product(models.Model):
 		return self.title
 
 	def save(self, *args, **kwargs):
-		if self.parent:
-			self.slug == None
-
-			if self.title == '':
-				self.title = self.parent.title
+		if self.is_child:
+			self.slug = None
+			self.title = self.parent.title
+			self.vendor = self.parent.vendor
 		else:
 			self.slug = slugify(self.title) + "-" + str(self.id)
 			
 		super(Product, self).save(*args, **kwargs)
 
-	# def save(self, *args, **kwargs):
-	# 	if self.product_type == "parent" or self.product_type == "standalone":
-	# 		self.slug = slugify(self.title)
-	# 		super(Product, self).save(*args, **kwargs)
 
 # class AttributeGroup(models.Model):
 

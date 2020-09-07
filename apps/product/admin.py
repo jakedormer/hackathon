@@ -12,10 +12,10 @@ class AttributeValueAdmin(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
 
-	list_display = ('vendor', 'get_product_category', 'title', 'product_type', 'date_created')
+	list_display = ('code', 'vendor', 'get_product_category', 'title', 'product_type', 'date_created')
 	list_filter = ('vendor', 'category', 'product_type')
 	inlines = (AttributeValueAdmin,)
-	ordering = ('vendor', 'title', 'product_type')
+	ordering = ('vendor', 'title', '-product_type')
 
 class AttributeAdmin(admin.ModelAdmin):
 	list_display = ('name', 'type')

@@ -1,31 +1,25 @@
 {% extends "base.html" %}
 
 {% block body %}
-<div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-dark text-light">
+
+<div id="carouselExampleIndicators" class="carousel slide fade-in mt-3" data-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img class="d-block w-100 rounded grayscale" src="https://blog.closetmaid.com/hubfs/FeaturedImage.jpg" alt="First slide">
+      <div class="carousel-caption d-none d-md-block fade-in">
+          <h1 class="display-4">Clothes that you will love and keep</h5>
+          <p class="h3">Time to start buying clothes that fit</p>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center text-light bg-home">
   <div class="col-md-5 p-lg-5 mx-auto my-5">
     <h1 class="display-4 font-weight-normal text-white fade-in">Find clothes you'll love and keep</h1>
-    <p class="lead font-weight-normal fade-in">Time to start buying clothes that fit...</p>
+    <p class="lead font-weight-normal">Time to start buying clothes that fit...</p>
     <a class="btn btn-secondary" href="">Coming soon</a>
   </div>
-  <div class="product-device shadow-sm d-none d-md-block"></div>
-  <div class="product-device product-device-2 shadow-sm d-none d-md-block"></div>
-</div>
+</div> -->
 
-<div class="d-md-flex flex-md-equal w-100 my-md-3 pl-md-3">
-  <div class="bg-dark mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center text-white overflow-hidden">
-    <div class="my-3 py-3">
-      <h2 class="display-5">Another headline</h2>
-      <p class="lead">And an even wittier subheading.</p>
-    </div>
-    <div class="bg-light shadow-sm mx-auto" style="width: 100%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-  </div>
-  <div class="bg-light mr-md-3 pt-3 px-3 pt-md-5 px-md-5 text-center overflow-hidden">
-    <div class="my-3 p-3">
-      <h2 class="display-5">Another headline</h2>
-      <p class="lead">And an even wittier subheading.</p>
-    </div>
-    <div class="bg-dark shadow-sm mx-auto" style="width: 100%; height: 300px; border-radius: 21px 21px 0 0;"></div>
-  </div>
-</div>
 
 {% endblock %}

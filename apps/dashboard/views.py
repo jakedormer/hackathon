@@ -87,9 +87,9 @@ def dashboard_products(request):
 	      'X-Shopify-Storefront-Access-Token': api_credentials.access_token,
 	  }
 
-	r = requests.post("https://" + request.user.profile.vendor.name + ".myshopify.com/api/2020-04/graphql", json={'query': product_query}, headers=headers)
+	r = requests.post("https://" + request.user.profile.vendor.name + ".myshopify.com/api/2020-07/graphql", json={'query': product_query}, headers=headers)
 	# print(r.status_code)
-	# print("hi" + r.text)
+	print(r.text)
 
 	json_response = r.json()
 

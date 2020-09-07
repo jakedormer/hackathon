@@ -23,7 +23,7 @@ def product(request, slug):
 		'product': parent,
 		'children': children,
 	}
-
+	
 	template = 'product/product.html'
 
 	return render(request, template, context)
