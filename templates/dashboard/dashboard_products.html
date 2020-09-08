@@ -9,9 +9,9 @@
 	  <thead class="thead-dark">
 	    <tr>
 	      <th scope="col">Image</th>
-	      <th scope="col">Size</th>
-	      <th scope="col">Title</th>
 	      <th scope="col">Type</th>
+	      <th scope="col">Title</th>
+	      <th scope="col">Size</th>
 	      <th scope="col">Vestem Category</th>
 	      <th score="col">Inventory</th>
 	      <th score="col">Size Guide</th>
@@ -19,12 +19,16 @@
 	  </thead>
 	  <tbody>
 	  	{% for product in products %}
-	    <tr class="bg-light">
-	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{image.node.transformedSrc}}" alt="Card image cap" style="width: 50px; height: 50px"></td>
+	  	{% if product.product_type == "child" %}
+	    <tr class="bg-white">
+	    {% else %}
+	     <tr class="bg-light">
+	    {% endif %}
+	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{product.image_src}}" alt="Card image cap" style="width: 50px; height: 50px"></td>
 	      <td>{{product.product_type|title}}</td>
 	      <td><a href="{{product.onlineStorePreviewUrl}}" target="_blank">{{product.title|title}}<i class="fas fa-external-link-alt ml-2 fa-xs text-dark"></i></a></td>
 	      <td></td>
-	      <td>{{product.category}}</td>
+	      <td>{{product.category|default_if_none:""}}{{product.parent.category|default_if_none:""}}</td>
 	      <td></td>
 	      <td>
 	      	<form>
@@ -39,20 +43,7 @@
 	      	  </div>
 	      	</form>
 	      </td>
-	    {% if product.node.variants.edges|length > 1 %}
 	    </tr>
-	    {% for variant in product.node.variants.edges %}
-	    <tr>
-		    <td></td>
-		    <td>{{variant.node.title}}</td>
-		    <td class="text-muted">{{product.node.title}}</td>
-		    <td></td>
-		    <td></td>
-		    <td>{{variant.node.quantityAvailable}}</td>
-		    <td></td>
-		</tr>
-	   {% endfor %}
-	   {% endif %}
 	   
 	   {% endfor %}
 	  </tbody>

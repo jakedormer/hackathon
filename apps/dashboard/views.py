@@ -78,7 +78,7 @@ def dashboard_sizes(request):
 def dashboard_products(request):
 
 	vendor = request.user.profile.vendor
-	products = Product.objects.filter(vendor=vendor)
+	products = Product.objects.filter(vendor=vendor).order_by('title',)
 
 	context = {
 		'products': products,

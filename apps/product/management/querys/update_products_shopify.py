@@ -1,5 +1,4 @@
-query = """
- {
+query = """ {
    shop {
      name
    }
@@ -32,7 +31,7 @@ query = """
            edges {
              node {
                altText
-               transformedSrc
+               originalSrc
              }
            }
          }

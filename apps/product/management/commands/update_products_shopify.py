@@ -22,13 +22,13 @@ class Command(BaseCommand):
               }
 
 
-        r = requests.post("https://" + vendor_name + ".myshopify.com/api/2020-04/graphql", json={'query': query}, headers=headers)
+        r = requests.post("https://" + vendor_name + ".myshopify.com/api/2020-07/graphql", json={'query': query}, headers=headers)
 
         try:
 
             json_response = r.json()
             # print(r.status_code)
-
+            # print(json_response)
             data = json_response['data']
             # print(data)
 
@@ -62,9 +62,12 @@ class Command(BaseCommand):
             p_title = node['node']['title']
             p_code = node['node']['id']
             p_category = node['node']['productType']
-            print(p_category)
+            p_external_url = node['node']['onlineStoreUrl']
+            # print(p_category)
             p_variants = node['node']['variants']['edges']
-            print(len(p_variants))
+            p_image_src = node['node']['images']['edges'][0]['node']['originalSrc']
+            # print(p_image_src)
+            # print(len(p_variants))
             # If 1 variant then item is standalone, else it is a parent
             if len(p_variants) == 1:
                 product_type = "standalone"
@@ -89,6 +92,8 @@ class Command(BaseCommand):
                     'vendor_id': vendor_id, 
                     'product_type': product_type,
                     'category': category,
+                    'image_src': p_image_src,
+                    'external_url': p_external_url
                     }
             )
 
@@ -128,7 +133,7 @@ class Command(BaseCommand):
 
                 if p[0] == 200:
                     print("API connected successfully")
-                    # print(p[1])
+                    print(p[1])
                     self.update_products(json_data=p[1], vendor_id=vendor.id)
                     print("Product created")
                 else:

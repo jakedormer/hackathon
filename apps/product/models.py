@@ -79,6 +79,8 @@ class Product(models.Model):
 	        help_text= "A product attribute is something that this product may "
 	                    "have, such as a size, as specified by its class")
 
+	external_url = models.URLField(max_length=200, null=True, blank=True)
+
 	def clean(self):
 	    """
 	    Validate a product. Those are the rules:
@@ -185,6 +187,8 @@ class Product(models.Model):
 			self.slug = None
 			self.title = self.parent.title
 			self.vendor = self.parent.vendor
+			self.external_url = self.parent.external_url
+			self.image_src = self.parent.image_src
 		else:
 			self.slug = slugify(self.title) + "-" + str(self.id)
 			
