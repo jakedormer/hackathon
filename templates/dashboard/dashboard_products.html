@@ -14,19 +14,31 @@
 	      <th scope="col">Type</th>
 	      <th scope="col">Vestem Category</th>
 	      <th score="col">Inventory</th>
+	      <th score="col">Size Guide</th>
 	    </tr>
 	  </thead>
 	  <tbody>
 	  	{% for product in products %}
 	    <tr class="bg-light">
-	      {% for image in product.node.images.edges %}
 	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{image.node.transformedSrc}}" alt="Card image cap" style="width: 50px; height: 50px"></td>
-	      {% endfor %}
-	      <td>Parent</td>
-	      <td><a href="{{product.onlineStorePreviewUrl}}" target="_blank">{{product.node.title}}<i class="fas fa-external-link-alt ml-2 fa-xs text-dark"></i></a></td>
-	      <td>{{product.node.productType}}</td>
+	      <td>{{product.product_type|title}}</td>
+	      <td><a href="{{product.onlineStorePreviewUrl}}" target="_blank">{{product.title|title}}<i class="fas fa-external-link-alt ml-2 fa-xs text-dark"></i></a></td>
 	      <td></td>
+	      <td>{{product.category}}</td>
 	      <td></td>
+	      <td>
+	      	<form>
+	      	  <div class="form-group">
+	      	    <select class="form-control" id="exampleFormControlSelect1">
+	      	      <option>---</option>
+	      	      <option>Slim Fit T Shirts</option>
+	      	      <option>3</option>
+	      	      <option>4</option>
+	      	      <option>5</option>
+	      	    </select>
+	      	  </div>
+	      	</form>
+	      </td>
 	    {% if product.node.variants.edges|length > 1 %}
 	    </tr>
 	    {% for variant in product.node.variants.edges %}
@@ -37,6 +49,7 @@
 		    <td></td>
 		    <td></td>
 		    <td>{{variant.node.quantityAvailable}}</td>
+		    <td></td>
 		</tr>
 	   {% endfor %}
 	   {% endif %}

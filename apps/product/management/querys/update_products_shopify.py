@@ -17,6 +17,7 @@ query = """
          variants (first: 5) {
            edges {
              node {
+               price
                title
                id
                quantityAvailable

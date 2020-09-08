@@ -5,13 +5,14 @@ from django.contrib.auth.models import User as user
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import UpdateDetailsForm
-from .models import APICredential, Platform
+from .models import APICredential, Platform, Vendor
 from django.core.exceptions import ObjectDoesNotExist
 import requests
 import json
 from django.views.generic import TemplateView
 from json import JSONDecodeError
 from .querys import *
+from apps.product.models import Product
 
 
 # Create your views here.
@@ -76,33 +77,11 @@ def dashboard_sizes(request):
 @login_required
 def dashboard_products(request):
 
-	vendor_object 	= request.user.profile.vendor
-	platform_object = Platform.objects.get(name='shopify')
-	api_credentials = APICredential.objects.get(vendor=vendor_object, platform=platform_object)
-
-
-	headers = {
-	      'Accept': 'application/json',
-	      'Content-Type': 'application/json',
-	      'X-Shopify-Storefront-Access-Token': api_credentials.access_token,
-	  }
-
-	r = requests.post("https://" + request.user.profile.vendor.name + ".myshopify.com/api/2020-07/graphql", json={'query': product_query}, headers=headers)
-	# print(r.status_code)
-	print(r.text)
-
-	json_response = r.json()
-
-	# data = json.loads(json_response)
-	products = json_response['data']['products']['edges']
-	shop = json_response['data']['shop']
-
-	# print(r.json)
-	
+	vendor = request.user.profile.vendor
+	products = Product.objects.filter(vendor=vendor)
 
 	context = {
 		'products': products,
-
 	}
 
 

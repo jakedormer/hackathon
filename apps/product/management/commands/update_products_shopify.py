@@ -1,10 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from apps.dashboard.models import Vendor, APICredential
-from apps.product.models import Product
+from apps.product.models import Product, Category
 from apps.product.management.querys import update_products_shopify as q
 import requests
 from json import JSONDecodeError
+import re
 
 
 class Command(BaseCommand):
@@ -37,16 +38,80 @@ class Command(BaseCommand):
 
             return [r.status_code, r.text]
 
+    def regex_category(self, category):
+
+        #T Shirts
+        x = re.search(r'\b(tee|t[-\s]shirts?)\b', category, re.IGNORECASE)
+        if x:
+            return "t-shirts"
+
+        #Shirts
+        x = re.search(r'\b(shirts?)\b', category, re.IGNORECASE)
+        if x:
+            return "shirts"
+
+
     def update_products(self, json_data, vendor_id):
 
         products = json_data['products']['edges']
+        # print(products)
 
-        for edges in products:
-            title = edges['node']['title']
-            code = edges['node']['id']
-            print(code)
+        # Create parents first and then create children. Children will have options and stock records.
 
-            obj, created = Product.objects.update_or_create(code=code, title=title, vendor_id=vendor_id, product_type="parent")
+        for node in products:
+            p_title = node['node']['title']
+            p_code = node['node']['id']
+            p_category = node['node']['productType']
+            print(p_category)
+            p_variants = node['node']['variants']['edges']
+            print(len(p_variants))
+            # If 1 variant then item is standalone, else it is a parent
+            if len(p_variants) == 1:
+                product_type = "standalone"
+            else:
+                product_type = "parent"
+
+            # Get category for foreignkey
+
+            try:
+                regex_category = self.regex_category(p_category)
+                category = Category.objects.get(name=regex_category)
+
+            except ObjectDoesNotExist:
+
+                category = None
+
+
+            p_obj, created = Product.objects.update_or_create(
+                id=p_code,
+                defaults = {
+                    'title':p_title, 
+                    'vendor_id': vendor_id, 
+                    'product_type': product_type,
+                    'category': category,
+                    }
+            )
+
+            if product_type == "parent":
+
+                for node in p_variants:
+                    c_title = node['node']['title']
+                    c_code = node['node']['id']
+                    c_price = node['node']['price']
+                    c_options = node['node']['selectedOptions']
+
+
+                    c_obj, created = Product.objects.update_or_create(
+                        id=c_code,
+                        defaults = {
+                            'title':c_title, 
+                            'vendor_id': vendor_id, 
+                            'product_type': "child",
+                            'parent': p_obj,
+                            }
+                    )
+
+                    # print(c_obj)
 
 
     def handle(self, *args, **options):

@@ -28,7 +28,7 @@ class Category(models.Model):
 
 class Product(models.Model):
 
-	code = models.CharField(max_length=100, null=False, blank=False)
+	id = models.CharField(max_length=100, null=False, blank=False, primary_key=True)
 	title = models.CharField(max_length=128, blank=True)
 	description = models.TextField(null=True, blank=True)
 	slug = models.SlugField(null=True, unique=True, blank=True)
@@ -104,6 +104,7 @@ class Product(models.Model):
 	    Because the validation logic is quite complex, validation is delegated
 	    to the sub method appropriate for the product's product_type.
 	    """
+
 	    if self.product_type:
 	    	getattr(self, '_clean_%s' % self.product_type)()
 
@@ -117,6 +118,8 @@ class Product(models.Model):
 	        raise ValidationError(("Your product must have a category."))
 	    if self.parent:
 	        raise ValidationError(("Only child products can have a parent."))
+	    if not self.vendor:
+	        raise ValidationError(("Your product must have vendor"))
 
 	def _clean_child(self):
 	    """
