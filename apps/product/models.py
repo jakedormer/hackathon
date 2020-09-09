@@ -8,13 +8,8 @@ from django.core.exceptions import ValidationError
 
 class Category(models.Model):
 
-	CATEGORY_CHOICES = [
-		('t-shirts', 'T-Shirts'),
-		('shirts', 'Shirts'),
-	]
 
-
-	name = models.CharField(max_length=30, choices=CATEGORY_CHOICES, unique=True)
+	name = models.CharField(max_length=30, unique=True)
 	slug = models.SlugField(unique=True, null=True)
 	description = models.TextField(null=True, blank=True)
 

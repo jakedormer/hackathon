@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from apps.dashboard.models import Vendor, APICredential
 from apps.product.models import Product, Category
+from apps.inventory.models import StockRecord
 from apps.product.management.querys import update_products_shopify as q
 import requests
 from json import JSONDecodeError
@@ -50,6 +51,11 @@ class Command(BaseCommand):
         if x:
             return "shirts"
 
+        #Vests
+        x = re.search(r'\b(vests?)\b', category, re.IGNORECASE)
+        if x:
+            return "vests"
+
 
     def update_products(self, json_data, vendor_id):
 
@@ -68,23 +74,24 @@ class Command(BaseCommand):
             p_image_src = node['node']['images']['edges'][0]['node']['originalSrc']
             # print(p_image_src)
             # print(len(p_variants))
+
+            # Get category for foreignkey base don regex of title
+
+            try:
+                regex_category = self.regex_category(p_title)
+                category = Category.objects.get(name=regex_category)
+
+            except ObjectDoesNotExist:
+                category = None
+
             # If 1 variant then item is standalone, else it is a parent
+
             if len(p_variants) == 1:
                 product_type = "standalone"
             else:
                 product_type = "parent"
 
-            # Get category for foreignkey
-
-            try:
-                regex_category = self.regex_category(p_category)
-                category = Category.objects.get(name=regex_category)
-
-            except ObjectDoesNotExist:
-
-                category = None
-
-
+            # Create product for standalone and parent
             p_obj, created = Product.objects.update_or_create(
                 id=p_code,
                 defaults = {
@@ -97,15 +104,28 @@ class Command(BaseCommand):
                     }
             )
 
-            if product_type == "parent":
+            #Loop through variants
+            for node in p_variants:
+                c_title = node['node']['title']
+                c_code = node['node']['id']
+                c_price = node['node']['price']
+                c_quantity = node['node']['quantityAvailable']
+                c_options = node['node']['selectedOptions']
 
-                for node in p_variants:
-                    c_title = node['node']['title']
-                    c_code = node['node']['id']
-                    c_price = node['node']['price']
-                    c_options = node['node']['selectedOptions']
+                # Create a standalone stock record
+                if product_type == "standalone":
 
+                    i_obj, created = StockRecord.objects.update_or_create(
+                        product=p_obj,
+                        defaults = {
+                            'price_inc_tax': c_price,
+                            'num_in_stock': c_quantity,
+                        })
 
+                # Create a parent product, child and child stock records
+                else:
+
+                    # Create child product
                     c_obj, created = Product.objects.update_or_create(
                         id=c_code,
                         defaults = {
@@ -115,8 +135,13 @@ class Command(BaseCommand):
                             'parent': p_obj,
                             }
                     )
-
-                    # print(c_obj)
+                    # Create stock record for child
+                    i_obj, created = StockRecord.objects.update_or_create(
+                        product=c_obj,
+                        defaults = {
+                            'price_inc_tax': c_price,
+                            'num_in_stock': c_quantity,
+                        })
 
 
     def handle(self, *args, **options):
