@@ -76,6 +76,8 @@ class Product(models.Model):
 
 	external_url = models.URLField(max_length=200, null=True, blank=True)
 
+	date_modified = models.DateTimeField(auto_now=True)
+
 	def clean(self):
 	    """
 	    Validate a product. Those are the rules:
@@ -251,7 +253,7 @@ class AttributeValue(models.Model):
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, verbose_name= "Attribute")
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='attribute_values', verbose_name="Product")
 
-    value_text = models.TextField('Text', blank=True, null=True)
+    value_text = models.CharField('Text', max_length=100, blank=True, null=True)
     value_float = models.FloatField('Float', blank=True, null=True, db_index=True)
 
 

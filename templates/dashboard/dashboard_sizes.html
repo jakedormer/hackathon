@@ -1,6 +1,33 @@
 {% extends "dashboard/dashboard.html" %}
 
 {% block dashboard %}
-<h1>Size Guides</h1>
+
+<div class="row mt-3">
+	<div class="col-12">
+
+		<table class="table table-hover table-responsive-lg">
+		  <thead class="thead-dark">
+		    <tr>
+		      <th scope="col">Size Guide Name</th>
+		      <th scope="col">Category</th>
+		      <th scope="col">Edit/ Delete</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		  	<tr>
+		  		<td>Name here</td>
+		  		<td>Category Name</td>
+		  		<td class="text-right">
+		  			<button type="button" class="btn btn-dark btn-sm"><i class="fas fa-pencil-alt mr-2"></i>Edit</button>
+		  			<button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt mr-2"></i></i>Delete</button>
+		  		</td>
+		  	</tr>
+		  </tbody>
+		</table>
+
+	</div>
+</div>
+
+
 {% endblock %}
 

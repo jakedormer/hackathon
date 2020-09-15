@@ -19,38 +19,32 @@
       <div class="sidebar-sticky pt-3">
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link active" href="/dashboard">
-              <i class="fas fa-home mr-2"></i>
-              Home
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link text-dark" href="#">
               <i class="fas fa-pound-sign mr-3"></i>
                Orders
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/dashboard/products">
+            <a class="nav-link text-dark" href="/dashboard/products">
               <i class="fas fa-tshirt mr-2"></i>
               Products
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/dashboard/sizes">
+            <a class="nav-link text-dark" href="/dashboard/sizes">
               <i class="fas fa-ruler"></i>
               Size Guides
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/dashboard/settings">
+            <a class="nav-link text-dark" href="/dashboard/settings">
               <i class="fas fa-cog mr-2"></i>
               Settings
             </a>
           </li>
         </ul>
 
-        <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+        <!-- <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
           <span>Saved reports</span>
           <a class="d-flex align-items-center text-muted" href="#" aria-label="Add a new report">
             <span data-feather="plus-circle"></span>
@@ -63,12 +57,12 @@
               Current month
             </a>
           </li>
-        </ul>
+        </ul> -->
       </div>
     </nav>
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-              <h1 class="h3 pb-2 mt-3 border-bottom"><b>Welcome {{user.get_username|title}}</b>, <small><i>{{user.profile.vendor.name|title}}</i></small></h1>
+<!--               <h1 class="h3 pb-2 mt-3 border-bottom"><b>Welcome {{user.get_username|title}}</b>, <small><i>{{user.profile.vendor.name|title}}</i></small></h1> -->
     {% block dashboard %}
 
     {% endblock %}

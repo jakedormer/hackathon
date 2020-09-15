@@ -6,12 +6,7 @@ from django.dispatch import receiver
 class Platform(models.Model):
 
 
-	platform_choices = {
-		('shopify', 'Shopify'),
-		('woocommerce', 'WooCommerce')
-	}
-
-	name = models.CharField(max_length=30, choices=platform_choices, null=True, unique=True)
+	name = models.CharField(max_length=30, null=True, unique=True)
 
 	def __str__(self):
 		# return self.get_name_display()
@@ -51,6 +46,7 @@ class APICredential(models.Model):
 	password = models.CharField(max_length=200, null=True, blank=True)
 	access_token = models.CharField(max_length=200, null=True, blank=True)
 	categories = models.CharField(max_length=500, null=True, blank=True)
+	date_modified = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
 		return self.vendor.name.title() + "-" + self.platform.name.title()

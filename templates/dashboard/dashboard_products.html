@@ -2,7 +2,7 @@
 
 {% block dashboard %}
 
-<div class="row">
+<div class="row mt-3">
 	<div class="col-12">
 
 	<table class="table table-hover table-responsive-lg">
@@ -10,10 +10,11 @@
 	    <tr>
 	      <th scope="col">Image</th>
 	      <th scope="col">Type</th>
-	      <th scope="col">Title</th>
+	      <th class="w-33" scope="col">Title</th>
 	      <th scope="col">Size</th>
 	      <th scope="col">Vestem Category</th>
-	      <th score="col">Inventory</th>
+	      <th score="col">Stock</th>
+	      <th score="col">Price</th>
 	      <th score="col">Size Guide</th>
 	    </tr>
 	  </thead>
@@ -24,12 +25,39 @@
 	    {% else %}
 	     <tr class="bg-light">
 	    {% endif %}
-	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{product.image_src}}" alt="Card image cap" style="width: 50px; height: 50px"></td>
+	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{product.image_src}}" alt="Card image cap" style="width: 75px; height: 75px"></td>
 	      <td>{{product.product_type|title}}</td>
-	      <td><a href="{{product.onlineStorePreviewUrl}}" target="_blank">{{product.title|title}}<i class="fas fa-external-link-alt ml-2 fa-xs text-dark"></i></a></td>
+	      <td><a href="{{product.onlineStorePreviewUrl}}" target="_blank">{{product.title|title}}<i class="fas fa-external-link-alt ml-2 fa-xs"></i></a><br>
+	      	<small class="text-muted">Last Synced: {{product.date_modified}}</small></td>
+
+	      <!-- Sizes -->
+	      {% if product.attribute_values.all.count == 0  %}
 	      <td></td>
+	      {% else %}
+	      {% for attribute in product.attribute_values.all %}
+	      {% if attribute.attribute.name == "size" %}
+	      <td class="font-weight-bold">{{attribute.value_text|default_if_none:""}}</td>
+	      {% endif %}
+	      {% endfor %}
+	      {% endif %}
+
+	      <!-- Category -->
 	      <td>{{product.category|default_if_none:""}}{{product.parent.category|default_if_none:""}}</td>
+	      
+
+	      <!-- Stock -->
+	      {% with product.stockrecords.all|first as stock %}
+	      {% if stock.num_in_stock == 0 or not stock.num_in_stock %}
+	      <td class="text-danger">{{stock.num_in_stock}}</td>
 	      <td></td>
+	      {% else %}
+	      <td class="text-success">{{stock.num_in_stock}}</td>
+	      <td class="text-primary font-weight-bold">£{{stock.price_inc_tax}}</td>
+	      {% endif %}
+	      {% endwith %}
+
+	      <!-- Size Guides -->
+	      {% if product.product_type == "standalone" or product.product_type == "parent" %}
 	      <td>
 	      	<form>
 	      	  <div class="form-group">
@@ -43,13 +71,21 @@
 	      	  </div>
 	      	</form>
 	      </td>
-	    </tr>
+	      {% else %}
+	      <td></td>
+	      {% endif %}
 	   
 	   {% endfor %}
 	  </tbody>
-	</table>	
+	</table>
 
 	</div>
 </div>
+
+<div class="row m-3">
+	<div class="col text-center">
+		<small>Note: No product descriptions, inventories, prices or images can be edited here. They must be edited on shopify.</small>
+	</div>
+</div>	
 
 {% endblock %}

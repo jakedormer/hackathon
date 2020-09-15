@@ -32,7 +32,7 @@ def login_view(request):
 
 				login(request, auth_user)
 
-				return redirect('/dashboard')
+				return redirect('/dashboard/products')
 
 			else:
 
@@ -44,7 +44,7 @@ def login_view(request):
 
 		if request.user.is_authenticated:
 
-			return redirect('/dashboard')
+			return redirect('/dashboard/products')
 
 		else:
 

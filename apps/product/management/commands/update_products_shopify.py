@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from apps.dashboard.models import Vendor, APICredential
-from apps.product.models import Product, Category
+from apps.product.models import Product, Category, AttributeValue, Attribute
 from apps.inventory.models import StockRecord
 from apps.product.management.querys import update_products_shopify as q
 import requests
@@ -44,17 +44,27 @@ class Command(BaseCommand):
         #T Shirts
         x = re.search(r'\b(tee|t[-\s]shirts?)\b', category, re.IGNORECASE)
         if x:
-            return "t-shirts"
+            return ["tops", "t-shirts"]
 
         #Shirts
         x = re.search(r'\b(shirts?)\b', category, re.IGNORECASE)
         if x:
-            return "shirts"
+            return ["tops", "shirts"]
 
         #Vests
         x = re.search(r'\b(vests?)\b', category, re.IGNORECASE)
         if x:
-            return "vests"
+            return ["tops", "vests"]
+
+    def regex_size(self, size):
+
+        # Small
+        if re.search(r'^s$', size, re.IGNORECASE):
+            return "S"
+
+        # Medium    
+        if re.search(r'^m$', size, re.IGNORECASE):
+            return "M"
 
 
     def update_products(self, json_data, vendor_id):
@@ -71,14 +81,26 @@ class Command(BaseCommand):
             p_external_url = node['node']['onlineStoreUrl']
             # print(p_category)
             p_variants = node['node']['variants']['edges']
-            p_image_src = node['node']['images']['edges'][0]['node']['originalSrc']
+
+            try:
+                p_image_src = node['node']['images']['edges'][0]['node']['originalSrc']
+
+            # Product has no image
+            except IndexError:
+                p_image_src = None
+
             # print(p_image_src)
             # print(len(p_variants))
 
             # Get category for foreignkey base don regex of title
 
             try:
-                regex_category = self.regex_category(p_title)
+                regex_category = self.regex_category(p_title)[1]
+
+            except TypeError:
+                regex_category = None
+
+            try:
                 category = Category.objects.get(name=regex_category)
 
             except ObjectDoesNotExist:
@@ -112,7 +134,27 @@ class Command(BaseCommand):
                 c_quantity = node['node']['quantityAvailable']
                 c_options = node['node']['selectedOptions']
 
-                # Create a standalone stock record
+                # Sieve through options to find size variable
+                for i in c_options:
+
+                    try:
+                        if re.search(r'\b(size|sizing)\b', i['name'], re.IGNORECASE):
+
+                            size = self.regex_size(i['value'])
+
+                            break
+
+                        else:
+                            size = None
+
+                    # If null is returned
+
+                    except TypeError:
+
+                        pass
+
+                        
+                # Create a standalone stock record and size attribute value
                 if product_type == "standalone":
 
                     i_obj, created = StockRecord.objects.update_or_create(
@@ -122,7 +164,18 @@ class Command(BaseCommand):
                             'num_in_stock': c_quantity,
                         })
 
-                # Create a parent product, child and child stock records
+                    if size:
+                        # Create size attribute value
+                        size_attr = Attribute.objects.get(name="size")
+
+                        a_obj, created = AttributeValue.objects.update_or_create(
+                            attribute=size_attr,
+                            product=c_obj,
+                            defaults = {
+                                'value_text': size,
+                            })
+
+                # Create a parent product, child, size attribute value and child stock records
                 else:
 
                     # Create child product
@@ -143,6 +196,17 @@ class Command(BaseCommand):
                             'num_in_stock': c_quantity,
                         })
 
+                    if size:
+                        # Create size attribute value for child
+                        size_attr = Attribute.objects.get(name="size")
+
+                        a_obj, created = AttributeValue.objects.update_or_create(
+                            attribute=size_attr,
+                            product=c_obj,
+                            defaults = {
+                                'value_text': size,
+                            })
+
 
     def handle(self, *args, **options):
 
@@ -158,12 +222,12 @@ class Command(BaseCommand):
 
                 if p[0] == 200:
                     print("API connected successfully")
-                    print(p[1])
+                    # print(p[1])
                     self.update_products(json_data=p[1], vendor_id=vendor.id)
                     print("Product created")
                 else:
                     print("API unsuccessful")
-                    print(p)
+                    # print(p)
 
 
 

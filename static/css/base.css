@@ -60,3 +60,11 @@ body {
 .grayscale {
   filter: grayscale(100%);
 }
+
+a:hover {
+  text-decoration: underline!important;
+}
+
+.w-33 {
+  width: 33%;
+}
