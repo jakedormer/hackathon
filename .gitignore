@@ -6,6 +6,7 @@ bin/
 Include/
 pip-selfcheck.json
 Lib/
+media/
 
 # JD
 

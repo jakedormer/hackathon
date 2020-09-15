@@ -19,6 +19,8 @@ from views import base
 from apps.cart import views as views_cart
 from apps.product import views as views_product
 from apps.dashboard import views as views_dashboard
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin', admin.site.urls),
@@ -36,4 +38,6 @@ urlpatterns = [
     path('dashboard/sizes', views_dashboard.dashboard_sizes, name='dashboard_sizes'),
 
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns 
