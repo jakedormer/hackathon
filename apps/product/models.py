@@ -233,11 +233,20 @@ class Attribute(models.Model):
 		choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0],
 		max_length=20, verbose_name="Type")
 
+	# option_group = models.ForeignKey(
+	#     'catalogue.AttributeOptionGroup',
+	#     blank=True,
+	#     null=True,
+	#     on_delete=models.CASCADE,
+	#     verbose_name="Option Group",
+	#     help_text='Select an option group if using type "Option" or "Multi Option"'
+	#     )
+
 	def __str__(self):
 		return self.name
 
 
-class AttributeGroup(models.Model):
+class CategoryAttributeGroup(models.Model):
 	category = models.ForeignKey(Category, on_delete=models.CASCADE, null=False)
 	attribute = models.ManyToManyField(Attribute)
 
@@ -257,6 +266,14 @@ class AttributeValue(models.Model):
     value_float = models.FloatField('Float', blank=True, null=True, db_index=True)
 
 
+class SizeGuide(models.Model):
 
+	vendor 			= models.ForeignKey(Vendor, on_delete=models.CASCADE)
+	category		= models.ForeignKey(Category, on_delete=models.CASCADE)
+
+class SizeGuideItem(models.Model):
+
+	attribute  		= models.ManyToManyField(Attribute)
+	value     		= models.FloatField(null=False)
 
 

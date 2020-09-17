@@ -33,7 +33,10 @@ class AttributeGroupAdmin(admin.ModelAdmin):
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Attribute, AttributeAdmin)
-admin.site.register(AttributeGroup, AttributeGroupAdmin)
+admin.site.register(CategoryAttributeGroup, AttributeGroupAdmin)
 admin.site.register(AttributeValue)
+admin.site.register(SizeGuide)
+admin.site.register(SizeGuideItem)
+
 
 
