@@ -6,6 +6,13 @@ from django.db import models
 
 from .models import *
 
+class AttributeOptionInline(admin.TabularInline):
+    model = AttributeOption
+
+class AttributeOptionGroupAdmin(admin.ModelAdmin):
+    list_display = ('name', 'option_summary')
+    inlines = [AttributeOptionInline, ]
+
 class AttributeValueAdmin(admin.TabularInline):
     model = AttributeValue
     extra = 0
@@ -30,6 +37,7 @@ class AttributeGroupAdmin(admin.ModelAdmin):
 
 	list_display = ('category', 'get_attributes')
 
+admin.site.register(AttributeOptionGroup, AttributeOptionGroupAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Attribute, AttributeAdmin)
@@ -37,6 +45,7 @@ admin.site.register(CategoryAttributeGroup, AttributeGroupAdmin)
 admin.site.register(AttributeValue)
 admin.site.register(SizeGuide)
 admin.site.register(SizeGuideItem)
+
 
 
 

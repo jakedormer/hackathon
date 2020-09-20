@@ -8,7 +8,7 @@ def category(request, slug):
 	products = Product.objects.filter(category__slug=slug, product_type="parent") | Product.objects.filter(category__slug=slug, product_type="standalone")
 	context = {
 		'category': category,
-		'filters': category.attributegroup_set.all(),
+		'filters': category.categoryattributegroup_set.all(),
 		'products': products,
 	}
 	template = 'product/category.html'

@@ -68,3 +68,11 @@ a:hover {
 .w-33 {
   width: 33%;
 }
+
+.op-9 {
+  opacity: 0.95;
+}
+
+.dropdown-menu {
+  border: 0px!important;
+}

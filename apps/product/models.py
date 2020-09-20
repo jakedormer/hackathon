@@ -145,7 +145,14 @@ class Product(models.Model):
 	def _clean_parent(self):
 	    """
 	    Validates a parent product.
+
+
 	    """
+
+	    if self.attributes:
+	        raise ValidationError(
+	            ("A parent product cannot have attributes"))
+	        
 	    self._clean_standalone()
 	    # if self.has_stockrecords:
 	    #     raise ValidationError(
@@ -194,7 +201,38 @@ class Product(models.Model):
 
 # class AttributeGroup(models.Model):
 
+class AttributeOptionGroup(models.Model):
+    """
+    Defines a group of options that collectively may be used as an
+    attribute type
 
+    For example, Language
+    """
+    name = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def option_summary(self):
+        options = [o.option for o in self.options.all()]
+        return ", ".join(options)
+
+
+class AttributeOption(models.Model):
+    """
+    Provides an option within an option group for an attribute type
+    Examples: In a Language group, English, Greek, French
+    """
+    group = models.ForeignKey(
+        AttributeOptionGroup,
+        on_delete=models.CASCADE,
+        related_name='options',
+        )
+    option = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.option
 
 
 class Attribute(models.Model):
@@ -233,14 +271,14 @@ class Attribute(models.Model):
 		choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0],
 		max_length=20, verbose_name="Type")
 
-	# option_group = models.ForeignKey(
-	#     'catalogue.AttributeOptionGroup',
-	#     blank=True,
-	#     null=True,
-	#     on_delete=models.CASCADE,
-	#     verbose_name="Option Group",
-	#     help_text='Select an option group if using type "Option" or "Multi Option"'
-	#     )
+	option_group = models.ForeignKey(
+	    AttributeOptionGroup,
+	    blank=True,
+	    null=True,
+	    on_delete=models.CASCADE,
+	    verbose_name="Option Group",
+	    help_text='Select an option group if using type "Option" or "Multi Option"'
+	    )
 
 	def __str__(self):
 		return self.name
@@ -264,10 +302,16 @@ class AttributeValue(models.Model):
 
     value_text = models.CharField('Text', max_length=100, blank=True, null=True)
     value_float = models.FloatField('Float', blank=True, null=True, db_index=True)
+    value_option = models.ForeignKey(AttributeOption, blank=True, null=True, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('attribute', 'product')
+
 
 
 class SizeGuide(models.Model):
 
+	name 			= models.CharField(max_length=100, null=False, blank=False)
 	vendor 			= models.ForeignKey(Vendor, on_delete=models.CASCADE)
 	category		= models.ForeignKey(Category, on_delete=models.CASCADE)
 

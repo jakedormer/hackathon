@@ -74,6 +74,12 @@ def dashboard_sizes(request):
 	template = 'dashboard/dashboard_sizes.html'
 	return render(request, template, context=locals())
 
+@login_required()
+def dashboard_sizes_create(request):
+
+	template = 'dashboard/dashboard_sizes_create.html'
+	return render(request, template, context=locals())
+
 @login_required
 def dashboard_products(request):
 
@@ -167,6 +173,7 @@ def dashboard_settings(request):
 				api_access_token= form.cleaned_data['api_access_token']
 
 				# Update user object
+
 				request.user.first_name = first_name
 				request.user.last_name = surname
 				request.user.email = email
@@ -186,6 +193,10 @@ def dashboard_settings(request):
 
 
 					api_credentials.save()
+
+					initial_data['first_name'] = request.user.first_name
+					initial_data['surname'] = request.user.last_name
+					initial_data['email'] = request.user.email
 
 					initial_data['api_username'] = api_credentials.username
 					initial_data['api_password'] = api_credentials.password
