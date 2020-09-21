@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+<div class="row text-center">
+	<div class="col">
+		<h1 class="mt-3">Authenticate</h1>
+		<img class="img-responsive mt-4" src="{{ MEDIA_URL }}images/logos/shopify.jpg" style="height:100px">
+		{% if messages %}
+		{% for message in messages %}
+		{% if message.tags == "error" %}
+		<div class="alert alert-danger" role="alert">
+		  {{message}}
+		</div>
+		{% elif message.tags == "success" %}
+		<div class="alert alert-success" role="alert">
+		  {{message}}
+		</div>
+		{% else %}
+		{% endif %}
+		{% endfor %}
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}

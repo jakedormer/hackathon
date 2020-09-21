@@ -19,6 +19,7 @@ from views import base
 from apps.cart import views as views_cart
 from apps.product import views as views_product
 from apps.dashboard import views as views_dashboard
+from apps.oauth import views as views_oauth
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -30,6 +31,8 @@ urlpatterns = [
     path('cart', views_cart.cart, name='cart'),
     path('login', views_dashboard.login_view, name='login'),
     path('logout', views_dashboard.logout_view, name='logout'),
+    path('oauth/install', views_oauth.install, name='oauth/install'),
+    path('oauth/authenticate', views_oauth.authenticate, name='oauth/authenticate'),
     path('c/<slug:slug>', views_product.category, name='category'),
     path('p/<slug:slug>', views_product.product, name='product'),
     path('dashboard', views_dashboard.dashboard, name='dashboard'),
