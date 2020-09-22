@@ -118,7 +118,7 @@ def api_connect(platform, vendor_name, access_token, query):
 		return [r.status_code, data]
 
 	except JSONDecodeError:
-
+		print(r.content)
 		return [r.status_code, " - Could not connect to shopify, please check your API details are correct. Categories will appear below upon a successful connection"]
 
 @login_required
@@ -143,13 +143,8 @@ def dashboard_settings(request):
 	try:
 
 		vendor_object 	= request.user.profile.vendor
-		api_credentials = APICredential.objects.get(vendor=vendor_object, platform=platform_object)
+		api_credential = APICredential.objects.get(vendor=vendor_object, platform=platform_object)
 
-		initial_data['api_username'] = api_credentials.username
-		initial_data['api_password'] = api_credentials.password
-		initial_data['api_access_token'] = api_credentials.access_token
-
-		# Run API to shopify to get collections
 
 	except ObjectDoesNotExist:
 		pass
@@ -168,9 +163,6 @@ def dashboard_settings(request):
 				surname			= form.cleaned_data['surname']
 				email			= form.cleaned_data['email']
 				platform 		= form.cleaned_data['platform']
-				api_username 	= form.cleaned_data['api_username']
-				api_password	= form.cleaned_data['api_password']
-				api_access_token= form.cleaned_data['api_access_token']
 
 				# Update user object
 
@@ -178,65 +170,29 @@ def dashboard_settings(request):
 				request.user.last_name = surname
 				request.user.email = email
 
+				initial_data['first_name'] = first_name
+				initial_data['surname'] = surname
+				initial_data['email'] = email
+
 				request.user.save()
 
 				messages.info(request, "Details Updated")
 
-				# Update Vendor & Platform details
 
-				# If API credentials exist, then update, else create a new object
-				if api_credentials is not None:
+	# if a GET (or any other method) we'll create a blank form
+	print(vendor_object.name)
+	print(api_credential.access_token)
+	print(q_productTypes)
+	c = api_connect(platform='shopify', vendor_name=vendor_object.name, access_token=api_credential.access_token, query=q_productTypes)
 
-					api_credentials.username = api_username
-					api_credentials.password = api_password
-					api_credentials.access_token = api_access_token
-
-
-					api_credentials.save()
-
-					initial_data['first_name'] = request.user.first_name
-					initial_data['surname'] = request.user.last_name
-					initial_data['email'] = request.user.email
-
-					initial_data['api_username'] = api_credentials.username
-					initial_data['api_password'] = api_credentials.password
-					initial_data['api_access_token'] = api_credentials.access_token
-
-				else:		
-
-					APICredential.objects.create(vendor=vendor_object, platform=platform_object, username=api_username, password=api_password, access_token=api_access_token)
-
-
-				c = api_connect(platform='shopify', vendor_name=vendor_object.name, access_token = api_access_token, query=q_productTypes)
-
-				if c[0] == 200:
-					context['product_types'] = c[1]['shop']['productTypes']['edges']
-					messages.success(request, 'API connected successfully')
-				else:
-					messages.error(request, str(c[0]) + c[1])
-				
-				return render(request, template, context)
-					
-
-			else:
-
-				print(form.errors)
-
-				return render(request, template, context)
-
-
-		# if a GET (or any other method) we'll create a blank form
+	if c[0] == 200:
+		context['product_types'] = c[1]['shop']['productTypes']['edges']
+		messages.success(request, 'API connected successfully')
 	else:
-
-		c = api_connect(platform='shopify', vendor_name=vendor_object.name, access_token = api_credentials.access_token, query=q_productTypes)
-
-		if c[0] == 200:
-			context['product_types'] = c[1]['shop']['productTypes']['edges']
-			messages.success(request, 'API connected successfully')
-		else:
-			 messages.error(request, str(c[0]) + c[1])
-		
-		return render(request, template, context)
+		 print(c[0])
+		 messages.error(request, str(c[0]) + c[1])
+	
+	return render(request, template, context)
 
 	
 			

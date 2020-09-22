@@ -40,13 +40,14 @@ class Profile(models.Model):
 
 class APICredential(models.Model):
 
-	vendor 			= models.ForeignKey(Vendor, on_delete=models.CASCADE)
-	platform 		= models.ForeignKey(Platform, on_delete=models.CASCADE)
-	nonce			= models.CharField(max_length=200, null=True, blank=True)
-	access_token 	= models.CharField(max_length=200, null=True, blank=True)
-	categories 		= models.CharField(max_length=500, null=True, blank=True)
-	scopes	 		= models.CharField(max_length=500, null=True, blank=True)
-	date_modified 	= models.DateTimeField(auto_now=True)
+	vendor 						= models.ForeignKey(Vendor, on_delete=models.CASCADE)
+	platform 					= models.ForeignKey(Platform, on_delete=models.CASCADE)
+	nonce						= models.CharField(max_length=200, null=True, blank=True)
+	access_token 				= models.CharField(max_length=200, null=True, blank=True)
+	storefront_access_token 	= models.CharField(max_length=200, null=True, blank=True)
+	categories 					= models.CharField(max_length=500, null=True, blank=True)
+	scopes	 					= models.CharField(max_length=500, null=True, blank=True)
+	date_modified 				= models.DateTimeField(auto_now=True)
 
 	def __str__(self):
 		return self.vendor.name.title() + "-" + self.platform.name.title()
