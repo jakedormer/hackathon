@@ -19,7 +19,7 @@ class AttributeValueAdmin(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
 
-	list_display = ('id','slug', 'vendor', 'get_product_category', 'title', 'product_type', 'date_created')
+	list_display = ('id','slug', 'vendor', 'get_product_category', 'title', 'size', 'product_type', 'date_created')
 	list_filter = ('vendor', 'category', 'product_type')
 	inlines = (AttributeValueAdmin,)
 	ordering = ('vendor', 'title', '-product_type')
@@ -37,14 +37,25 @@ class AttributeGroupAdmin(admin.ModelAdmin):
 
 	list_display = ('category', 'get_attributes')
 
+class SizeGuideInline(admin.TabularInline):
+	model = SizeGuideItem
+
+
+class SizeGuideAdmin(admin.ModelAdmin):
+	list_display = ('name', 'vendor')
+	inlines = [SizeGuideInline, ]
+
+class SizeAdmin(admin.ModelAdmin):
+	list_display = ('value', )
+
 admin.site.register(AttributeOptionGroup, AttributeOptionGroupAdmin)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Attribute, AttributeAdmin)
 admin.site.register(CategoryAttributeGroup, AttributeGroupAdmin)
 admin.site.register(AttributeValue)
-admin.site.register(SizeGuide)
-admin.site.register(SizeGuideItem)
+admin.site.register(Size, SizeAdmin)
+admin.site.register(SizeGuide, SizeGuideAdmin)
 
 
 

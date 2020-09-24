@@ -20,6 +20,12 @@ class Category(models.Model):
 		self.slug = slugify(self.name)
 		super(Category, self).save(*args, **kwargs)
 
+class Size(models.Model):
+
+	value = models.CharField(max_length=50)
+
+	def __str__(self):
+		return self.value
 
 class Product(models.Model):
 
@@ -67,6 +73,7 @@ class Product(models.Model):
 		)
 
 	image_src = models.URLField(null=True)
+	size = models.ForeignKey(Size, blank=True, null=True, on_delete=models.SET_NULL)
 	attributes = models.ManyToManyField(
 	        'product.Attribute',
 	        through='AttributeValue',
@@ -119,6 +126,8 @@ class Product(models.Model):
 	        raise ValidationError(("Only child products can have a parent."))
 	    if not self.vendor:
 	        raise ValidationError(("Your product must have vendor"))
+	    if not self.size:
+	    	raise ValidationError(("Your product must have a size"))
 
 	def _clean_child(self):
 	    """
@@ -126,6 +135,8 @@ class Product(models.Model):
 	    """
 	    if not self.parent:
 	        raise ValidationError(("A child product needs a parent."))
+	    if not self.size:
+	        raise ValidationError(("A child product needs a size"))
 	    if self.parent and not self.parent.is_parent:
 	        raise ValidationError(
 	            ("You can only assign child products to parent products."))
@@ -138,6 +149,8 @@ class Product(models.Model):
 	    if self.parent and self.vendor != self.parent.vendor:
 	        raise ValidationError(
 	            ("A child product must have the same vendor as its parent product."))
+	    if not self.size:
+	    	raise ValidationError(("Your product must have a size"))
 
 	    # Note that we only forbid options on product level
 
@@ -146,17 +159,21 @@ class Product(models.Model):
 	    """
 	    Validates a parent product.
 
-
 	    """
 
-	    if self.attributes:
+	    if not self.title:
+	        raise ValidationError(("Your product must have a title."))
+	    if not self.category:
+	        raise ValidationError(("Your product must have a category."))
+	    if self.parent:
+	        raise ValidationError(("Only child products can have a parent."))
+	    if not self.vendor:
+	        raise ValidationError(("Your product must have vendor"))
+	    if self.size:
+	    	raise ValidationError(("Parent products can not have a size."))
+	    if self.attributes.count() > 0:
 	        raise ValidationError(
-	            ("A parent product cannot have attributes"))
-	        
-	    self._clean_standalone()
-	    # if self.has_stockrecords:
-	    #     raise ValidationError(
-	    #         ("A parent product can't have stockrecords."))
+	            ("A parent product can not have attributes"))
 
 	def get_product_category(self):
 		"""
@@ -189,12 +206,14 @@ class Product(models.Model):
 	def save(self, *args, **kwargs):
 		if self.is_child:
 			self.slug = None
-			self.title = self.parent.title
+			self.title = self.parent.title + " - " + self.size.value
 			self.vendor = self.parent.vendor
 			self.external_url = self.parent.external_url
 			self.image_src = self.parent.image_src
-		else:
-			self.slug = slugify(self.title) + "-" + str(self.id)
+		# if self.is_parent:
+
+		# 	self.attributes = None
+		# 	self.slug = slugify(self.title) + "-" + str(self.id)
 			
 		super(Product, self).save(*args, **kwargs)
 
@@ -308,15 +327,16 @@ class AttributeValue(models.Model):
         unique_together = ('attribute', 'product')
 
 
-
 class SizeGuide(models.Model):
 
-	name 			= models.CharField(max_length=100, null=False, blank=False)
+	name 			= models.CharField(max_length=100, null=False, blank=False, unique=True)
 	vendor 			= models.ForeignKey(Vendor, on_delete=models.CASCADE)
 	category		= models.ForeignKey(Category, on_delete=models.CASCADE)
 
 class SizeGuideItem(models.Model):
 
+	size_guide		= models.ForeignKey(SizeGuide, on_delete=models.CASCADE)
+	size 			= models.ManyToManyField(Size)
 	attribute  		= models.ManyToManyField(Attribute)
 	value     		= models.FloatField(null=False)
 

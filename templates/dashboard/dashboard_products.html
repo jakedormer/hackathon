@@ -31,7 +31,7 @@
 	      	<small class="text-muted">Last Synced: {{product.date_modified}}</small></td>
 
 	      <!-- Sizes -->
-	      {% if product.attribute_values.all.count == 0  %}
+<!-- 	      {% if product.attribute_values.all.count == 0  %}
 	      <td></td>
 	      {% else %}
 	      {% for attribute in product.attribute_values.all %}
@@ -39,7 +39,11 @@
 	      <td class="font-weight-bold">{{attribute.value_text|default_if_none:""}}</td>
 	      {% endif %}
 	      {% endfor %}
-	      {% endif %}
+	      {% endif %} -->
+
+	      <!-- Sizes -->
+	      <td>{{product.size|default_if_none:""}}</td>
+
 
 	      <!-- Category -->
 	      <td>{{product.category|default_if_none:""}}{{product.parent.category|default_if_none:""}}</td>
