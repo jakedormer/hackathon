@@ -13,9 +13,11 @@ from django.views.generic import TemplateView
 from json import JSONDecodeError
 from .querys import *
 from apps.product.models import Product
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 
 # Create your views here.
+@xframe_options_exempt
 def login_view(request):
 
 	template = 'dashboard/login.html'

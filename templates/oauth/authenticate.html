@@ -20,12 +20,14 @@
 		{% endif %}
 		{% endfor %}
 		{% endif %}
-	</div>
+	<a class="btn btn-dark" href="https://{{shop}}/admin/apps/vestem">Return To Shopify</a>
+	<img class="img-responsive mt-3" src="{{ MEDIA_URL }}images/logos/shopify.jpg" style="height:100px">
 	{% if html %}
 	<div class="alert alert-warning" role="alert">
 	  {{html}}
 	</div>
 	{% endif %}
+</div>
 </div>
 
 {% endblock %}

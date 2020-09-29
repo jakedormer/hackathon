@@ -12,6 +12,7 @@ import hmac as _hmac
 import hashlib
 from json import JSONDecodeError
 import datetime
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 def get_random_alphanumeric_string(length):
     letters_and_digits = string.ascii_letters + string.digits
@@ -20,8 +21,25 @@ def get_random_alphanumeric_string(length):
 
 def install(request):
 
-	template = 'oauth/install.html'
-	
+	template 		= 'oauth/install.html'
+	hostname 		= request.get_host()
+	# print("hi, "+ request.get_host())
+	# print(request.is_secure())
+
+	if settings.DEBUG:
+		protocol = "https://"
+	else:
+		if request.is_secure():
+
+			protocol = "https://"
+		else:
+			protocol = "http://"
+
+	print(protocol)
+
+	redirect_uri 	= protocol + hostname + requests.utils.quote(settings.SHOPIFY_REDIRECT_URI)
+	print(redirect_uri)
+
 	# Shop must exist and have been created by admin else this process will fail.
 	try:
 
@@ -37,7 +55,8 @@ def install(request):
 			api_secret 		= settings.SHOPIFY_API_SECRET
 			scopes 			= settings.SHOPIFY_API_SCOPES
 			nonce 			= get_random_alphanumeric_string(49)
-			redirect_uri 	= requests.utils.quote(settings.SHOPIFY_REDIRECT_URI)
+			
+			print(redirect_uri)
 			
 			platform = Platform.objects.get(name="shopify")
 			vendor_api_credentials, created = APICredential.objects.update_or_create(
@@ -83,6 +102,7 @@ def api_connect(vendor_name, endpoint, data):
 
         return [r.status_code, r.text]
 
+@xframe_options_exempt
 def authenticate(request):
 
 	context = {}
@@ -93,6 +113,7 @@ def authenticate(request):
 	params = request.GET.dict()
 	try:
 		shop_url		= params['shop']
+		context['shop'] = shop_url
 		code			= params['code']
 		hmac			= params['hmac']
 		nonce			= params['state']

@@ -5,3 +5,7 @@ To create a new app in a folder:
 You must create the new folder name first
 
 SUPERUSER - jake emoclew30
+
+NGROK HTTPS Tunneling
+
+./ngrok http 8000
