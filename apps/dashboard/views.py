@@ -12,7 +12,7 @@ import json
 from django.views.generic import TemplateView
 from json import JSONDecodeError
 from .querys import *
-from apps.product.models import Product
+from apps.product.models import Product, Category, Size, SizeGuide
 from django.views.decorators.clickjacking import xframe_options_exempt
 
 
@@ -73,13 +73,24 @@ def dashboard(request):
 @login_required()
 def dashboard_sizes(request):
 
+	size_guides = SizeGuide.objects.filter(vendor=request.user.profile.vendor)
+
+	context = {
+		'sgs': size_guides,
+	}
 	template = 'dashboard/dashboard_sizes.html'
-	return render(request, template, context=locals())
+	return render(request, template, context)
 
 @login_required()
 def dashboard_sizes_create(request):
 
 	template = 'dashboard/dashboard_sizes_create.html'
+	categories = Category.objects.all().order_by("name")
+	sizes = Size.objects.all().order_by("order")
+	context = {
+		'categories': categories,
+		'sizes': sizes,
+	}
 	return render(request, template, context=locals())
 
 @login_required

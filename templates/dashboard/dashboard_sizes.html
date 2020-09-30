@@ -10,17 +10,25 @@
 		    <tr>
 		      <th scope="col">Size Guide Name</th>
 		      <th scope="col">Category</th>
-		      <th scope="col">Edit/ Delete</th>
+		      <th scope="col" class="w-33 text-right">Edit/ Delete</th>
 		    </tr>
 		  </thead>
 		  <tbody>
+		  	{% for sg in sgs %}
 		  	<tr>
-		  		<td class="text-muted">Name</td>
-		  		<td class="text-muted">Category</td>
+		  		<td class="text-muted">{{sg.name}}</td>
+		  		<td class="text-muted">{{sg.category}}</td>
 		  		<td class="text-right">
-		  			<a href="/dashboard/sizes/create" class="btn btn-success btn-sm"><i class="fas fa-plus mr-2"></i></i>Create</a>
-<!-- 		  			<button type="button" class="btn btn-dark btn-sm"><i class="fas fa-pencil-alt mr-2"></i>Edit</button>
-		  			<button type="button" class="btn btn-danger btn-sm"><i class="fas fa-trash-alt mr-2"></i></i>Delete</button> -->
+		  			<a href="/dashboard/sizes/create?id={{sg.id}}" class="btn btn-dark btn-sm"><i class="fas fa-pencil-alt"></i></i></a>
+		  			<a href="/dashboard/sizes/create?id={{sg.id}}" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></i></a>
+		  		</td>
+		  	</tr>
+		  	{% endfor %}
+		  	<tr>
+		  		<td class="text-muted"></td>
+		  		<td class="text-muted"></td>
+		  		<td class="text-right">
+		  			<a href="/dashboard/sizes/create" class="btn btn-success btn-sm"><i class="fas fa-plus mr-2"></i></i>New</a>
 		  		</td>
 		  	</tr>
 		  </tbody>
@@ -28,6 +36,8 @@
 
 	</div>
 </div>
+
+<!--  -->
 
 
 {% endblock %}

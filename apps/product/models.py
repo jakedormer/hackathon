@@ -23,6 +23,7 @@ class Category(models.Model):
 class Size(models.Model):
 
 	value = models.CharField(max_length=50)
+	order = models.PositiveIntegerField(null=False, help_text="Used to order the sizes, 1 is the smallest")
 
 	def __str__(self):
 		return self.value

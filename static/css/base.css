@@ -76,3 +76,7 @@ a:hover {
 .dropdown-menu {
   border: 0px!important;
 }
+
+.help {
+  cursor: help;
+}

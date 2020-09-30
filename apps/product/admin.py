@@ -46,7 +46,7 @@ class SizeGuideAdmin(admin.ModelAdmin):
 	inlines = [SizeGuideInline, ]
 
 class SizeAdmin(admin.ModelAdmin):
-	list_display = ('value', )
+	list_display = ('value', 'order')
 
 admin.site.register(AttributeOptionGroup, AttributeOptionGroupAdmin)
 admin.site.register(Product, ProductAdmin)
