@@ -334,6 +334,9 @@ class SizeGuide(models.Model):
 	vendor 			= models.ForeignKey(Vendor, on_delete=models.CASCADE)
 	category		= models.ForeignKey(Category, on_delete=models.CASCADE)
 
+	class Meta:
+		unique_together = ('name', 'vendor')
+
 class SizeGuideItem(models.Model):
 
 	size_guide		= models.ForeignKey(SizeGuide, on_delete=models.CASCADE)

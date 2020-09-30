@@ -87,10 +87,26 @@ def dashboard_sizes_create(request):
 	template = 'dashboard/dashboard_sizes_create.html'
 	categories = Category.objects.all().order_by("name")
 	sizes = Size.objects.all().order_by("order")
+
+	if 'id' in request.GET:
+		id = request.GET["id"]
+		size_guide = SizeGuide.objects.filter(vendor=request.user.profile.vendor, id=id).first()
+	else:
+		id = None
+		size_guide = None
+
 	context = {
 		'categories': categories,
 		'sizes': sizes,
+		'size_guide': size_guide,
 	}
+
+	if request.method == 'POST':
+		if size_guide:
+			size_guide.name = "hi"
+			size_guide.gsm = 2
+			size_guide.save()
+
 	return render(request, template, context=locals())
 
 @login_required

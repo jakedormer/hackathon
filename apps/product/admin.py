@@ -42,11 +42,11 @@ class SizeGuideInline(admin.TabularInline):
 
 
 class SizeGuideAdmin(admin.ModelAdmin):
-	list_display = ('name', 'vendor')
+	list_display = ('name', 'vendor', 'category')
 	inlines = [SizeGuideInline, ]
 
 class SizeAdmin(admin.ModelAdmin):
-	list_display = ('value', 'order')
+	list_display = ('value', 'order',)
 
 admin.site.register(AttributeOptionGroup, AttributeOptionGroupAdmin)
 admin.site.register(Product, ProductAdmin)

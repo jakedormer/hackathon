@@ -5,22 +5,26 @@
 <div class="row mt-3 justify-content-center">
 	<div class="col-12 col-lg-8">
 
-		<h1 class="text-center">Create Size Guide</h1>
+		<h1 class="text-center">{% if size_guide %}Editing: {{size_guide.name}} {% else %} Create New Size Guide {% endif %}</h1>
+		<hr>
 
 			<!-- Form Practice -->
 
-			<form class="w-100" action="" method="post">
+			<form class="w-100" action="/dashboard/sizes/create?id={{size_guide.id}}" method="post">
 				{% csrf_token %}
 				<div class="form-group">
 					<label for="aaa">Size Guide Name</label>
+					{% if size_guide %}
+					<input type="text" class="form-control" value="{{size_guide.name}}" required>
+					{% else %}
 					<input type="text" class="form-control" required>
+					{% endif %}
 				</div>
 
 				<!-- Categories -->
 				<div class="form-group">
 				   <label for="exampleFormControlSelect1">Category</label>
 				   <select class="form-control" id="exampleFormControlSelect1">
-				   	<option></option>
 				   	{% for category in categories %}
 				     <option>{{category.name|title}}</option>
 				   	{% endfor %}
@@ -45,7 +49,7 @@
 					<figcaption class="figure-caption">All sizes must be in centimeters</figcaption>
 				</figure>
 				</div>
-				<table class="table table-striped table-responsive">
+				<table class="table table-hover table-responsive">
 					<thead>
 						<tr>
 							<th class="w-25">Size</th>
@@ -72,12 +76,14 @@
 					</tbody>
 				</table>
 
-				<div class="form-group text-center">										
+				<div class="form-group text-center m-4">										
 					<button type="submit" class="btn btn-primary font-weight-bold" name="form_name" value="update_settings">Update Size Guide</button>
 				</div>
 			</form>
+			<div class="alert alert-warning mt-4 text-center" role="alert">
+			  Note- You do not need to fill in every size if you don't stock that size. They are simply placeholders.
+			</div>
 		</div>
-
 	</div>
 </div>
 
