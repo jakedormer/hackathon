@@ -1,4 +1,5 @@
 {% extends "dashboard/dashboard.html" %}
+{% load static %}
 
 {% block dashboard %}
 
@@ -63,15 +64,16 @@
 	      <!-- Size Guides -->
 	      {% if product.product_type == "standalone" or product.product_type == "parent" %}
 	      <td>
-	      	<form>
+	      	<form method="post" action="/ajax/apply_size_guide" id="size_guide_apply_form">
+	      		{% csrf_token %}
 	      	  <div class="form-group">
-	      	    <select class="form-control" id="exampleFormControlSelect1">
-	      	      <option>---</option>
-	      	      <option>Slim Fit T Shirts</option>
-	      	      <option>3</option>
-	      	      <option>4</option>
-	      	      <option>5</option>
+	      	    <select name="size_guide_name" class="form-control" id="size_guide_apply">
+	      	    	{% for size_guide in size_guides %}
+	      	      <option>{{size_guide.name|title}}</option>
+	      	      {% endfor %}
 	      	    </select>
+	      	    <input type="hidden" name="product" value="{{product.id}}">
+	      	    <button type="submit">Submit</button>
 	      	  </div>
 	      	</form>
 	      </td>
@@ -91,5 +93,11 @@
 		<small>Note: No product descriptions, inventories, prices or images can be edited here. They must be edited on shopify.</small>
 	</div>
 </div>	
+
+{% endblock %}
+
+{% block js %}
+
+<script type="text/javascript" src='{% static "dashboard/js/apply_size_guide.js" %}'></script>
 
 {% endblock %}

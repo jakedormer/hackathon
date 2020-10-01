@@ -54,4 +54,29 @@ body {
   background: url("https://blog.closetmaid.com/hubfs/FeaturedImage.jpg");
   filter: grayscale(100%);
   background-size: cover;
+  min-height: 700px;
+}
+
+.grayscale {
+  filter: grayscale(100%);
+}
+
+a:hover {
+  text-decoration: underline!important;
+}
+
+.w-33 {
+  width: 33%;
+}
+
+.op-9 {
+  opacity: 0.95;
+}
+
+.dropdown-menu {
+  border: 0px!important;
+}
+
+.help {
+  cursor: help;
 }

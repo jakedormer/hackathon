@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect
+from django.db import IntegrityError
 from django.contrib.auth.models import User as user
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -14,6 +15,7 @@ from json import JSONDecodeError
 from .querys import *
 from apps.product.models import Product, Category, Size, SizeGuide
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -110,38 +112,67 @@ def dashboard_sizes_create(request):
 
 	if request.method == 'POST':
 		params = request.POST
+		# If size guide already exists, then update with new values
 		if size_guide:
-			size_guide.name = params['name']
-			size_guide.category = Category.objects.get(name=params['category'].lower())
-			size_guide.save()
-			messages.success(request, "Size guide updated successfully.")
-
+			name = size_guide.name
 		else:
-			obj, created = SizeGuide.objects.get_or_create(
-				name = params['name'],
-				category = Category.objects.get(name=params['category'].lower()),
-				vendor = request.user.profile.vendor,
+			name = params['name']
+
+		category = Category.objects.get(name=params['category'].lower())
+
+		try:
+			obj, created = SizeGuide.objects.update_or_create(
+				name=name,
+				vendor=request.user.profile.vendor,
+				category=category,
 				defaults = {
 					'name': params['name'],
-					'category': Category.objects.get(name=params['category'].lower()),
-					'vendor': request.user.profile.vendor
+					'category': category,
 					}
-
 				)
+
+			if created:
+
+				messages.success(request, "Size guide created successfully.", extra_tags="alert-success")
+
+			else:
+
+				messages.success(request, "Size guide updated successfully.", extra_tags="alert-success")
 
 			context['size_guide'] = obj
 
-		if created:
-			messages.success(request, "Size guide created successfully.")
-		else:
-			messages.success(request, "Size guide updated successfully.")
+		except IntegrityError:
+
+			messages.error(request, "Size guide names must be unique", extra_tags="alert-danger")
+
+		
 
 
-	return render(request, template, context=locals())
+		# 	size_guide.name = params['name']
+		# 	size_guide.category = Category.objects.get(name=params['category'].lower())
+		# 	size_guide.save()
+
+		# 	messages.success(request, "Size guide updated successfully.")
+
+		# else:
+		# 	size_guide = SizeGuide.objects.create(
+		# 		name = params['name'],
+		# 		category = Category.objects.get(name=params['category'].lower()),
+		# 		vendor = request.user.profile.vendor
+		# 		)
+
+		# 	context['size_guide'] = size_guide
+
+		# 	messages.success(request, "Size guide created successfully.")
+
+		
+
+
+	return render(request, template, context)
 
 def dashboard_sizes_delete(request, code):
 
-	if request.method == 'POST':
+	if request.method == 'POST' and request.POST['form_name'] == 'delete_size_guide':
 		print("hi")
 
 		size_guide = SizeGuide.objects.get(
@@ -155,14 +186,31 @@ def dashboard_sizes_delete(request, code):
 
 	return redirect('/dashboard/sizes')
 
+def apply_size_guide(request):
+	if request.method == "POST":
+
+		product = Product.objects.get(vendor=request.user.profile.vendor, id=request.POST['product'])
+		size_guide = SizeGuide.objects.get(vendor=request.user.profile.vendor, name=request.POST['size_guide_name'].lower())
+
+		product.size_guide = size_guide
+		product.save()
+
+		data = {
+			'updated': True
+		}
+
+		return JsonResponse(data)
+
 @login_required
 def dashboard_products(request):
 
 	vendor = request.user.profile.vendor
 	products = Product.objects.filter(vendor=vendor).order_by('title',)
+	size_guides = SizeGuide.objects.filter(vendor=vendor).order_by('name')
 
 	context = {
 		'products': products,
+		'size_guides': size_guides,
 	}
 
 

@@ -42,6 +42,9 @@ urlpatterns = [
     path('dashboard/sizes/delete/<int:code>', views_dashboard.dashboard_sizes_delete, name='dashboard_sizes_delete'),
     path('dashboard/sizes/create', views_dashboard.dashboard_sizes_create, name='dashboard_sizes'),
 
+    # Ajax
+    path('ajax/apply_size_guide', views_dashboard.apply_size_guide, name='apply_size_guide'),
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

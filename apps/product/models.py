@@ -20,6 +20,103 @@ class Category(models.Model):
 		self.slug = slugify(self.name)
 		super(Category, self).save(*args, **kwargs)
 
+class AttributeOptionGroup(models.Model):
+    """
+    Defines a group of options that collectively may be used as an
+    attribute type
+
+    For example, Language
+    """
+    name = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def option_summary(self):
+        options = [o.option for o in self.options.all()]
+        return ", ".join(options)
+
+class Attribute(models.Model):
+
+	name = models.CharField(max_length=128, null=False, unique=True)
+	
+	#Attribute Choices
+	TEXT = "text"
+	INTEGER = "integer"
+	BOOLEAN = "boolean"
+	FLOAT = "float"
+	RICHTEXT = "richtext"
+	DATE = "date"
+	DATETIME = "datetime"
+	OPTION = "option"
+	MULTI_OPTION = "multi_option"
+	ENTITY = "entity"
+	FILE = "file"
+	IMAGE = "image"
+	TYPE_CHOICES = (
+		(TEXT, ("Text")),
+		(INTEGER, ("Integer")),
+		(BOOLEAN, ("True / False")),
+		(FLOAT, ("Float")),
+		(RICHTEXT, ("Rich Text")),
+		(DATE, ("Date")),
+		(DATETIME, ("Datetime")),
+		(OPTION, ("Option")),
+		(MULTI_OPTION, ("Multi Option")),
+		(ENTITY, ("Entity")),
+		(FILE, ("File")),
+		(IMAGE, ("Image")),
+	)
+
+	type = models.CharField(
+		choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0],
+		max_length=20, verbose_name="Type")
+
+	option_group = models.ForeignKey(
+	    AttributeOptionGroup,
+	    blank=True,
+	    null=True,
+	    on_delete=models.CASCADE,
+	    verbose_name="Option Group",
+	    help_text='Select an option group if using type "Option" or "Multi Option"'
+	    )
+
+	def __str__(self):
+		return self.name
+
+
+
+
+class AttributeOption(models.Model):
+    """
+    Provides an option within an option group for an attribute type
+    Examples: In a Language group, English, Greek, French
+    """
+    group = models.ForeignKey(
+        AttributeOptionGroup,
+        on_delete=models.CASCADE,
+        related_name='options',
+        )
+    option = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.option
+
+
+
+
+class CategoryAttributeGroup(models.Model):
+	category = models.ForeignKey(Category, on_delete=models.CASCADE, null=False)
+	attribute = models.ManyToManyField(Attribute)
+
+	def __str__(self):
+		return self.category.name.title()
+
+	def get_attributes(self):
+	    return ", ".join([a.name for a in self.attribute.all()])
+
+
 class Size(models.Model):
 
 	value = models.CharField(max_length=50)
@@ -27,6 +124,23 @@ class Size(models.Model):
 
 	def __str__(self):
 		return self.value
+
+class SizeGuide(models.Model):
+
+	name 			= models.CharField(max_length=100, null=False, blank=False, unique=True)
+	vendor 			= models.ForeignKey(Vendor, on_delete=models.CASCADE)
+	category		= models.ForeignKey(Category, on_delete=models.CASCADE)
+
+	class Meta:
+		unique_together = ('name', 'vendor')
+
+class SizeGuideItem(models.Model):
+
+	size_guide		= models.ForeignKey(SizeGuide, on_delete=models.CASCADE)
+	size 			= models.ManyToManyField(Size)
+	attribute  		= models.ManyToManyField(Attribute)
+	value     		= models.FloatField(null=False)
+
 
 
 class Product(models.Model):
@@ -76,6 +190,7 @@ class Product(models.Model):
 
 	image_src = models.URLField(null=True)
 	size = models.ForeignKey(Size, blank=True, null=True, on_delete=models.SET_NULL)
+	size_guide = models.ForeignKey(SizeGuide, null=True, on_delete=models.SET_NULL)
 	attributes = models.ManyToManyField(
 	        'product.Attribute',
 	        through='AttributeValue',
@@ -220,102 +335,6 @@ class Product(models.Model):
 		super(Product, self).save(*args, **kwargs)
 
 
-# class AttributeGroup(models.Model):
-
-class AttributeOptionGroup(models.Model):
-    """
-    Defines a group of options that collectively may be used as an
-    attribute type
-
-    For example, Language
-    """
-    name = models.CharField(max_length=128)
-
-    def __str__(self):
-        return self.name
-
-    @property
-    def option_summary(self):
-        options = [o.option for o in self.options.all()]
-        return ", ".join(options)
-
-
-class AttributeOption(models.Model):
-    """
-    Provides an option within an option group for an attribute type
-    Examples: In a Language group, English, Greek, French
-    """
-    group = models.ForeignKey(
-        AttributeOptionGroup,
-        on_delete=models.CASCADE,
-        related_name='options',
-        )
-    option = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.option
-
-
-class Attribute(models.Model):
-
-	name = models.CharField(max_length=128, null=False, unique=True)
-	
-	#Attribute Choices
-	TEXT = "text"
-	INTEGER = "integer"
-	BOOLEAN = "boolean"
-	FLOAT = "float"
-	RICHTEXT = "richtext"
-	DATE = "date"
-	DATETIME = "datetime"
-	OPTION = "option"
-	MULTI_OPTION = "multi_option"
-	ENTITY = "entity"
-	FILE = "file"
-	IMAGE = "image"
-	TYPE_CHOICES = (
-		(TEXT, ("Text")),
-		(INTEGER, ("Integer")),
-		(BOOLEAN, ("True / False")),
-		(FLOAT, ("Float")),
-		(RICHTEXT, ("Rich Text")),
-		(DATE, ("Date")),
-		(DATETIME, ("Datetime")),
-		(OPTION, ("Option")),
-		(MULTI_OPTION, ("Multi Option")),
-		(ENTITY, ("Entity")),
-		(FILE, ("File")),
-		(IMAGE, ("Image")),
-	)
-
-	type = models.CharField(
-		choices=TYPE_CHOICES, default=TYPE_CHOICES[0][0],
-		max_length=20, verbose_name="Type")
-
-	option_group = models.ForeignKey(
-	    AttributeOptionGroup,
-	    blank=True,
-	    null=True,
-	    on_delete=models.CASCADE,
-	    verbose_name="Option Group",
-	    help_text='Select an option group if using type "Option" or "Multi Option"'
-	    )
-
-	def __str__(self):
-		return self.name
-
-
-class CategoryAttributeGroup(models.Model):
-	category = models.ForeignKey(Category, on_delete=models.CASCADE, null=False)
-	attribute = models.ManyToManyField(Attribute)
-
-	def __str__(self):
-		return self.category.name.title()
-
-	def get_attributes(self):
-	    return ", ".join([a.name for a in self.attribute.all()])
-
-
 class AttributeValue(models.Model):
 
     attribute = models.ForeignKey(Attribute, on_delete=models.CASCADE, verbose_name= "Attribute")
@@ -329,20 +348,5 @@ class AttributeValue(models.Model):
         unique_together = ('attribute', 'product')
 
 
-class SizeGuide(models.Model):
-
-	name 			= models.CharField(max_length=100, null=False, blank=False, unique=True)
-	vendor 			= models.ForeignKey(Vendor, on_delete=models.CASCADE)
-	category		= models.ForeignKey(Category, on_delete=models.CASCADE)
-
-	class Meta:
-		unique_together = ('name', 'vendor')
-
-class SizeGuideItem(models.Model):
-
-	size_guide		= models.ForeignKey(SizeGuide, on_delete=models.CASCADE)
-	size 			= models.ManyToManyField(Size)
-	attribute  		= models.ManyToManyField(Attribute)
-	value     		= models.FloatField(null=False)
 
 
