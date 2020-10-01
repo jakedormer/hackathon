@@ -78,6 +78,7 @@ def dashboard_sizes(request):
 	context = {
 		'sgs': size_guides,
 	}
+
 	template = 'dashboard/dashboard_sizes.html'
 	return render(request, template, context)
 
@@ -89,8 +90,14 @@ def dashboard_sizes_create(request):
 	sizes = Size.objects.all().order_by("order")
 
 	if 'id' in request.GET:
-		id = request.GET["id"]
-		size_guide = SizeGuide.objects.filter(vendor=request.user.profile.vendor, id=id).first()
+
+		try:
+			id = request.GET["id"]
+			size_guide = SizeGuide.objects.filter(vendor=request.user.profile.vendor, id=id).first()
+
+		except ValueError:
+			id = None
+			size_guide = None
 	else:
 		id = None
 		size_guide = None
@@ -102,12 +109,51 @@ def dashboard_sizes_create(request):
 	}
 
 	if request.method == 'POST':
+		params = request.POST
 		if size_guide:
-			size_guide.name = "hi"
-			size_guide.gsm = 2
+			size_guide.name = params['name']
+			size_guide.category = Category.objects.get(name=params['category'].lower())
 			size_guide.save()
+			messages.success(request, "Size guide updated successfully.")
+
+		else:
+			obj, created = SizeGuide.objects.get_or_create(
+				name = params['name'],
+				category = Category.objects.get(name=params['category'].lower()),
+				vendor = request.user.profile.vendor,
+				defaults = {
+					'name': params['name'],
+					'category': Category.objects.get(name=params['category'].lower()),
+					'vendor': request.user.profile.vendor
+					}
+
+				)
+
+			context['size_guide'] = obj
+
+		if created:
+			messages.success(request, "Size guide created successfully.")
+		else:
+			messages.success(request, "Size guide updated successfully.")
+
 
 	return render(request, template, context=locals())
+
+def dashboard_sizes_delete(request, code):
+
+	if request.method == 'POST':
+		print("hi")
+
+		size_guide = SizeGuide.objects.get(
+			vendor=request.user.profile.vendor,
+			id=code
+			)
+
+
+		size_guide.delete()
+
+
+	return redirect('/dashboard/sizes')
 
 @login_required
 def dashboard_products(request):

@@ -6,7 +6,25 @@
 	<div class="col-12 col-lg-8">
 
 		<h1 class="text-center">{% if size_guide %}Editing: {{size_guide.name}} {% else %} Create New Size Guide {% endif %}</h1>
+
+		<!-- Messages -->
+		{% if messages %}
+		{% for message in messages %}
+
+		{% if message.tags == 'success' %}
+		<div class="mt-3 alert alert-success alert-dismissible fade show text-center" role="alert">
+		  {{message}}
+		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+	    {% endif %}
+
+		{% endfor %}
+		{% endif %}
+
 		<hr>
+
 
 			<!-- Form Practice -->
 
@@ -15,33 +33,27 @@
 				<div class="form-group">
 					<label for="aaa">Size Guide Name</label>
 					{% if size_guide %}
-					<input type="text" class="form-control" value="{{size_guide.name}}" required>
+					<input name="name" type="text" class="form-control" value="{{size_guide.name}}" required>
 					{% else %}
-					<input type="text" class="form-control" required>
+					<input name="name" type="text" class="form-control" required>
 					{% endif %}
 				</div>
 
 				<!-- Categories -->
 				<div class="form-group">
 				   <label for="exampleFormControlSelect1">Category</label>
-				   <select class="form-control" id="exampleFormControlSelect1">
+				   <select name="category" class="form-control" id="exampleFormControlSelect1">
+
 				   	{% for category in categories %}
+				   	{% if category.name == size_guide.category.name %}
+				     <option class="bg-secondary text-white" selected="selected">{{category.name|title}}</option>
+				     {% else %}
 				     <option>{{category.name|title}}</option>
+				     {% endif %}
 				   	{% endfor %}
 				   </select>
 				 </div>
 
-				<!-- GSM -->
-				<div class="form-group">
-					<label for="aaa">
-						GSM
-						<a tabindex=0 class="popover-dismiss text-dark help" data-toggle="popover" title="" data-trigger="focus" data-content="GSM is a metric measurement meaning grams per square metre- it is how much 1 square metre of fabric weighs and the higher the GSM number the denser the fabric will be. This is to show customers how thick they can expect a garment to be." >
-						<i class="fas fa-info-circle fa-xs ml-2 popover-dismiss" ></i>
-						</a>
-						</th>
-					</label>
-					<input type="number" class="form-control">
-				</div>
 
 				<div class="text-center m-3">
 					<figure class="figure">
@@ -57,6 +69,11 @@
 							<th>Bust</th>
 							<th>Sleeve Length</th>
 							<th>Sleeve Width</th>
+							<th>GSM
+								<a tabindex=0 class="popover-dismiss text-dark help" data-toggle="popover" title="" data-trigger="focus" data-content="GSM is a metric measurement meaning grams per square metre- it is how much 1 square metre of fabric weighs and the higher the GSM number the denser the fabric will be. This is to show customers how thick they can expect a garment to be." >
+								<i class="fas fa-info-circle fa-xs ml-2 popover-dismiss" ></i>
+								</a>
+							</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -67,17 +84,19 @@
 							   		<input class="form-control" type="text" value={{size.value}} disabled>
 							   	</div>
 							</td>
-							<td><input type="number" class="form-control" min=0></td>
-							<td><input type="number" class="form-control" min=0></td>
-							<td><input type="number" class="form-control" min=0></td>
-							<td><input type="number" class="form-control" min=0></td>
+							<td><input name="{{size.value}}|height" type="number" class="form-control" min=0></td>
+							<td><input name="{{size.value}}|bust" type="number" class="form-control" min=0></td>
+							<td><input name="{{size.value}}|sleeve_length" type="number" class="form-control" min=0></td>
+							<td><input name="{{size.value}}|sleeve_width" type="number" class="form-control" min=0></td>
+							<td><input name="{{size.value}}|gsm" type="number" class="form-control" min=0></td>
 						</tr>
 						{% endfor %}
 					</tbody>
 				</table>
 
 				<div class="form-group text-center m-4">										
-					<button type="submit" class="btn btn-primary font-weight-bold" name="form_name" value="update_settings">Update Size Guide</button>
+					<button type="submit" class="btn btn-primary font-weight-bold" name="form_name" value="update_size_guide">
+					{% if size_guide %} Update Size Guide {% else %} Create Size Guide {% endif %}</button>
 				</div>
 			</form>
 			<div class="alert alert-warning mt-4 text-center" role="alert">

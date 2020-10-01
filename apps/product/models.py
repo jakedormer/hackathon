@@ -28,6 +28,7 @@ class Size(models.Model):
 	def __str__(self):
 		return self.value
 
+
 class Product(models.Model):
 
 	id = models.CharField(max_length=100, null=False, blank=False, primary_key=True)

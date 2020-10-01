@@ -20,7 +20,11 @@
 		  		<td class="text-muted">{{sg.category}}</td>
 		  		<td class="text-right">
 		  			<a href="/dashboard/sizes/create?id={{sg.id}}" class="btn btn-dark btn-sm"><i class="fas fa-pencil-alt"></i></i></a>
-		  			<a href="/dashboard/sizes/create?id={{sg.id}}" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></i></a>
+		  			<form method="post" class="d-inline" action="/dashboard/sizes/delete/{{sg.id}}" onsubmit="return confirm('Are you sure you want to delete this size guide? It will be removed from all items')">
+		  				{% csrf_token %}
+		  				<button type="submit" name="form_name" value="delete_size_guide" class="btn btn-danger btn-sm"><i class="far fa-trash-alt"></i></i></button>
+		  				
+		  			</form>
 		  		</td>
 		  	</tr>
 		  	{% endfor %}
