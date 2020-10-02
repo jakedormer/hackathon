@@ -7,11 +7,11 @@
 	<div class="col-12">
 
 	<table class="table table-hover table-responsive-lg">
-	  <thead class="thead-dark">
+	  <thead class="bg-vestem">
 	    <tr>
 	      <th scope="col">Image</th>
 	      <th scope="col">Type</th>
-	      <th class="w-33" scope="col">Title</th>
+	      <th class="w-50" scope="col">Title</th>
 	      <th scope="col">Size</th>
 	      <th scope="col">Vestem Category</th>
 	      <th score="col">Stock</th>
@@ -68,12 +68,19 @@
 	      		{% csrf_token %}
 	      	  <div class="form-group">
 	      	    <select name="size_guide_name" class="form-control" id="size_guide_apply">
+	      	    	<option></option>
+	      	    	{% if product.size_guide %}
+	      	    	<option class="bg-vestem" selected="selected">{{product.size_guide.name|title}}</option>
+	      	    	{% endif %}
 	      	    	{% for size_guide in size_guides %}
-	      	      <option>{{size_guide.name|title}}</option>
+	      	    	{% if size_guide.name == product.size_guide.name %}
+	      	      	
+	      	      	{% else %}
+	      	      	<option class="">{{size_guide.name|title}}</option>
+	      	      	{% endif %}
 	      	      {% endfor %}
 	      	    </select>
 	      	    <input type="hidden" name="product" value="{{product.id}}">
-	      	    <button type="submit">Submit</button>
 	      	  </div>
 	      	</form>
 	      </td>

@@ -134,6 +134,9 @@ class SizeGuide(models.Model):
 	class Meta:
 		unique_together = ('name', 'vendor')
 
+	def __str__(self):
+		return self.name
+
 class SizeGuideItem(models.Model):
 
 	size_guide		= models.ForeignKey(SizeGuide, on_delete=models.CASCADE)
@@ -190,7 +193,7 @@ class Product(models.Model):
 
 	image_src = models.URLField(null=True)
 	size = models.ForeignKey(Size, blank=True, null=True, on_delete=models.SET_NULL)
-	size_guide = models.ForeignKey(SizeGuide, null=True, on_delete=models.SET_NULL)
+	size_guide = models.ForeignKey(SizeGuide, null=True, blank=True, on_delete=models.SET_NULL)
 	attributes = models.ManyToManyField(
 	        'product.Attribute',
 	        through='AttributeValue',

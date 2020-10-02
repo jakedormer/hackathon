@@ -15,7 +15,8 @@ from json import JSONDecodeError
 from .querys import *
 from apps.product.models import Product, Category, Size, SizeGuide
 from django.views.decorators.clickjacking import xframe_options_exempt
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
+from django.db.models import Count
 
 
 # Create your views here.
@@ -75,7 +76,7 @@ def dashboard(request):
 @login_required()
 def dashboard_sizes(request):
 
-	size_guides = SizeGuide.objects.filter(vendor=request.user.profile.vendor)
+	size_guides = SizeGuide.objects.filter(vendor=request.user.profile.vendor).annotate(count=Count('product'))
 
 	context = {
 		'sgs': size_guides,
@@ -190,10 +191,18 @@ def apply_size_guide(request):
 	if request.method == "POST":
 
 		product = Product.objects.get(vendor=request.user.profile.vendor, id=request.POST['product'])
-		size_guide = SizeGuide.objects.get(vendor=request.user.profile.vendor, name=request.POST['size_guide_name'].lower())
 
-		product.size_guide = size_guide
-		product.save()
+		if request.POST['size_guide_name']:
+
+			size_guide = SizeGuide.objects.filter(vendor=request.user.profile.vendor, name=request.POST['size_guide_name'].lower()).first()
+
+			product.size_guide = size_guide
+			product.save()
+
+			# Else, remove the relationship
+		else:
+			product.size_guide = None
+			product.save()
 
 		data = {
 			'updated': True
