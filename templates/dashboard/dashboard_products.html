@@ -11,7 +11,7 @@
 	    <tr>
 	      <th scope="col">Image</th>
 	      <th scope="col">Type</th>
-	      <th class="w-50" scope="col">Title</th>
+	      <th style="width:50%" scope="col">Title</th>
 	      <th scope="col">Size</th>
 	      <th scope="col">Vestem Category</th>
 	      <th score="col">Stock</th>
@@ -21,7 +21,7 @@
 	  </thead>
 	  <tbody>
 	  	{% for product in products %}
-	  	{% if product.product_type == "child" %}
+	  	{% if product.product_type == "variant" %}
 	    <tr class="bg-white">
 	    {% else %}
 	     <tr class="bg-light">
@@ -64,19 +64,19 @@
 	      <!-- Size Guides -->
 	      {% if product.product_type == "standalone" or product.product_type == "parent" %}
 	      <td>
-	      	<form method="post" action="/ajax/apply_size_guide" id="size_guide_apply_form">
+	      	<form method="post" action="/ajax/apply_size_guide" id="size_guide_apply_form" class="size_guide_apply_form">
 	      		{% csrf_token %}
 	      	  <div class="form-group">
 	      	    <select name="size_guide_name" class="form-control" id="size_guide_apply">
 	      	    	<option></option>
 	      	    	{% if product.size_guide %}
-	      	    	<option class="bg-vestem" selected="selected">{{product.size_guide.name|title}}</option>
+	      	    	<option class="bg-vestem" selected="selected">{{product.size_guide.name}}</option>
 	      	    	{% endif %}
 	      	    	{% for size_guide in size_guides %}
 	      	    	{% if size_guide.name == product.size_guide.name %}
 	      	      	
 	      	      	{% else %}
-	      	      	<option class="">{{size_guide.name|title}}</option>
+	      	      	<option class="">{{size_guide.name}}</option>
 	      	      	{% endif %}
 	      	      {% endfor %}
 	      	    </select>
@@ -85,7 +85,7 @@
 	      	</form>
 	      </td>
 	      {% else %}
-	      <td></td>
+	      <td class="text-muted font-italic">Variants will inherit from the parent</td>
 	      {% endif %}
 	   
 	   {% endfor %}

@@ -156,15 +156,15 @@ class Product(models.Model):
 
 
 	#: Type of product, e.g. T-Shirt, Book, etc.
-	#: None for child products, they inherit their parent's product class
+	#: None for variants, they inherit their parent's product class
 
 	category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.PROTECT)
 
-	STANDALONE, PARENT, CHILD = 'standalone', 'parent', 'child'
+	STANDALONE, PARENT, VARIANT = 'standalone', 'parent', 'variant'
 	PRODUCT_TYPE_CHOICES = [
 		('standalone', 'Stand-alone product'),
 		('parent', 'Parent product'),
-		('child', 'Child product')
+		('variant', 'Variant product')
 	]
 	product_type = models.CharField(max_length=10, choices=PRODUCT_TYPE_CHOICES)
 
@@ -176,8 +176,8 @@ class Product(models.Model):
 		on_delete=models.CASCADE,
 		related_name='children',
 		verbose_name= "Parent product",
-		help_text= ("Only choose a parent product if you're creating a child "
-					"product.  For example if this is a size "
+		help_text= ("Only choose a parent product if you're creating a variant "
+					"variant.  For example if this is a size "
 					"4 of a particular t-shirt.  Leave blank if this is a "
 					"stand-alone product (i.e. there is only one version of"
 					" this product).")
@@ -210,7 +210,7 @@ class Product(models.Model):
 	    Validate a product. Those are the rules:
 
 	    +---------------+-------------+--------------+--------------+
-	    |               | stand alone | parent       | child        |
+	    |               | stand alone | parent       | variant      |
 	    +---------------+-------------+--------------+--------------+
 	    | title         | required    | required     | optional     |
 	    +---------------+-------------+--------------+--------------+
@@ -243,32 +243,32 @@ class Product(models.Model):
 	    if not self.category:
 	        raise ValidationError(("Your product must have a category."))
 	    if self.parent:
-	        raise ValidationError(("Only child products can have a parent."))
+	        raise ValidationError(("Only variant products can have a parent."))
 	    if not self.vendor:
 	        raise ValidationError(("Your product must have vendor"))
 	    if not self.size:
 	    	raise ValidationError(("Your product must have a size"))
 
-	def _clean_child(self):
+	def _clean_variant(self):
 	    """
-	    Validates a child product
+	    Validates a variant product
 	    """
 	    if not self.parent:
-	        raise ValidationError(("A child product needs a parent."))
+	        raise ValidationError(("A variant product needs a parent."))
 	    if not self.size:
-	        raise ValidationError(("A child product needs a size"))
+	        raise ValidationError(("A variant product needs a size"))
 	    if self.parent and not self.parent.is_parent:
 	        raise ValidationError(
-	            ("You can only assign child products to parent products."))
+	            ("You can only assign variant products to parent products."))
 	    if self.category:
 	        raise ValidationError(
-	            ("A child product can't have a product class."))
+	            ("A variant product can't have a product class."))
 	    if self.slug:
 	        raise ValidationError(
-	            ("A child product can't have a url slug."))
+	            ("A variant product can't have a url slug."))
 	    if self.parent and self.vendor != self.parent.vendor:
 	        raise ValidationError(
-	            ("A child product must have the same vendor as its parent product."))
+	            ("A variant product must have the same vendor as its parent product."))
 	    if not self.size:
 	    	raise ValidationError(("Your product must have a size"))
 
@@ -286,7 +286,7 @@ class Product(models.Model):
 	    if not self.category:
 	        raise ValidationError(("Your product must have a category."))
 	    if self.parent:
-	        raise ValidationError(("Only child products can have a parent."))
+	        raise ValidationError(("Only variant products can have a parent."))
 	    if not self.vendor:
 	        raise ValidationError(("Your product must have vendor"))
 	    if self.size:
@@ -297,9 +297,9 @@ class Product(models.Model):
 
 	def get_product_category(self):
 		"""
-		Return a product's item class. Child products inherit their parent's.
+		Return a product's item class. Variant products inherit their parent's.
 		"""
-		if self.is_child:
+		if self.is_variant:
 		    return self.parent.category
 		else:
 		    return self.category
@@ -316,15 +316,15 @@ class Product(models.Model):
 		return self.product_type == self.PARENT
 
 	@property
-	def is_child(self):
-		return self.product_type == self.CHILD
+	def is_variant(self):
+		return self.product_type == self.VARIANT
 
 
 	def __str__(self):
 		return self.title
 
 	def save(self, *args, **kwargs):
-		if self.is_child:
+		if self.is_variant:
 			self.slug = None
 			self.title = self.parent.title + " - " + self.size.value
 			self.vendor = self.parent.vendor

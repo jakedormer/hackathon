@@ -1,5 +1,4 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login, logout
+from django.shortcuts import render, redirect
 from django.shortcuts import redirect
 from django.db import IntegrityError
 from django.contrib.auth.models import User as user
@@ -19,53 +18,7 @@ from django.http import JsonResponse, HttpResponse
 from django.db.models import Count
 
 
-# Create your views here.
-@xframe_options_exempt
-def login_view(request):
 
-	template = 'dashboard/login.html'
-	
-	if request.POST:
-		name = request.POST['form_name']
-
-		if name == "login":
-			username = request.POST['inputUsername']
-			password = request.POST['inputPassword']
-			auth_user = authenticate(request, username=username, password=password)
-
-			if auth_user is not None:
-
-				login(request, auth_user)
-
-				return redirect('/dashboard/products')
-
-			else:
-
-				messages.error(request, "Incorrect username or password")
-
-				return render(request, template, context=locals())
-
-	else:
-
-		if request.user.is_authenticated:
-
-			return redirect('/dashboard/products')
-
-		else:
-
-			return render(request, template, context=locals())
-
-
-
-@login_required()
-def logout_view(request):
-
-	logout(request)
-	# Redirect to a success page.
-
-	messages.warning(request, "You are now logged out")
-
-	return redirect('/login')
 
 @login_required()
 def dashboard(request):
@@ -76,7 +29,7 @@ def dashboard(request):
 @login_required()
 def dashboard_sizes(request):
 
-	size_guides = SizeGuide.objects.filter(vendor=request.user.profile.vendor).annotate(count=Count('product'))
+	size_guides = SizeGuide.objects.filter(vendor=request.user.profile.vendor).order_by('category', 'name').annotate(count=Count('product'))
 
 	context = {
 		'sgs': size_guides,
@@ -146,28 +99,6 @@ def dashboard_sizes_create(request):
 
 			messages.error(request, "Size guide names must be unique", extra_tags="alert-danger")
 
-		
-
-
-		# 	size_guide.name = params['name']
-		# 	size_guide.category = Category.objects.get(name=params['category'].lower())
-		# 	size_guide.save()
-
-		# 	messages.success(request, "Size guide updated successfully.")
-
-		# else:
-		# 	size_guide = SizeGuide.objects.create(
-		# 		name = params['name'],
-		# 		category = Category.objects.get(name=params['category'].lower()),
-		# 		vendor = request.user.profile.vendor
-		# 		)
-
-		# 	context['size_guide'] = size_guide
-
-		# 	messages.success(request, "Size guide created successfully.")
-
-		
-
 
 	return render(request, template, context)
 
@@ -194,19 +125,25 @@ def apply_size_guide(request):
 
 		if request.POST['size_guide_name']:
 
-			size_guide = SizeGuide.objects.filter(vendor=request.user.profile.vendor, name=request.POST['size_guide_name'].lower()).first()
+			size_guide = SizeGuide.objects.filter(vendor=request.user.profile.vendor, name=request.POST['size_guide_name']).first()
 
 			product.size_guide = size_guide
 			product.save()
+
+			data = {
+				'updated': True
+			}
 
 			# Else, remove the relationship
 		else:
 			product.size_guide = None
 			product.save()
 
-		data = {
-			'updated': True
-		}
+			data = {
+				'created': True
+			}
+
+		
 
 		return JsonResponse(data)
 

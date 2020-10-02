@@ -9,12 +9,17 @@
 <h1 class="text-bold display-5 text-center fade-in mt-3">{{category.name|title}}</h1>
 <p class="text-center fade-in"><small class="text-muted">{{category.description}}</small></p>
 
-{% for filter in filters %}
+<!-- {% for filter in filters %}
 <p>{{filter.get_attributes}}</p>
 {% for attr in filter.attribute_set.all %}
 <p>{{ attr }}</p>
 {% endfor %}
 {% endfor %}
+ -->
+
+{% endblock %}
+
+{% block bodynoncon %}
 
 <!-- Facets -->
 <div class="row">
@@ -36,7 +41,7 @@
 <div class="row mt-4">
   {% for product in products %}
 
-  <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 col-6">
+  <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6">
   <div class="card shadow mb-2">
     <a href="/p/{{product.slug}}">
       <img class="card-img-top img-responsive" src="{{product.image_src}}" alt="Card image cap" onmouseover="this.src='https://cdn.shopify.com/s/files/1/1150/4230/products/IMG_3969_2d77fd01-8294-46f1-b814-7653cdcad91d_460x.jpg?v=1598525706'" onmouseout="this.src='{{product.image_src}}'">
@@ -54,7 +59,6 @@
   </div>
 {% endfor %}
 </div>
-
-
-<!-- Card -->
 {% endblock %}
+
+

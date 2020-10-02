@@ -15,7 +15,7 @@ body {
 }
 
 body {
-    min-height: 75rem;
+    min-height: 55rem;
     padding-top: 3.5rem;
     height: 100%
 }
@@ -47,7 +47,8 @@ body {
 }*/
 
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'mont-light', Fallback, sans-serif;
+    /*letter-spacing: 1px;*/
 }
 
 .breadcrumb {
@@ -104,4 +105,18 @@ a:hover {
     color: #fff;
     background-color: #efebe1;
     border-color: #efebe1;
+}
+
+@font-face {
+    font-family: mont-heavy;
+    src: url("../fonts/Mont-ExtraLightDEMO.otf") format("opentype");
+}
+
+@font-face {
+    font-family: mont-light;
+    src: url("../fonts/Mont-ExtraLightDEMO.otf") format("opentype");
+}
+
+.text-sp3 {
+  letter-spacing: 3px;
 }

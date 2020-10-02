@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from views import base
+from apps.account import views as views_account
 from apps.cart import views as views_cart
 from apps.product import views as views_product
 from apps.dashboard import views as views_dashboard
@@ -29,8 +30,8 @@ urlpatterns = [
     path('about', base.about, name='about'),
     path('privacy', base.privacy, name='privacy'),
     path('cart', views_cart.cart, name='cart'),
-    path('login', views_dashboard.login_view, name='login'),
-    path('logout', views_dashboard.logout_view, name='logout'),
+    path('login', views_account.login_view, name='login'),
+    path('logout', views_account.logout_view, name='logout'),
     path('oauth/install', views_oauth.install, name='oauth/install'),
     path('oauth/authenticate', views_oauth.authenticate, name='oauth/authenticate'),
     path('c/<slug:slug>', views_product.category, name='category'),
