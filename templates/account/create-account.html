@@ -1,0 +1,30 @@
+{% extends "account/base.html" %}
+{% load static %}
+
+
+{% block form %}
+
+<form class="form-signin" action="" method="post">
+	<p class="text-center">Track your orders, input your perfect sizes, and save your favourite brands!</p>
+	{% csrf_token %}
+	<label for="first_name" class="sr-only">First Name</label>
+		<input type="text" name="first_name" class="form-control mb-2" placeholder="First Name" required autofocus>
+
+	<label for="last_name" class="sr-only">Last Name</label>
+		<input type="text" name="last_name" class="form-control mb-2" placeholder="Last Name" required autofocus>
+
+	<label for="last_name" class="sr-only">Last Name</label>
+		<input type="email" name="email" class="form-control mb-2" placeholder="Email" required autofocus>
+
+
+	<label for="password" class="sr-only">Password</label>
+		<input type="password" name="inputPassword" class="form-control" placeholder="Password" required>
+	
+	<div class="checkbox mb-3 text-center">
+		<label>
+			<input type="checkbox" value="remember-me"> Sign up to email
+		</label>
+	</div>
+	<button class="btn btn-lg btn-success btn-block" type="submit" name="form_name" value="login">Create Account</button>
+
+{% endblock %}

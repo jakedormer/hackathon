@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% load static %}
+{% block css %}
+<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+<link rel="stylesheet" href='{% static "base_static/css/flickity.css" %}'>
+{% endblock %}
 
 {% block body %}
 <div class="row">
@@ -13,7 +18,7 @@
         <div class="carousel-item active">
           <img class="d-block w-100 rounded grayscale" src="{{ MEDIA_URL }}images/home/home-4.jpg" alt="First slide">
           <div class="carousel-caption fade-in">
-              <h1 class="h1 display-4 text-dark d-none d-md-block">Clothes you will love and keep</h1>
+              <h1 class="h1 display-4 d-none d-md-block text-dark shadow-sm">Clothes you will love and keep</h1>
               <h3 class="h3 text-dark">Finding you the perfect fit</h3>
           </div>
         </div>
@@ -40,14 +45,34 @@
   <div class="col-md text-center">
     <i class="fas fa-ruler fa-9x text-vestem"></i>
     <hr>
-    <p>We know its hard to find the right size, so we try to help you find your perfect fit based on clothes you already own.</p>
+    <p>We know its hard to find the right size, so we try to help you find clothes that fit based on clothes you already own.</p>
   </div>
 </div>
 
 <div class="row mt-5">
   <div class="col text-center">
     <h3 class="text-center">Shop T Shirts</h3>
-    <a>See All</a>
+    <a href="/">See All</a>
+  </div>
+</div>
+
+<!-- Carousel T Shirts -->
+
+<div class="carousel mt-3 mb-5" data-flickity='{ "freeScroll": true, "wrapAround": true }'>
+  <div class="carousel-cell">
+    <img src="https://via.placeholder.com/200">
+  </div>
+  <div class="carousel-cell">
+    <img src="https://via.placeholder.com/200">
+  </div>
+  <div class="carousel-cell">
+    <img src="https://via.placeholder.com/200">
+  </div>
+  <div class="carousel-cell">
+    <img src="https://via.placeholder.com/200">
+  </div>
+  <div class="carousel-cell">
+    <img src="https://via.placeholder.com/200">
   </div>
 </div>
 
@@ -69,4 +94,9 @@
   </div>
 </div> -->
 
+{% endblock %}
+
+{% block js %}
+<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+<script src='{% static "base_static/js/flickity.js" %}'></script>
 {% endblock %}

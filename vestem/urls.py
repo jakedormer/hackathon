@@ -32,6 +32,7 @@ urlpatterns = [
     path('cart', views_cart.cart, name='cart'),
     path('login', views_account.login_view, name='login'),
     path('logout', views_account.logout_view, name='logout'),
+    path('create-account', views_account.create_account, name='create_account'),
     path('oauth/install', views_oauth.install, name='oauth/install'),
     path('oauth/authenticate', views_oauth.authenticate, name='oauth/authenticate'),
     path('c/<slug:slug>', views_product.category, name='category'),

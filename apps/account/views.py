@@ -55,3 +55,13 @@ def logout_view(request):
 	messages.warning(request, "You are now logged out", extra_tags="alert-warning")
 
 	return redirect('/login')
+
+
+def create_account(request):
+
+	template = 'account/create-account.html'
+
+	return render(request, template, context=locals())
+
+
+

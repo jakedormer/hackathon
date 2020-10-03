@@ -1,15 +1,8 @@
-{% extends "base.html" %}
+{% extends "account/base.html" %}
 {% load static %}
 
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'dashboard/css/login.css' %}" crossorigin="anonymous">
-{% endblock %}
-
-{% block body %}
-
-<h1 class="display-3 font-weight-normal text-center font-weight-bold fade-in mt-5">A</h1>
-
+{% block form %}
 <form class="form-signin" action="/login" method="post">
 	{% csrf_token %}
 	<label for="inputUsername" class="sr-only">Username</label>
@@ -35,10 +28,6 @@
 {% endfor %}
 {% endif %}
 </form>
-<p class="text-center mt-4 text-dark">New to <span class="text-sp3 underline">Aveste</span>?<a href=""> Create an account</a></p>
-
-
-<p class="mt-5 mb-3 text-muted text-center">&copy; 2020</p>
-
+<p class="text-center mt-4 text-dark">New to <span class="text-sp3 underline">AVESTE</span>?<a href="/create-account"> Create an account</a></p>
 
 {% endblock %}
