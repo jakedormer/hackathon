@@ -9,48 +9,47 @@
 <h1 class="text-bold display-5 text-center fade-in mt-3">{{category.name|title}}</h1>
 <p class="text-center fade-in"><small class="text-muted">{{category.description}}</small></p>
 
-<!-- {% for filter in filters %}
-<p>{{filter.get_attributes}}</p>
-{% for attr in filter.attribute_set.all %}
-<p>{{ attr }}</p>
-{% endfor %}
-{% endfor %}
- -->
-
-{% endblock %}
-
-{% block bodynoncon %}
-
 <!-- Facets -->
-<div class="row">
-  <div class="col">
-    <div class="dropdown show">
-      <a class="btn btn-light dropdown-toggle w-50" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Brand >
-      </a>
-
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-        <a class="dropdown-item" href="#">Action</a>
-        <a class="dropdown-item" href="#">Another action</a>
-        <a class="dropdown-item" href="#">Something else here</a>
+<div class="row bg-vestem">
+  {% for key, value in facet_list.items %}
+  <div class="col-3 my-2">
+    <div class="dropdown">
+      <button class="btn btn-dark dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{key}}
+        <span><i class="fas fa-angle-down float-right"></i></span>
+      </button>
+      <div class="dropdown-menu w-75 bg-vestem" aria-labelledby="dropdownMenuButton">
+        <h6 class="dropdown-header">X Selected</h6>
+        <div class="dropdown-divide bg-dark"></div>
+        {{value}}
+        {% for x in value %}
+        <a class="dropdown-item bg-white py-2 my-1 shadow w-100" href="#">{{x.vendor__name}} <small>({{x.count}})</small></a>
+        {% endfor %}
       </div>
     </div>
   </div>
+  {% endfor %}
 </div>
 
 <div class="row mt-4">
   {% for product in products %}
 
-  <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 col-6">
+  <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-6">
   <div class="card shadow mb-2">
     <a href="/p/{{product.slug}}">
-      <img class="card-img-top img-responsive" src="{{product.image_src}}" alt="Card image cap" onmouseover="this.src='https://cdn.shopify.com/s/files/1/1150/4230/products/IMG_3969_2d77fd01-8294-46f1-b814-7653cdcad91d_460x.jpg?v=1598525706'" onmouseout="this.src='{{product.image_src}}'">
+      <div class="img-zoom">
+        <img class="card-img-top img-responsive img-zoom" src="{{product.image_src}}" alt="Card image cap">
+      </div>
     </a>
       <div class="p-2">
         <a class="text-dark font-weight-bold" href="/p/{{product.slug}}"><small class="p-1 text-center">{{product.title|title}}</small></a>
         <hr>
         <!-- <button class="btn btn-light">View Product</button> -->
-        <small class="p-1 font-weight-bold text-dark">£59</small>
+        <div class="row">
+          <div class="col-12 text-center">
+            <small class="p-1 font-weight-bold text-dark">£59</small>
+          </div>
+        </div>
       </div>
       <div class="bg-light card-text text-center p-1">
         <small class="text-muted">{{product.vendor.name|title}}</small>
@@ -59,6 +58,12 @@
   </div>
 {% endfor %}
 </div>
+
+{% endblock %}
+
+{% block bodynoncon %}
+
+
 {% endblock %}
 
 

@@ -25,6 +25,7 @@ class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT, null=True, blank=True)
 	is_vendor = models.BooleanField()
+	email = models.BooleanField(default=False)
 
 	@receiver(post_save, sender=User)
 	def create_user_profile(sender, instance, created, **kwargs):

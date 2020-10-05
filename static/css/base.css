@@ -120,3 +120,15 @@ a:hover {
 .text-sp3 {
   letter-spacing: 3px;
 }
+
+.img-zoom {
+  overflow:hidden;
+}
+.img-zoom img{ 
+    width: 100%; 
+    transition: 0.3s all ease-in-out; 
+} 
+
+.img-zoom:hover img{ 
+  transform: scale(1.6); 
+  } 
