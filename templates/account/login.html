@@ -15,18 +15,7 @@
 		</label>
 	</div>
 	<button class="btn btn-lg btn-dark btn-block" type="submit" name="form_name" value="login">Sign in</button>
-
-<!-- Alert -->
-{% if messages %}
-{% for message in messages %}
-	<div class="alert {{message.extra_tags}} alert-dismissible fade show mt-2 text-center" role="alert">
-		{{message}}
-		<button type="button" class="close" data-dismiss="alert" aria-label="Close">
-			<span aria-hidden="true">&times;</span>
-		</button>
-	</div>
-{% endfor %}
-{% endif %}
+	
 </form>
 <p class="text-center mt-4 text-dark">New to <span class="text-sp3 underline">AVESTE</span>?<a href="/create-account"> Create an account</a></p>
 

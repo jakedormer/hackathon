@@ -62,16 +62,16 @@
 				<table class="table table-hover table-responsive">
 					<thead>
 						<tr>
-							<th class="w-25">Size</th>
-							<th>Height</th>
-							<th>Bust</th>
-							<th>Sleeve Length</th>
-							<th>Sleeve Width</th>
-							<th>GSM
-								<a tabindex=0 class="popover-dismiss text-dark help" data-toggle="popover" title="" data-trigger="focus" data-content="GSM is a metric measurement meaning grams per square metre- it is how much 1 square metre of fabric weighs and the higher the GSM number the denser the fabric will be. This is to show customers how thick they can expect a garment to be." >
+							<th class="">Size</th>
+							{% for attribute in attributes %}
+							<th>{{attribute.name|title}}
+							{% if attribute.size_guide_info %}
+							<a tabindex=0 class="popover-dismiss text-dark help" data-toggle="popover" title="" data-trigger="focus" data-content="{{attribute.size_guide_info}}">
 								<i class="fas fa-info-circle fa-xs ml-2 popover-dismiss" ></i>
-								</a>
-							</th>
+							</a>
+							{% endif %}
+						    </th>
+							{% endfor %}
 						</tr>
 					</thead>
 					<tbody>
@@ -82,11 +82,17 @@
 							   		<input class="form-control" type="text" value={{size.value}} disabled>
 							   	</div>
 							</td>
-							<td><input name="{{size.value}}|height" type="number" class="form-control" min=0></td>
-							<td><input name="{{size.value}}|bust" type="number" class="form-control" min=0></td>
-							<td><input name="{{size.value}}|sleeve_length" type="number" class="form-control" min=0></td>
-							<td><input name="{{size.value}}|sleeve_width" type="number" class="form-control" min=0></td>
-							<td><input name="{{size.value}}|gsm" type="number" class="form-control" min=0></td>
+							{% for attribute in attributes %}
+							
+							<!-- Logic for adding values -->
+							<td><input name="{{size.value}}|{{attribute.name}}" type="number" class="form-control" min=0 placeholder="cm" 
+								{% for item in size_guide.sizeguideitem_set.all %}
+								{% if size.value == item.size.value and attribute.name == item.attribute.name %}
+								value="{{item.value}}"
+								{% endif %}
+								{% endfor %}
+								></td>
+							{% endfor %}
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -98,12 +104,11 @@
 				</div>
 			</form>
 			<div class="alert alert-warning mt-4 text-center" role="alert">
-			  Note- You do not need to fill in every size if you don't stock that size. They are simply placeholders.
+			  Note - You do not need to fill in every size if you don't stock that size. They are simply placeholders.
 			</div>
 		</div>
 	</div>
 </div>
-
 
 {% endblock %}
 

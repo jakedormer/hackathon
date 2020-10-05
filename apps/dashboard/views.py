@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.shortcuts import redirect
 from django.db import IntegrityError
 from django.contrib.auth.models import User as user
 from django.contrib.auth.decorators import login_required
@@ -12,10 +11,11 @@ import json
 from django.views.generic import TemplateView
 from json import JSONDecodeError
 from .querys import *
-from apps.product.models import Product, Category, Size, SizeGuide
+from apps.product.models import Product, Category, Size, SizeGuide, SizeGuideItem, Attribute
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.http import JsonResponse, HttpResponse
 from django.db.models import Count
+import re
 
 
 
@@ -44,6 +44,7 @@ def dashboard_sizes_create(request):
 	template = 'dashboard/dashboard_sizes_create.html'
 	categories = Category.objects.all().order_by("name")
 	sizes = Size.objects.all().order_by("order")
+	attributes = Attribute.objects.all()
 
 	if 'id' in request.GET:
 
@@ -62,42 +63,69 @@ def dashboard_sizes_create(request):
 		'categories': categories,
 		'sizes': sizes,
 		'size_guide': size_guide,
+		'attributes': attributes,
 	}
 
 	if request.method == 'POST':
-		params = request.POST
-		# If size guide already exists, then update with new values
-		if size_guide:
-			name = size_guide.name
-		else:
-			name = params['name']
 
+		params = request.POST
 		category = Category.objects.get(name=params['category'].lower())
+		# If size guide already exists, then update with new values
 
 		try:
-			obj, created = SizeGuide.objects.update_or_create(
-				name=name,
-				vendor=request.user.profile.vendor,
-				category=category,
-				defaults = {
-					'name': params['name'],
-					'category': category,
-					}
-				)
-
-			if created:
-
-				messages.success(request, "Size guide created successfully.", extra_tags="alert-success")
+			if size_guide:
+				name = size_guide.name
+				size_guide.name = params['name']
+				size_guide.category = category
+				size_guide.save()
+				sg_obj = None
 
 			else:
+				print("hi")
+				sg_obj = SizeGuide(
+					name=params['name'],
+					vendor=request.user.profile.vendor,
+					category=category,
+					)
+				
+				sg_obj.save()
 
-				messages.success(request, "Size guide updated successfully.", extra_tags="alert-success")
-
-			context['size_guide'] = obj
+				size_guide = sg_obj
 
 		except IntegrityError:
 
 			messages.error(request, "Size guide names must be unique", extra_tags="alert-danger")
+
+			return render(request, template, context)
+			
+		for key in request.POST:
+			if re.search(r'\|', key, re.IGNORECASE):
+
+				size = key.split('|')[0]
+				attribute = key.split('|')[1]
+
+				# If size guide measurement is not null, then create or update sizeguide item
+				if request.POST[key]:
+					sgi_obj, sgi_created = SizeGuideItem.objects.update_or_create(
+						size_guide = size_guide,
+						size = Size.objects.get(value=size),
+						attribute = Attribute.objects.get(name=attribute),
+						defaults = {
+							'value': request.POST[key]
+							}
+						)
+
+				context[key] = request.POST[key]
+
+		if sg_obj:
+
+			messages.success(request, "Size guide created successfully.", extra_tags="alert-success")
+
+		else:
+
+			messages.success(request, "Size guide updated successfully.", extra_tags="alert-success")
+
+		context['size_guide'] = size_guide
 
 
 	return render(request, template, context)

@@ -82,6 +82,9 @@ class Attribute(models.Model):
 	    help_text='Select an option group if using type "Option" or "Multi Option"'
 	    )
 
+	size_guide_info = models.TextField(max_length=250, null=True, blank=True)
+
+
 	def __str__(self):
 		return self.name
 
@@ -140,9 +143,12 @@ class SizeGuide(models.Model):
 class SizeGuideItem(models.Model):
 
 	size_guide		= models.ForeignKey(SizeGuide, on_delete=models.CASCADE)
-	size 			= models.ManyToManyField(Size)
-	attribute  		= models.ManyToManyField(Attribute)
+	size 			= models.ForeignKey(Size, on_delete=models.CASCADE)
+	attribute  		= models.ForeignKey(Attribute, on_delete=models.CASCADE)
 	value     		= models.FloatField(null=False)
+
+	class Meta:
+		unique_together = ('size_guide', 'size', 'attribute')
 
 
 
