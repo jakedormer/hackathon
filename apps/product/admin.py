@@ -19,7 +19,7 @@ class AttributeValueAdmin(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
 
-	list_display = ('id','slug', 'vendor', 'get_product_category', 'title', 'size', 'product_type', 'date_created')
+	list_display = ('external_id','slug', 'vendor', 'get_product_category', 'title', 'size', 'product_type', 'date_created')
 	list_filter = ('vendor', 'category', 'product_type')
 	inlines = (AttributeValueAdmin,)
 	ordering = ('vendor', 'title', '-product_type')

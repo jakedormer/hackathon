@@ -7,6 +7,8 @@ class Platform(models.Model):
 
 
 	name = models.CharField(max_length=30, null=True, unique=True)
+	storefront_endpoint = models.CharField(max_length=200, null=True, blank=True)
+	sales_channel_endpoint = models.CharField(max_length=200, null=True, blank=True)
 
 	def __str__(self):
 		# return self.get_name_display()
@@ -24,13 +26,16 @@ class Vendor(models.Model):
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
 	vendor = models.ForeignKey(Vendor, on_delete=models.PROTECT, null=True, blank=True)
-	is_vendor = models.BooleanField()
-	email = models.BooleanField(default=False)
+	is_vendor = models.BooleanField(null=True)
+	email_pref = models.BooleanField(default=False)
+	sms_pref = models.BooleanField(default=False)
 
 	@receiver(post_save, sender=User)
 	def create_user_profile(sender, instance, created, **kwargs):
 		if created:
 			Profile.objects.create(user=instance)
+			instance.email = instance.username
+			instance.save()
 
 	@receiver(post_save, sender=User)
 	def save_user_profile(sender, instance, **kwargs):

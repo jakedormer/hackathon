@@ -14,30 +14,34 @@ class Command(BaseCommand):
 
 
 
-    def api_connect(self, vendor_name, access_token, query):
+    def api_connect(self, vendor_name, access_token, endpoint, query):
 
         headers = {
                   'Accept': 'application/json',
                   'Content-Type': 'application/json',
-                  'X-Shopify-Storefront-Access-Token': access_token,
+                  # 'X-Shopify-Storefront-Access-Token': access_token,
+                  'X-Shopify-Access-Token': access_token,
               }
 
 
-        r = requests.post("https://" + vendor_name + ".myshopify.com/api/2020-07/graphql", json={'query': query}, headers=headers)
+        # r = requests.post("https://" + vendor_name + ".myshopify.com/admin/api/2020-10/product_listings.json", json={'query': query}, headers=headers)
+        r = requests.get("https://" + vendor_name + ".myshopify.com" + endpoint, headers=headers)
 
         try:
 
             json_response = r.json()
             # print(r.status_code)
             # print(json_response)
-            data = json_response['data']
+            # data = json_response['data']
+            data = r.json()
             # print(data)
 
             return [r.status_code, data]
+            # return [r.status_code, r.json()]
 
         except JSONDecodeError:
 
-            return [r.status_code, r.text]
+            return [r.status_code, r.content]
 
     def regex_category(self, category):
 
@@ -67,7 +71,7 @@ class Command(BaseCommand):
             return "M"
 
 
-    def update_products(self, json_data, vendor_id):
+    def update_products_storefront(self, json_data, vendor_id):
 
         products = json_data['products']['edges']
         # print(products)
@@ -217,17 +221,18 @@ class Command(BaseCommand):
             try:
                 
                 api_credential = APICredential.objects.get(vendor=vendor, platform__name='shopify')
+                # print(api_credential.platform.sales_channel_endpoint)
 
-                p = self.api_connect(vendor_name=vendor.name, access_token=api_credential.access_token, query=q.query)
+                p = self.api_connect(vendor_name=vendor.name, access_token=api_credential.access_token, endpoint=api_credential.platform.sales_channel_endpoint, query=q.query)
 
                 if p[0] == 200:
                     print("API connected successfully")
-                    # print(p[1])
+                    print(p[1])
                     self.update_products(json_data=p[1], vendor_id=vendor.id)
                     print("Product created")
                 else:
                     print("API unsuccessful")
-                    # print(p)
+                    print(p)
 
 
 
@@ -236,7 +241,9 @@ class Command(BaseCommand):
                 pass
 
             
+    def update_products_sales_channel(self):
 
+        return
 
 
 

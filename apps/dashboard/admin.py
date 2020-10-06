@@ -3,15 +3,23 @@ from django.contrib import admin
 # Register your models here.
 from .models import Vendor, Profile, Platform, APICredential
 
-admin.site.register(Profile)
+
 admin.site.register(Platform)
 
 class APICredentialAdmin(admin.TabularInline):
-    model = APICredential
-    extra = 0
+	model = APICredential
+	extra = 0
 
 class VendorAdmin(admin.ModelAdmin):
 	inlines = (APICredentialAdmin, )
 
+class ProfileAdmin(admin.ModelAdmin):
+
+	list_display = ('profile_username','vendor', 'email_pref')
+
+	def profile_username(self, x):
+		
+		return x.user.username
 
 admin.site.register(Vendor, VendorAdmin)
+admin.site.register(Profile, ProfileAdmin)

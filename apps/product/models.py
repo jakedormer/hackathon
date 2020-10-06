@@ -154,7 +154,7 @@ class SizeGuideItem(models.Model):
 
 class Product(models.Model):
 
-	id = models.CharField(max_length=100, null=False, blank=False, primary_key=True)
+	external_id = models.CharField(max_length=100, null=False, blank=False, primary_key=True)
 	title = models.CharField(max_length=128, blank=True)
 	description = models.TextField(null=True, blank=True)
 	slug = models.SlugField(null=True, unique=True, blank=True)

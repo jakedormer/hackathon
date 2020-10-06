@@ -8,9 +8,10 @@
 {% block body %}
 <h1 class="text-bold display-5 text-center fade-in mt-3">{{category.name|title}}</h1>
 <p class="text-center fade-in"><small class="text-muted">{{category.description}}</small></p>
+<hr>
 
 <!-- Facets -->
-<div class="row bg-vestem">
+<div class="row bg-vestem rounded shadow-sm">
   {% for key, value in facet_list.items %}
   <div class="col-3 my-2">
     <div class="dropdown">

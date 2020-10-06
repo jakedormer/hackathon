@@ -27,7 +27,7 @@ def install(request):
 	# print(request.is_secure())
 
 	if settings.DEBUG:
-		protocol = "https://"
+		protocol = "http://"
 	else:
 		if request.is_secure():
 
