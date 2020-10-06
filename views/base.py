@@ -4,6 +4,7 @@ from urllib.parse import urlencode
 from django.core.exceptions import ObjectDoesNotExist
 import re
 from apps.dashboard.models import Vendor
+from apps.product.models import Category
 
 from django.views.decorators.clickjacking import xframe_options_exempt
 
@@ -11,8 +12,10 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 
 @xframe_options_exempt
 def home(request):
-	context = locals()
+	context = {}
 	template = 'home.html'
+	categories = Category.objects.all().order_by('name')
+	context['categories'] = categories
 
 	#Shopify Oauth Install redirect
 	params = request.GET.dict()

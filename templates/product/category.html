@@ -13,24 +13,34 @@
 <!-- Facets -->
 <div class="row bg-vestem rounded shadow-sm">
   {% for key, value in facet_list.items %}
-  <div class="col-3 my-2">
+  <div class="col-lg-3 col-md-4 col-6 my-2">
     <div class="dropdown">
       <button class="btn btn-dark dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        {{key}}
+        {{key|title}}
         <span><i class="fas fa-angle-down float-right"></i></span>
       </button>
-      <div class="dropdown-menu w-75 bg-vestem" aria-labelledby="dropdownMenuButton">
+      <div class="dropdown-menu w-100 bg-vestem" aria-labelledby="dropdownMenuButton">
         <h6 class="dropdown-header">X Selected</h6>
         <div class="dropdown-divide bg-dark"></div>
-        {{value}}
+        <!-- {{value}} -->
         {% for x in value %}
-        <a class="dropdown-item bg-white py-2 my-1 shadow w-100" href="#">{{x.vendor__name}} <small>({{x.count}})</small></a>
+        <form method="get" action="/t-shirts/c/1">
+          {% csrf_token %}
+        <div class="dropdown-item bg-white py-2 my-1 shadow w-100" href="#">
+          {{x.vendor__name|title}} 
+          <small>({{x.count}})</small>
+        <span><input type="checkbox" name="{{key}}" value="{{x.vendor__name}}" onChange="this.form.submit()"></span>
+        
+        </div>
+        </form>
         {% endfor %}
       </div>
     </div>
   </div>
   {% endfor %}
 </div>
+
+<!-- Product Cards -->
 
 <div class="row mt-4">
   {% for product in products %}
@@ -46,10 +56,17 @@
         <a class="text-dark font-weight-bold" href="/p/{{product.slug}}"><small class="p-1 text-center">{{product.title|title}}</small></a>
         <hr>
         <!-- <button class="btn btn-light">View Product</button> -->
-        <div class="row">
+<!--         <div class="row">
           <div class="col-12 text-center">
             <small class="p-1 font-weight-bold text-dark">£59</small>
           </div>
+        </div> -->
+        <div class="row">
+          {% for variant in product.children.all %}
+          <div class="col text-center">
+            <small class="p-1 font-weight-bold text-dark">{{variant.size}}</small>
+          </div>
+          {% endfor %}
         </div>
       </div>
       <div class="bg-light card-text text-center p-1">

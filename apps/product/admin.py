@@ -28,7 +28,7 @@ class AttributeAdmin(admin.ModelAdmin):
 	list_display = ('name', 'type')
 
 class CategoryAdmin(admin.ModelAdmin):
-	list_display = ('name',)
+	list_display = ('id', 'name',)
 
 class AttributeGroupAdmin(admin.ModelAdmin):
 	formfield_overrides = {
