@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load tags %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'product/css/category.css' %}" crossorigin="anonymous">
@@ -12,33 +13,40 @@
 
 <!-- Facets -->
 <div class="row bg-vestem rounded shadow-sm">
+  <form class="w-100" method="get" action="/{{category.name}}/c/{{category.id}}?{{request.GET.urlencode}}">
+    {% csrf_token %}
+  <div class="row">
   {% for key, value in facet_list.items %}
-  <div class="col-lg-3 col-md-4 col-6 my-2">
+    <div class="col-lg-3 col-md-4 col-sm-6 my-2 m-1 d-inline-block">
     <div class="dropdown">
-      <button class="btn btn-dark dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <button class="btn btn-outline-dark dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{key|title}}
         <span><i class="fas fa-angle-down float-right"></i></span>
       </button>
-      <div class="dropdown-menu w-100 bg-vestem" aria-labelledby="dropdownMenuButton">
-        <h6 class="dropdown-header">X Selected</h6>
-        <div class="dropdown-divide bg-dark"></div>
+      <div class="dropdown-menu bg-vestem w-100" aria-labelledby="dropdownMenuButton">
+        <!-- <h6 class="dropdown-header">X Selected</h6> -->
         <!-- {{value}} -->
         {% for x in value %}
-        <form method="get" action="/t-shirts/c/1">
-          {% csrf_token %}
-        <div class="dropdown-item bg-white py-2 my-1 shadow w-100" href="#">
-          {{x.vendor__name|title}} 
-          <small>({{x.count}})</small>
-        <span><input type="checkbox" name="{{key}}" value="{{x.vendor__name}}" onChange="this.form.submit()"></span>
+        <div class="dropdown-item bg-white mb-2 p-2 ml-2 shadow w-95" href="#">
         
+          {{x.name|title}} 
+          <small>({{x.count}})</small>
+        <span><input type="checkbox" name="{{key}}" value="{{x.name}}" onChange="this.form.submit()"
+          {% if request.GET|get_item:key == x.name and x.name != None  %} checked {% endif %}></span>
         </div>
-        </form>
+        
         {% endfor %}
       </div>
     </div>
   </div>
   {% endfor %}
 </div>
+</form>
+</div>
+
+
+<form method="get" action="">
+  </form>
 
 <!-- Product Cards -->
 

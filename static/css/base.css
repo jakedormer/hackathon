@@ -74,6 +74,10 @@ a:hover {
   width: 33%;
 }
 
+.w-95 {
+  width: 95%;
+}
+
 .op-9 {
   opacity: 0.95;
 }

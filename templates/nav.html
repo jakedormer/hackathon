@@ -27,8 +27,9 @@
                 SHOP
             </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="t-shirts/c/1">T-Shirts</a>
-                    <a class="dropdown-item" href="shirts/c/2">Shirts</a>
+                    {% for category in all_categories %}
+                    <a class="dropdown-item" href="/{{category.name}}/c/{{category.id}}">{{category}}</a>
+                    {% endfor %}
                 </div>
 
             </li>
