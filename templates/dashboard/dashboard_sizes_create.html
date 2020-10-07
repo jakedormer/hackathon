@@ -79,13 +79,13 @@
 						<tr>
 							<td>
 								<div class="form-group">
-							   		<input class="form-control" type="text" value={{size.value}} disabled>
+							   		<input class="form-control" type="text" value={{size.name}} disabled>
 							   	</div>
 							</td>
 							{% for attribute in attributes %}
 							
 							<!-- Logic for adding values -->
-							<td><input name="{{size.value}}|{{attribute.name}}" type="number" class="form-control" min=0 placeholder="cm" 
+							<td><input name="{{size.name}}|{{attribute.name}}" type="number" class="form-control" min=0 placeholder="cm" 
 								{% for item in size_guide.sizeguideitem_set.all %}
 								{% if size.value == item.size.value and attribute.name == item.attribute.name %}
 								value="{{item.value}}"

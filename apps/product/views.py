@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from apps.product.models import *
-from django.db.models import Count
-from django.db.models import F
+from django.db.models import Count, F, Q
+
 
 # Create your views here.
 
@@ -16,19 +16,24 @@ def category(request, slug, code):
 		filters_applied['size__name'] = request.GET['sizes']
 
 	category = Category.objects.get(id=code)
-	products = Product.objects.filter(category__id=code, product_type="parent", **filters_applied) | Product.objects.filter(category__slug=slug, product_type="standalone", **filters_applied)
-	
+	products = Product.objects.filter(category__id=code, product_type="parent", **filters_applied).prefetch_related('children') | Product.objects.filter(category__slug=slug, product_type="standalone", **filters_applied)
+
+
 	context = {
 		'category': category,
 		'products': products,
 		'facet_list': {
-			'vendors': products.values('vendor__name').distinct().order_by('vendor__name').annotate(count=Count('vendor__name', distnct=True), name=F('vendor__name')),
+			'vendors': products.values('vendor__name').distinct().order_by('vendor__name').annotate(count=Count('vendor__name'), name=F('vendor__name')),
 			'sizes': products.values('size__name').distinct().order_by('size__order').annotate(count=Count('size__name', distnct=True), name=F('size__name')),
+			# 'sizes': products.filter(Q(product_type="variant")|Q(product_type="standalone")).values(),
 			'colours': None,
+			'jake': None,
+			'josh':None,
 		}
 		
 	}
 
+	# .filter(Q(product_type="variant")|Q(product_type="standalone"))
 
 
 	template = 'product/category.html'
