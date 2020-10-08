@@ -35,8 +35,9 @@ class Command(BaseCommand):
             # data = json_response['data']
             data = r.json()
             # print(data)
+            print("hi")
 
-            return [r.status_code, data]
+            return [r.status_code, r.content, data]
             # return [r.status_code, r.json()]
 
         except JSONDecodeError:
@@ -45,17 +46,17 @@ class Command(BaseCommand):
 
     def regex_category(self, category):
 
-        #T Shirts
+        # T Shirts
         x = re.search(r'\b(tee|t[-\s]shirts?)\b', category, re.IGNORECASE)
         if x:
             return ["tops", "t-shirts"]
 
-        #Shirts
+        # Shirts
         x = re.search(r'\b(shirts?)\b', category, re.IGNORECASE)
         if x:
             return ["tops", "shirts"]
 
-        #Vests
+        # Vests
         x = re.search(r'\b(vests?)\b', category, re.IGNORECASE)
         if x:
             return ["tops", "vests"]
@@ -71,145 +72,166 @@ class Command(BaseCommand):
             return "M"
 
 
-    def update_products_storefront(self, json_data, vendor_id):
+    def update_products(self, json_data, vendor_id, graphql):
 
-        products = json_data['products']['edges']
-        # print(products)
+        # GraphQl Required manipulating the schema different to the sales channel API
+
+        if graphql == True:
+
+            products = json_data['products']['edges']
+
+            for product in products:
+                p_title = product['node']['title']
+                p_id = product['node']['id']
+                p_category = product['node']['productType']
+                p_external_url = product['node']['onlineStoreUrl']
+                p_variants = product['node']['variants']['edges']
+
+                try:
+                    p_image_src = node['node']['images']['edges'][0]['node']['originalSrc']
+
+                # Product has no image
+                except IndexError:
+                    p_image_src = None
+
+        else:
+
+            products = json_data['product_listings']
+
+            for product in products:
+
+                p_title = product['title']
+                p_id = product['product_id']
+                p_category = product['product_type']
+                p_external_url = None
+                p_variants = product['variants']
+
+                try:
+
+                    p_image_src = product['images'][0]['src']
+
+                except IndexError:
+                    p_image_src=None
+
+            
+        
 
         # Create parents first and then create children. Children will have options and stock records.
 
-        for node in products:
-            p_title = node['node']['title']
-            p_code = node['node']['id']
-            p_category = node['node']['productType']
-            p_external_url = node['node']['onlineStoreUrl']
-            # print(p_category)
-            p_variants = node['node']['variants']['edges']
+        # Get category for foreignkey based on regex of title
 
-            try:
-                p_image_src = node['node']['images']['edges'][0]['node']['originalSrc']
+        try:
+            regex_category = self.regex_category(p_title)[1]
 
-            # Product has no image
-            except IndexError:
-                p_image_src = None
+        except TypeError:
+            regex_category = None
 
-            # print(p_image_src)
-            # print(len(p_variants))
+        try:
+            category = Category.objects.get(name=regex_category)
 
-            # Get category for foreignkey base don regex of title
+        except ObjectDoesNotExist:
+            category = None
 
-            try:
-                regex_category = self.regex_category(p_title)[1]
+        # If 1 variant then item is standalone, else it is a parent
 
-            except TypeError:
-                regex_category = None
+        if len(p_variants) == 1:
+            product_type = "standalone"
+        else:
+            product_type = "parent"
 
-            try:
-                category = Category.objects.get(name=regex_category)
+        # Create product for standalone and parent
+        p_obj, created = Product.objects.update_or_create(
+            external_id=p_id,
+            defaults = {
+                'title':p_title, 
+                'vendor_id': vendor_id, 
+                'product_type': product_type,
+                'category': category,
+                'image_src': p_image_src,
+                'external_url': p_external_url
+                }
+        )
 
-            except ObjectDoesNotExist:
-                category = None
+        # #Loop through variants
+        # for node in p_variants:
+        #     c_title = node['node']['title']
+        #     c_code = node['node']['id']
+        #     c_price = node['node']['price']
+        #     c_quantity = node['node']['quantityAvailable']
+        #     c_options = node['node']['selectedOptions']
 
-            # If 1 variant then item is standalone, else it is a parent
+        #     # Sieve through options to find size variable
+        #     for i in c_options:
 
-            if len(p_variants) == 1:
-                product_type = "standalone"
-            else:
-                product_type = "parent"
+        #         try:
+        #             if re.search(r'\b(size|sizing)\b', i['name'], re.IGNORECASE):
 
-            # Create product for standalone and parent
-            p_obj, created = Product.objects.update_or_create(
-                id=p_code,
-                defaults = {
-                    'title':p_title, 
-                    'vendor_id': vendor_id, 
-                    'product_type': product_type,
-                    'category': category,
-                    'image_src': p_image_src,
-                    'external_url': p_external_url
-                    }
-            )
+        #                 size = self.regex_size(i['value'])
 
-            #Loop through variants
-            for node in p_variants:
-                c_title = node['node']['title']
-                c_code = node['node']['id']
-                c_price = node['node']['price']
-                c_quantity = node['node']['quantityAvailable']
-                c_options = node['node']['selectedOptions']
+        #                 break
 
-                # Sieve through options to find size variable
-                for i in c_options:
+        #             else:
+        #                 size = None
 
-                    try:
-                        if re.search(r'\b(size|sizing)\b', i['name'], re.IGNORECASE):
+        #         # If null is returned
 
-                            size = self.regex_size(i['value'])
+        #         except TypeError:
 
-                            break
+        #             pass
 
-                        else:
-                            size = None
+                    
+        #     # Create a standalone stock record and size attribute value
+        #     if product_type == "standalone":
 
-                    # If null is returned
+        #         i_obj, created = StockRecord.objects.update_or_create(
+        #             product=p_obj,
+        #             defaults = {
+        #                 'price_inc_tax': c_price,
+        #                 'num_in_stock': c_quantity,
+        #             })
 
-                    except TypeError:
+        #         if size:
+        #             # Create size attribute value
+        #             size_attr = Attribute.objects.get(name="size")
 
-                        pass
+        #             a_obj, created = AttributeValue.objects.update_or_create(
+        #                 attribute=size_attr,
+        #                 product=c_obj,
+        #                 defaults = {
+        #                     'value_text': size,
+        #                 })
 
-                        
-                # Create a standalone stock record and size attribute value
-                if product_type == "standalone":
+        #     # Create a parent product, child, size attribute value and child stock records
+        #     else:
 
-                    i_obj, created = StockRecord.objects.update_or_create(
-                        product=p_obj,
-                        defaults = {
-                            'price_inc_tax': c_price,
-                            'num_in_stock': c_quantity,
-                        })
+        #         # Create child product
+        #         c_obj, created = Product.objects.update_or_create(
+        #             id=c_code,
+        #             defaults = {
+        #                 'title':c_title, 
+        #                 'vendor_id': vendor_id, 
+        #                 'product_type': "child",
+        #                 'parent': p_obj,
+        #                 }
+        #         )
+        #         # Create stock record for child
+        #         i_obj, created = StockRecord.objects.update_or_create(
+        #             product=c_obj,
+        #             defaults = {
+        #                 'price_inc_tax': c_price,
+        #                 'num_in_stock': c_quantity,
+        #             })
 
-                    if size:
-                        # Create size attribute value
-                        size_attr = Attribute.objects.get(name="size")
+        #         if size:
+        #             # Create size attribute value for child
+        #             size_attr = Attribute.objects.get(name="size")
 
-                        a_obj, created = AttributeValue.objects.update_or_create(
-                            attribute=size_attr,
-                            product=c_obj,
-                            defaults = {
-                                'value_text': size,
-                            })
-
-                # Create a parent product, child, size attribute value and child stock records
-                else:
-
-                    # Create child product
-                    c_obj, created = Product.objects.update_or_create(
-                        id=c_code,
-                        defaults = {
-                            'title':c_title, 
-                            'vendor_id': vendor_id, 
-                            'product_type': "child",
-                            'parent': p_obj,
-                            }
-                    )
-                    # Create stock record for child
-                    i_obj, created = StockRecord.objects.update_or_create(
-                        product=c_obj,
-                        defaults = {
-                            'price_inc_tax': c_price,
-                            'num_in_stock': c_quantity,
-                        })
-
-                    if size:
-                        # Create size attribute value for child
-                        size_attr = Attribute.objects.get(name="size")
-
-                        a_obj, created = AttributeValue.objects.update_or_create(
-                            attribute=size_attr,
-                            product=c_obj,
-                            defaults = {
-                                'value_text': size,
-                            })
+        #             a_obj, created = AttributeValue.objects.update_or_create(
+        #                 attribute=size_attr,
+        #                 product=c_obj,
+        #                 defaults = {
+        #                     'value_text': size,
+        #                 })
 
 
     def handle(self, *args, **options):
@@ -227,12 +249,12 @@ class Command(BaseCommand):
 
                 if p[0] == 200:
                     print("API connected successfully")
-                    print(p[1])
-                    self.update_products(json_data=p[1], vendor_id=vendor.id)
+                    # print(p[1])
+                    self.update_products(json_data=p[2], vendor_id=vendor.id, graphql=False)
                     print("Product created")
                 else:
                     print("API unsuccessful")
-                    print(p)
+                    # print(p)
 
 
 

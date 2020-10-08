@@ -18,6 +18,7 @@ class Platform(models.Model):
 class Vendor(models.Model):
 
 	name = models.CharField(max_length=30, unique=True)
+	display_name = models.CharField(max_length=30)
 	platform = models.ManyToManyField(Platform, through="APICredential")
 
 	def __str__(self):
@@ -39,6 +40,7 @@ class Profile(models.Model):
 
 	@receiver(post_save, sender=User)
 	def save_user_profile(sender, instance, **kwargs):
+		instance.email = instance.username
 		instance.profile.save()
 
 	def __str__(self):
