@@ -48,6 +48,7 @@ def install(request):
 
 		# Try and find vendor. Name must be the name of the shopify store
 		try:
+			print(shop_name)
 			vendor = Vendor.objects.get(name=shop_name)
 			
 			# Add API Credentials with the nonce
@@ -67,8 +68,6 @@ def install(request):
 					'scopes': scopes,
 				}
 			)
-
-
 
 			install_url = "https://" + shop_name + ".myshopify.com/admin/oauth/authorize?client_id=" + api_key + "&scope=" + scopes + "&state=" + nonce + "&redirect_uri=" + redirect_uri
 
@@ -130,7 +129,7 @@ def authenticate(request):
 			
 			except ObjectDoesNotExist:
 				vendor = None
-				messages.error(request, "Store must be created first, please contact the site owner to create a store on vestem.")
+				messages.error(request, "Store must be created first, please contact the site owner to create a store on vestem")
 
 		except AttributeError:
 			shop_name = None

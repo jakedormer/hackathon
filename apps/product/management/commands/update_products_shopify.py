@@ -10,264 +10,281 @@ import re
 
 
 class Command(BaseCommand):
-    help = "Update products in django database with products from shopify"
+	help = "Update products in django database with products from shopify"
 
 
 
-    def api_connect(self, vendor_name, access_token, endpoint, query):
+	def api_connect(self, vendor_name, access_token, endpoint, query):
 
-        headers = {
-                  'Accept': 'application/json',
-                  'Content-Type': 'application/json',
-                  # 'X-Shopify-Storefront-Access-Token': access_token,
-                  'X-Shopify-Access-Token': access_token,
-              }
+		headers = {
+				  'Accept': 'application/json',
+				  'Content-Type': 'application/json',
+				  # 'X-Shopify-Storefront-Access-Token': access_token,
+				  'X-Shopify-Access-Token': access_token,
+			  }
 
 
-        # r = requests.post("https://" + vendor_name + ".myshopify.com/admin/api/2020-10/product_listings.json", json={'query': query}, headers=headers)
-        r = requests.get("https://" + vendor_name + ".myshopify.com" + endpoint, headers=headers)
+		# r = requests.post("https://" + vendor_name + ".myshopify.com/admin/api/2020-10/product_listings.json", json={'query': query}, headers=headers)
+		r = requests.get("https://" + vendor_name + ".myshopify.com" + endpoint, headers=headers)
 
-        try:
+		try:
 
-            json_response = r.json()
-            # print(r.status_code)
-            # print(json_response)
-            # data = json_response['data']
-            data = r.json()
-            # print(data)
-            print("hi")
+			json_response = r.json()
+			# print(r.status_code)
+			# print(json_response)
+			# data = json_response['data']
+			data = r.json()
+			# print(data)
+			print(data)
 
-            return [r.status_code, r.content, data]
-            # return [r.status_code, r.json()]
+			return [r.status_code, r.content, data]
+			# return [r.status_code, r.json()]
 
-        except JSONDecodeError:
+		except JSONDecodeError:
 
-            return [r.status_code, r.content]
+			return [r.status_code, r.content, r.content]
 
-    def regex_category(self, category):
+	def regex_category(self, category):
 
-        # T Shirts
-        x = re.search(r'\b(tee|t[-\s]shirts?)\b', category, re.IGNORECASE)
-        if x:
-            return ["tops", "t-shirts"]
+		# T Shirts
+		x = re.search(r'\b(tee|t[-\s]shirts?)\b', category, re.IGNORECASE)
+		if x:
+			return ["tops", "t-shirts"]
 
-        # Shirts
-        x = re.search(r'\b(shirts?)\b', category, re.IGNORECASE)
-        if x:
-            return ["tops", "shirts"]
+		# Shirts
+		x = re.search(r'\b(shirts?)\b', category, re.IGNORECASE)
+		if x:
+			return ["tops", "shirts"]
 
-        # Vests
-        x = re.search(r'\b(vests?)\b', category, re.IGNORECASE)
-        if x:
-            return ["tops", "vests"]
+		# Vests
+		x = re.search(r'\b(vests?)\b', category, re.IGNORECASE)
+		if x:
+			return ["tops", "vests"]
 
-    def regex_size(self, size):
+		# Sweatshirts
+		x = re.search(r'\b(sweatshirts?|jumpers?|fleeces?)\b', category, re.IGNORECASE)
+		if x:
+			return ["tops", "sweatshirts"]
 
-        # Small
-        if re.search(r'^s$', size, re.IGNORECASE):
-            return "S"
+	def regex_size(self, size):
 
-        # Medium    
-        if re.search(r'^m$', size, re.IGNORECASE):
-            return "M"
+		# Small
+		if re.search(r'^s$', size, re.IGNORECASE):
+			return "S"
 
+		# Medium    
+		if re.search(r'^m$', size, re.IGNORECASE):
+			return "M"
 
-    def update_products(self, json_data, vendor_id, graphql):
 
-        # GraphQl Required manipulating the schema different to the sales channel API
+	def update_products(self, json_data, vendor_id, graphql):
 
-        if graphql == True:
+		# GraphQl Required manipulating the schema different to the sales channel API
 
-            products = json_data['products']['edges']
+		if graphql == True:
 
-            for product in products:
-                p_title = product['node']['title']
-                p_id = product['node']['id']
-                p_category = product['node']['productType']
-                p_external_url = product['node']['onlineStoreUrl']
-                p_variants = product['node']['variants']['edges']
+			products = json_data['products']['edges']
 
-                try:
-                    p_image_src = node['node']['images']['edges'][0]['node']['originalSrc']
+			for product in products:
+				p_title = product['node']['title']
+				p_id = product['node']['id']
+				p_category = product['node']['productType']
+				p_external_url = product['node']['onlineStoreUrl']
+				p_variants = product['node']['variants']['edges']
 
-                # Product has no image
-                except IndexError:
-                    p_image_src = None
+				try:
+					p_image_src = node['node']['images']['edges'][0]['node']['originalSrc']
 
-        else:
+				# Product has no image
+				except IndexError:
+					p_image_src = None
 
-            products = json_data['product_listings']
+		else:
 
-            for product in products:
+			products = json_data['product_listings']
+			# print(products)
 
-                p_title = product['title']
-                p_id = product['product_id']
-                p_category = product['product_type']
-                p_external_url = None
-                p_variants = product['variants']
+			for product in products:
+				# print(product)
+				print(product['product_id'])
+				print(product['title'])
 
-                try:
+				p_title = product['title']
+				p_id = product['product_id']
+				p_category = product['product_type']
+				p_external_url = None
+				p_variants = product['variants']
 
-                    p_image_src = product['images'][0]['src']
+				try:
 
-                except IndexError:
-                    p_image_src=None
-
-            
-        
-
-        # Create parents first and then create children. Children will have options and stock records.
-
-        # Get category for foreignkey based on regex of title
-
-        try:
-            regex_category = self.regex_category(p_title)[1]
-
-        except TypeError:
-            regex_category = None
-
-        try:
-            category = Category.objects.get(name=regex_category)
-
-        except ObjectDoesNotExist:
-            category = None
-
-        # If 1 variant then item is standalone, else it is a parent
-
-        if len(p_variants) == 1:
-            product_type = "standalone"
-        else:
-            product_type = "parent"
-
-        # Create product for standalone and parent
-        p_obj, created = Product.objects.update_or_create(
-            external_id=p_id,
-            defaults = {
-                'title':p_title, 
-                'vendor_id': vendor_id, 
-                'product_type': product_type,
-                'category': category,
-                'image_src': p_image_src,
-                'external_url': p_external_url
-                }
-        )
-
-        # #Loop through variants
-        # for node in p_variants:
-        #     c_title = node['node']['title']
-        #     c_code = node['node']['id']
-        #     c_price = node['node']['price']
-        #     c_quantity = node['node']['quantityAvailable']
-        #     c_options = node['node']['selectedOptions']
-
-        #     # Sieve through options to find size variable
-        #     for i in c_options:
+					p_image_src = product['images'][0]['src']
 
-        #         try:
-        #             if re.search(r'\b(size|sizing)\b', i['name'], re.IGNORECASE):
+				except IndexError:
+					p_image_src=None
 
-        #                 size = self.regex_size(i['value'])
+				print(p_image_src)
 
-        #                 break
+				# Create parents first and then create children. Children will have options and stock records.
 
-        #             else:
-        #                 size = None
+				# Get category for foreignkey based on regex of title
 
-        #         # If null is returned
+				try:
+					regex_category = self.regex_category(p_title)[1]
 
-        #         except TypeError:
+				except TypeError:
+					regex_category = None
 
-        #             pass
+				try:
+					category = Category.objects.get(name=regex_category)
 
-                    
-        #     # Create a standalone stock record and size attribute value
-        #     if product_type == "standalone":
+				except ObjectDoesNotExist:
 
-        #         i_obj, created = StockRecord.objects.update_or_create(
-        #             product=p_obj,
-        #             defaults = {
-        #                 'price_inc_tax': c_price,
-        #                 'num_in_stock': c_quantity,
-        #             })
+					category = None
 
-        #         if size:
-        #             # Create size attribute value
-        #             size_attr = Attribute.objects.get(name="size")
+				# print(category)
 
-        #             a_obj, created = AttributeValue.objects.update_or_create(
-        #                 attribute=size_attr,
-        #                 product=c_obj,
-        #                 defaults = {
-        #                     'value_text': size,
-        #                 })
+				# If 1 variant then item is standalone, else it is a parent
 
-        #     # Create a parent product, child, size attribute value and child stock records
-        #     else:
+				if len(p_variants) == 1:
+					
+					product_type = "standalone"
+				else:
+					product_type = "parent"
 
-        #         # Create child product
-        #         c_obj, created = Product.objects.update_or_create(
-        #             id=c_code,
-        #             defaults = {
-        #                 'title':c_title, 
-        #                 'vendor_id': vendor_id, 
-        #                 'product_type': "child",
-        #                 'parent': p_obj,
-        #                 }
-        #         )
-        #         # Create stock record for child
-        #         i_obj, created = StockRecord.objects.update_or_create(
-        #             product=c_obj,
-        #             defaults = {
-        #                 'price_inc_tax': c_price,
-        #                 'num_in_stock': c_quantity,
-        #             })
+				# print(product_type)
 
-        #         if size:
-        #             # Create size attribute value for child
-        #             size_attr = Attribute.objects.get(name="size")
+				p_obj, created = Product.objects.update_or_create(
+					external_id=p_id,
+					defaults = {
+						'title': p_title, 
+						'vendor_id': vendor_id, 
+						'product_type': product_type,
+						'category': category,
+						'image_src': p_image_src,
+						'external_url': p_external_url
+						}
+				)
 
-        #             a_obj, created = AttributeValue.objects.update_or_create(
-        #                 attribute=size_attr,
-        #                 product=c_obj,
-        #                 defaults = {
-        #                     'value_text': size,
-        #                 })
+				# print()
 
+				
 
-    def handle(self, *args, **options):
+		# #Loop through variants
+		# for node in p_variants:
+		#     c_title = node['node']['title']
+		#     c_code = node['node']['id']
+		#     c_price = node['node']['price']
+		#     c_quantity = node['node']['quantityAvailable']
+		#     c_options = node['node']['selectedOptions']
 
-        vendors = Vendor.objects.all()
+		#     # Sieve through options to find size variable
+		#     for i in c_options:
 
-        for vendor in vendors:
+		#         try:
+		#             if re.search(r'\b(size|sizing)\b', i['name'], re.IGNORECASE):
 
-            try:
-                
-                api_credential = APICredential.objects.get(vendor=vendor, platform__name='shopify')
-                # print(api_credential.platform.sales_channel_endpoint)
+		#                 size = self.regex_size(i['value'])
 
-                p = self.api_connect(vendor_name=vendor.name, access_token=api_credential.access_token, endpoint=api_credential.platform.sales_channel_endpoint, query=q.query)
+		#                 break
 
-                if p[0] == 200:
-                    print("API connected successfully")
-                    # print(p[1])
-                    self.update_products(json_data=p[2], vendor_id=vendor.id, graphql=False)
-                    print("Product created")
-                else:
-                    print("API unsuccessful")
-                    # print(p)
+		#             else:
+		#                 size = None
 
+		#         # If null is returned
 
+		#         except TypeError:
 
-            except ObjectDoesNotExist:
+		#             pass
 
-                pass
+					
+		#     # Create a standalone stock record and size attribute value
+		#     if product_type == "standalone":
 
-            
-    def update_products_sales_channel(self):
+		#         i_obj, created = StockRecord.objects.update_or_create(
+		#             product=p_obj,
+		#             defaults = {
+		#                 'price_inc_tax': c_price,
+		#                 'num_in_stock': c_quantity,
+		#             })
 
-        return
+		#         if size:
+		#             # Create size attribute value
+		#             size_attr = Attribute.objects.get(name="size")
 
+		#             a_obj, created = AttributeValue.objects.update_or_create(
+		#                 attribute=size_attr,
+		#                 product=c_obj,
+		#                 defaults = {
+		#                     'value_text': size,
+		#                 })
 
+		#     # Create a parent product, child, size attribute value and child stock records
+		#     else:
 
-            
-        
+		#         # Create child product
+		#         c_obj, created = Product.objects.update_or_create(
+		#             id=c_code,
+		#             defaults = {
+		#                 'title':c_title, 
+		#                 'vendor_id': vendor_id, 
+		#                 'product_type': "child",
+		#                 'parent': p_obj,
+		#                 }
+		#         )
+		#         # Create stock record for child
+		#         i_obj, created = StockRecord.objects.update_or_create(
+		#             product=c_obj,
+		#             defaults = {
+		#                 'price_inc_tax': c_price,
+		#                 'num_in_stock': c_quantity,
+		#             })
+
+		#         if size:
+		#             # Create size attribute value for child
+		#             size_attr = Attribute.objects.get(name="size")
+
+		#             a_obj, created = AttributeValue.objects.update_or_create(
+		#                 attribute=size_attr,
+		#                 product=c_obj,
+		#                 defaults = {
+		#                     'value_text': size,
+		#                 })
+
+
+	def handle(self, *args, **options):
+
+		vendors = Vendor.objects.all()
+
+		for vendor in vendors:
+
+			try:
+				
+				api_credential = APICredential.objects.get(vendor=vendor, platform__name='shopify')
+				# print(api_credential.platform.sales_channel_endpoint)
+
+				p = self.api_connect(vendor_name=vendor.name, access_token=api_credential.access_token, endpoint=api_credential.platform.sales_channel_endpoint, query=q.query)
+
+				if p[0] == 200:
+					print("API connected successfully")
+					# print(p[1])
+					self.update_products(json_data=p[2], vendor_id=vendor.id, graphql=False)
+					print("Product created")
+				else:
+					print("API unsuccessful")
+					print(p)
+
+
+
+			except ObjectDoesNotExist:
+
+				pass
+
+			
+	def update_products_sales_channel(self):
+
+		return
+
+
+
+			
+		

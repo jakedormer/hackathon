@@ -297,9 +297,9 @@ class Product(models.Model):
 			raise ValidationError(("Your product must have vendor"))
 		if self.size:
 			raise ValidationError(("Parent products can not have a size."))
-		if self.attributes.count() > 0:
-			raise ValidationError(
-				("A parent product can not have attributes"))
+		# if self.attributes.count() > 0:
+		# 	raise ValidationError(
+		# 		("A parent product can not have attributes"))
 
 	def get_product_category(self):
 		"""
