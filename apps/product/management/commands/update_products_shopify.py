@@ -35,7 +35,7 @@ class Command(BaseCommand):
 			# data = json_response['data']
 			data = r.json()
 			# print(data)
-			print(data)
+			# print(data)
 
 			return [r.status_code, r.content, data]
 			# return [r.status_code, r.json()]
@@ -68,6 +68,10 @@ class Command(BaseCommand):
 
 	def regex_size(self, size):
 
+		# X-Small
+		if re.search(r'^xs$', size, re.IGNORECASE):
+			return "XS"
+
 		# Small
 		if re.search(r'^s$', size, re.IGNORECASE):
 			return "S"
@@ -76,10 +80,20 @@ class Command(BaseCommand):
 		if re.search(r'^m$', size, re.IGNORECASE):
 			return "M"
 
+		#Large
+		if re.search(r'^l$', size, re.IGNORECASE):
+			return "L"
+
+		# X-Large
+		if re.search(r'^xl$', size, re.IGNORECASE):
+			return "XL"
+
 
 	def update_products(self, json_data, vendor_id, graphql):
 
 		# GraphQl Required manipulating the schema different to the sales channel API
+
+		size_attr = Attribute.objects.get(name="size")
 
 		if graphql == True:
 
@@ -106,8 +120,8 @@ class Command(BaseCommand):
 
 			for product in products:
 				# print(product)
-				print(product['product_id'])
-				print(product['title'])
+				# print(product['product_id'])
+				# print(product['title'])
 
 				p_title = product['title']
 				p_id = product['product_id']
@@ -122,7 +136,7 @@ class Command(BaseCommand):
 				except IndexError:
 					p_image_src=None
 
-				print(p_image_src)
+				# print(p_image_src)
 
 				# Create parents first and then create children. Children will have options and stock records.
 
@@ -167,88 +181,107 @@ class Command(BaseCommand):
 
 				# print()
 
-				
+				# print(p_variants)
+				print(len(p_variants))
 
-		# #Loop through variants
-		# for node in p_variants:
-		#     c_title = node['node']['title']
-		#     c_code = node['node']['id']
-		#     c_price = node['node']['price']
-		#     c_quantity = node['node']['quantityAvailable']
-		#     c_options = node['node']['selectedOptions']
+				#Loop through variants
+				for variant in p_variants:
 
-		#     # Sieve through options to find size variable
-		#     for i in c_options:
+					if graphql:
+						v_title = variant['node']['title']
+						v_code = variant['node']['id']
+						v_price = variant['node']['price']
+						v_quantity = variant['node']['quantityAvailable']
+						v_options = variant['node']['selectedOptions']
 
-		#         try:
-		#             if re.search(r'\b(size|sizing)\b', i['name'], re.IGNORECASE):
+					else:
+						v_title = variant['title']
+						v_code = variant['id']
+						v_price = variant['price']
+						v_quantity = variant['inventory_quantity']
+						v_options = variant['option_values']
 
-		#                 size = self.regex_size(i['value'])
+					# print(p_variants)
+					# print(p_title)
 
-		#                 break
+					print(variant)
+					# print(forloop.counter())
 
-		#             else:
-		#                 size = None
+					# Sieve through options to find size variable
+					for i in v_options:
 
-		#         # If null is returned
+						try:
+							if re.search(r'\b(size|sizing)\b', i['name'], re.IGNORECASE):
 
-		#         except TypeError:
+								size = self.regex_size(i['value'])
 
-		#             pass
+								break
 
-					
-		#     # Create a standalone stock record and size attribute value
-		#     if product_type == "standalone":
+							else:
+								size = None
 
-		#         i_obj, created = StockRecord.objects.update_or_create(
-		#             product=p_obj,
-		#             defaults = {
-		#                 'price_inc_tax': c_price,
-		#                 'num_in_stock': c_quantity,
-		#             })
+						# If null is returned
 
-		#         if size:
-		#             # Create size attribute value
-		#             size_attr = Attribute.objects.get(name="size")
+						except TypeError:
 
-		#             a_obj, created = AttributeValue.objects.update_or_create(
-		#                 attribute=size_attr,
-		#                 product=c_obj,
-		#                 defaults = {
-		#                     'value_text': size,
-		#                 })
+							print("typerror")
 
-		#     # Create a parent product, child, size attribute value and child stock records
-		#     else:
+					print('size', size)
 
-		#         # Create child product
-		#         c_obj, created = Product.objects.update_or_create(
-		#             id=c_code,
-		#             defaults = {
-		#                 'title':c_title, 
-		#                 'vendor_id': vendor_id, 
-		#                 'product_type': "child",
-		#                 'parent': p_obj,
-		#                 }
-		#         )
-		#         # Create stock record for child
-		#         i_obj, created = StockRecord.objects.update_or_create(
-		#             product=c_obj,
-		#             defaults = {
-		#                 'price_inc_tax': c_price,
-		#                 'num_in_stock': c_quantity,
-		#             })
+					# Create a standalone stock record and size attribute value
+					if product_type == "standalone":
 
-		#         if size:
-		#             # Create size attribute value for child
-		#             size_attr = Attribute.objects.get(name="size")
+						i_obj, created = StockRecord.objects.update_or_create(
+							product=p_obj,
+							defaults = {
+								'price_inc_tax': v_price,
+								'num_in_stock': v_quantity,
+							})
 
-		#             a_obj, created = AttributeValue.objects.update_or_create(
-		#                 attribute=size_attr,
-		#                 product=c_obj,
-		#                 defaults = {
-		#                     'value_text': size,
-		#                 })
+
+						if size:
+							# Create size attribute value
+
+							a_obj, created = AttributeValue.objects.update_or_create(
+								attribute=size_attr,
+								product=p_obj,
+								defaults = {
+									'value_text': size,
+								})
+
+							print(created)
+
+					# Create a parent product, variant, size attribute value and variant stock records
+					else:
+						# Create variant product
+						c_obj, created = Product.objects.update_or_create(
+							external_id=v_code,
+							defaults = {
+								'title':v_title, 
+								'vendor_id': vendor_id, 
+								'product_type': "variant",
+								'parent': p_obj,
+								}
+						)
+
+						# Create stock record for variant
+						cs_obj, created = StockRecord.objects.update_or_create(
+							product=c_obj,
+							defaults = {
+								'price_inc_tax': v_price,
+								'num_in_stock': v_quantity,
+							})
+
+						if size:
+							# Create size attribute value for variant
+							size_attr = Attribute.objects.get(name="size")
+
+							a_obj, created = AttributeValue.objects.update_or_create(
+								attribute=size_attr,
+								product=c_obj,
+								defaults = {
+									'value_text': size,
+								})
 
 
 	def handle(self, *args, **options):

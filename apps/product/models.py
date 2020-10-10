@@ -332,7 +332,7 @@ class Product(models.Model):
 	def save(self, *args, **kwargs):
 		if self.is_variant:
 			self.slug = None
-			self.title = self.parent.title + " - " + self.size.value
+			self.title = self.parent.title + " - variant"
 			self.vendor = self.parent.vendor
 			self.external_url = self.parent.external_url
 			self.image_src = self.parent.image_src
