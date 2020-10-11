@@ -16,19 +16,31 @@ def category(request, slug, code):
 		filters_applied['size__name'] = request.GET['sizes']
 
 	category = Category.objects.get(id=code)
-	products = Product.objects.filter(category__id=code, product_type="parent", **filters_applied).prefetch_related('children') | Product.objects.filter(category__slug=slug, product_type="standalone", **filters_applied)
+	# products = Product.objects.filter(
+	# 	category__name="t-shirts", 
+	# 	product_type="parent", 
+	# 	# **filters_applied
+	# 	).prefetch_related('children') | Product.objects.filter(category__name="t-shirts", product_type="standalone", 
+	# 	# **filters_applied
+	# 	)
 
+	products = Product.objects.filter(
+		category=category,
+		)
+
+	
+	attribute_values = AttributeValue.objects.filter(product__in=products)
+	
+	print(attribute_values.values())
 
 	context = {
 		'category': category,
-		'products': products,
+		'products': products.filter(Q(product_type="parent") | Q(product_type="standalone")),
 		'facet_list': {
-			'vendors': products.values('vendor__name').distinct().order_by('vendor__name').annotate(count=Count('vendor__name'), name=F('vendor__name')),
-			'sizes': products.values('size__name').distinct().order_by('size__order').annotate(count=Count('size__name', distnct=True), name=F('size__name')),
+			'brands': attribute_values.filter(Q(product__product_type="parent") | Q(product__product_type="standalone"), attribute__name="brand").values('value_text').distinct().order_by('value_text').annotate(count=Count('value_text'), name=F('value_text')),
+			'sizes':  attribute_values.filter(attribute__name="size").values('attribute__name').order_by('value_text').annotate(count=Count('value_text'), name=F('value_text')),
 			# 'sizes': products.filter(Q(product_type="variant")|Q(product_type="standalone")).values(),
 			'colours': None,
-			'jake': None,
-			'josh':None,
 		}
 		
 	}

@@ -49,7 +49,7 @@
       </button>
       <div class="dropdown-menu bg-light w-100 shadow-sm" aria-labelledby="dropdownMenuButton">
         <!-- <h6 class="dropdown-header">X Selected</h6> -->
-        <!-- {{value}} -->
+        {{value}}
         {% for x in value %}
         <label for="{{key}}|{{x.name}}" class="w-95 ">
         <div class="dropdown-item bg-white mb-2 p-2 ml-2 shadow-sm {% if request.GET|get_item:key == x.name and x.name != None  %} border border-primary rounded{% endif %}" href="#">
@@ -81,13 +81,13 @@
 
   <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-6">
   <div class="card shadow mb-2">
-    <a href="/p/{{product.slug}}">
+    <a href="/p/{{product.id}}">
       <div class="img-zoom">
         <img class="card-img-top img-responsive img-zoom" src="{{product.image_src}}" alt="Card image cap">
       </div>
     </a>
       <div class="p-2">
-        <a class="text-dark font-weight-bold" href="/p/{{product.slug}}"><small class="p-1 text-center">{{product.title|title}}</small></a>
+        <a class="text-dark font-weight-bold" href="/p/{{product.id}}"><small class="p-1 text-center">{{product.title|title}}</small></a>
         <hr>
         <!-- <button class="btn btn-light">View Product</button> -->
 <!--         <div class="row">

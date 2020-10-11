@@ -261,8 +261,8 @@ class Product(models.Model):
 		"""
 		if not self.parent:
 			raise ValidationError(("A variant product needs a parent."))
-		if not self.size:
-			raise ValidationError(("A variant product needs a size"))
+		# if not self.size:
+		# 	raise ValidationError(("A variant product needs a size"))
 		if self.parent and not self.parent.is_parent:
 			raise ValidationError(
 				("You can only assign variant products to parent products."))
@@ -275,8 +275,8 @@ class Product(models.Model):
 		if self.parent and self.vendor != self.parent.vendor:
 			raise ValidationError(
 				("A variant product must have the same vendor as its parent product."))
-		if not self.size:
-			raise ValidationError(("Your product must have a size"))
+		# if not self.size:
+		# 	raise ValidationError(("Your product must have a size"))
 
 		# Note that we only forbid options on product level
 
@@ -332,7 +332,9 @@ class Product(models.Model):
 	def save(self, *args, **kwargs):
 		if self.is_variant:
 			self.slug = None
-			self.title = self.parent.title + " - variant"
+			# self.title = self.parent.title + " - " + self.attribute_values.filter(attribute__name="size").first().value_text
+			self.title = self.parent.title
+			self.category = self.parent.category
 			self.vendor = self.parent.vendor
 			self.external_url = self.parent.external_url
 			self.image_src = self.parent.image_src
@@ -369,7 +371,8 @@ class AttributeValue(models.Model):
 		if self.value_option:
 			return self.value_option
 
-	
+	def __str__(self):
+		return self.product.title + ' - ' + self.attribute.name
 
 
 
