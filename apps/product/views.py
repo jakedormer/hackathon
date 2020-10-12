@@ -52,15 +52,19 @@ def category(request, slug, code):
 
 	return render(request,template,context)
 
-def product(request, slug):
-	parent = Product.objects.get(slug=slug)
-	children = Product.objects.filter(parent=parent)
+def product(request, id):
+	product = Product.objects.get(id=id)
+	variants = product.children.all()
+	sizes = AttributeValue.objects.filter(attribute__name="size", product__in=product.children.all()).order_by('value_text')
+	print(sizes)
+	print(variants)
 
 	context = {
-		'product': parent,
-		'children': children,
+		'product': product,
+		'sizes': sizes,
 	}
 	
+
 	template = 'product/product.html'
 
 	return render(request, template, context)

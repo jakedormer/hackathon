@@ -157,7 +157,7 @@ class Product(models.Model):
 	external_id = models.CharField(max_length=100, null=False, blank=False)
 	title = models.CharField(max_length=128, blank=True)
 	description = models.TextField(null=True, blank=True)
-	slug = models.SlugField(null=True, unique=True, blank=True)
+	slug = models.SlugField(null=True, blank=True)
 	vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE, null=True)
 
 
@@ -341,7 +341,7 @@ class Product(models.Model):
 		# if self.is_parent:
 
 		# 	self.attributes = None
-		# 	self.slug = slugify(self.title) + "-" + str(self.id)
+		self.slug = slugify(self.title)
 			
 		super(Product, self).save(*args, **kwargs)
 

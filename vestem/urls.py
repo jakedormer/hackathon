@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 from views import base
 from apps.account import views as views_account
 from apps.cart import views as views_cart
@@ -36,7 +36,7 @@ urlpatterns = [
     path('oauth/install', views_oauth.install, name='oauth/install'),
     path('oauth/authenticate', views_oauth.authenticate, name='oauth/authenticate'),
     path('<slug:slug>/c/<int:code>', views_product.category, name='category'),
-    path('p/<slug:slug>', views_product.product, name='product'),
+    re_path(r'.+/p/(?P<id>[0-9]+)', views_product.product, name='product'),
     path('dashboard', views_dashboard.dashboard, name='dashboard'),
     path('dashboard/products', views_dashboard.dashboard_products, name='dashboard_products'),
     path('dashboard/settings', views_dashboard.dashboard_settings, name='dashboard_settings'),
