@@ -103,6 +103,8 @@ class AttributeOption(models.Model):
 		)
 	option = models.CharField(max_length=255)
 
+	order = models.PositiveIntegerField(null=True, blank=True, help_text="Used to order sizing in the store, 1 is the smallest")
+
 	def __str__(self):
 		return self.option
 
@@ -340,8 +342,8 @@ class Product(models.Model):
 			self.image_src = self.parent.image_src
 		# if self.is_parent:
 
-		# 	self.attributes = None
-		self.slug = slugify(self.title)
+		if self.is_variant or self.is_standalone:
+			self.slug = slugify(self.title)
 			
 		super(Product, self).save(*args, **kwargs)
 

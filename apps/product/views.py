@@ -55,7 +55,12 @@ def category(request, slug, code):
 def product(request, id):
 	product = Product.objects.get(id=id)
 	variants = product.children.all()
-	sizes = AttributeValue.objects.filter(attribute__name="size", product__in=product.children.all()).order_by('value_text')
+
+	if variants:
+		sizes = AttributeValue.objects.filter(attribute__name="size", product__in=product.children.all()).order_by('value_option__order')
+	else:
+		sizes = AttributeValue.objects.filter(attribute__name="size", product=product).order_by('value_option__order')
+
 	print(sizes)
 	print(variants)
 

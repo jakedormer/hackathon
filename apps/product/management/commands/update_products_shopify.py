@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import ObjectDoesNotExist
 from apps.dashboard.models import Vendor, APICredential
-from apps.product.models import Product, Category, AttributeValue, Attribute
+from apps.product.models import Product, Category, AttributeValue, Attribute, AttributeOption
 from apps.inventory.models import StockRecord
 from apps.product.management.querys import update_products_shopify as q
 import requests
@@ -246,7 +246,7 @@ class Command(BaseCommand):
 								attribute=size_attr,
 								product=p_obj,
 								defaults = {
-									'value_text': size,
+									'value_option': AttributeOption.objects.get(option=size)
 								})
 
 							print(created)
@@ -280,7 +280,7 @@ class Command(BaseCommand):
 								attribute=size_attr,
 								product=c_obj,
 								defaults = {
-									'value_text': size,
+									'value_option': AttributeOption.objects.get(option=size),
 								})
 
 

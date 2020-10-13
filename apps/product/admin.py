@@ -19,19 +19,28 @@ class AttributeValueAdmin(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
 
-	list_display = ('id', 'external_id', 'attr_count', 'vendor', 'get_product_category', 'title', 'size', 'product_type', 'date_created')
+	list_display = ('id', 'external_id', 'attr_count', 'vendor', 'get_product_category', 'title', 'get_size', 'product_type', 'date_created')
 	list_filter = ('vendor', 'category', 'product_type')
 	inlines = (AttributeValueAdmin,)
 	ordering = ('vendor', 'title', '-product_type')
 
 	def attr_count(self, x):
 			
-			return x.attributes.count()
+		return x.attributes.count()
 
+	def get_size(self, x):
+		
+		try:
+
+			return x.attribute_values.filter(attribute__name="size").first().value_option
+
+		except:
+
+			return None
 
 
 class AttributeAdmin(admin.ModelAdmin):
-	list_display = ('name', 'type')
+	list_display = ('name', 'type', )
 
 class CategoryAdmin(admin.ModelAdmin):
 	list_display = ('id', 'name',)

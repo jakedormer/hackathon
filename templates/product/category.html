@@ -41,8 +41,8 @@
     {% csrf_token %}
   <div class="row">
   {% for key, value in facet_list.items %}
-    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 my-2">
-    <div class="dropdown">
+    <div class="col-xl-3 col-lg-3 col-md-6 col-sm-12 my-2 d-flex text-center justify-content-center">
+    <div class="dropdown w-95">
       <button class="btn btn-outline-dark dropdown-toggle w-100" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         {{key|title}}
         <span><i class="fas fa-angle-down float-right"></i></span>
@@ -80,7 +80,7 @@
   {% for product in products %}
 
   <div class="col-xl-3 col-lg-3 col-md-4 col-sm-6 col-6">
-  <div class="card shadow mb-2">
+  <div class="card shadow mb-2 w-95">
     <a href="/{{product.slug}}/p/{{product.id}}">
       <div class="img-zoom">
         <img class="card-img-top img-responsive img-zoom" src="{{product.image_src}}" alt="Card image cap">
@@ -107,7 +107,7 @@
         </div> -->
       </div>
       <div class="bg-light card-text text-center p-1">
-        <small class="text-muted">{{product.vendor.name|title}}</small>
+        <small class="text-muted">{{product.vendor.display_name}}</small>
       </div>
     </div>
   </div>

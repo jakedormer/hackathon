@@ -1,0 +1,18 @@
+.swatch label {
+  min-width: 40px;
+ /*   height: 34px;
+    margin: 0;
+    font-size: 13px;
+    text-align: center;
+    line-height: 40px;
+    white-space: nowrap;*/
+    cursor: pointer;
+    padding: 10px 10px;
+}
+
+.swatch input[type="radio"]:checked+label {
+    color: #fff;
+    background-color: #343a40;
+    border-color: #343a40;
+    font-weight: bold;
+}
