@@ -3,7 +3,7 @@ from .models import *
 
 class StockRecordAdmin(admin.ModelAdmin):
 
-	list_display = ('product_id', 'get_product_type', 'price_inc_tax', 'num_in_stock')
+	list_display = ('product_id', 'product', 'get_product_type', 'price_inc_tax', 'num_in_stock')
 
 	def get_product_type(self, obj):
 	        return obj.product.product_type.title()

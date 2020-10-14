@@ -41,6 +41,7 @@ def category(request, slug, code):
 			'sizes':  attribute_values.filter(attribute__name="size").values('attribute__name').order_by('value_text').annotate(count=Count('value_text'), name=F('value_text')),
 			# 'sizes': products.filter(Q(product_type="variant")|Q(product_type="standalone")).values(),
 			'colours': None,
+			'jake': None
 		}
 		
 	}
@@ -61,8 +62,8 @@ def product(request, id):
 	else:
 		sizes = AttributeValue.objects.filter(attribute__name="size", product=product).order_by('value_option__order')
 
-	print(sizes)
-	print(variants)
+	# print(sizes)
+	# print(variants)
 
 	context = {
 		'product': product,

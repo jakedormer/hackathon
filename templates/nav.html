@@ -21,26 +21,18 @@
         <!-- <span class="navbar-toggler-icon"></span> -->
     </button>
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle font-weight-bold" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                SHOP
-            </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    {% for category in all_categories %}
-                    <a class="dropdown-item" href="/{{category.name}}/c/{{category.id}}">{{category}}</a>
-                    {% endfor %}
-                </div>
-
+        <ul class="navbar-nav">
+            {% for category in all_categories %}
+            <li class="nav-item ">
+                <a class="nav-link text-dark font-weight-200" href="/{{category.name}}/c/{{category.id}}">{{category|upper}}</a>
             </li>
+            {% endfor %}
 
             <li class="nav-item">
-                <a class="nav-link font-weight-bold" href="/about">ABOUT<span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/about">ABOUT<span class="sr-only">(current)</span></a>
             </li>
-
         </ul>
     </div>
 </nav>
-<!-- Navbar -->
 
 
