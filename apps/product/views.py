@@ -7,13 +7,14 @@ from django.db.models import Count, F, Q
 
 def category(request, slug, code):
 	filters_applied = {}
+	other_filter = {}
 	
-	if 'vendors' in request.GET:
-		filters_applied['vendor__name'] = request.GET['vendors']
+	if 'brands' in request.GET:
+		filters_applied['product__vendor__name'] = request.GET['brands']
 
 	
 	if 'sizes' in request.GET:
-		filters_applied['size__name'] = request.GET['sizes']
+		filters_applied['value_text'] = request.GET['sizes']
 
 	category = Category.objects.get(id=code)
 	# products = Product.objects.filter(
@@ -24,13 +25,22 @@ def category(request, slug, code):
 	# 	# **filters_applied
 	# 	)
 
-	products = Product.objects.filter(
-		category=category,
-		)
+	if len(filters_applied) > 0:
+		products = Product.objects.filter(
+			category=category,
+			attribute_values__in=AttributeValue.objects.filter(**filters_applied)
+			)
+	else:
+
+		products = Product.objects.filter(
+			category=category,
+			# attribute_values__in=AttributeValue.objects.filter(**filters_applied)
+			)
 
 	
 	attribute_values = AttributeValue.objects.filter(product__in=products)
-	
+	print("filter", filters_applied)
+	print(products)
 	print(attribute_values.values())
 
 	context = {

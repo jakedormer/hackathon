@@ -19,7 +19,7 @@ def set_brand(sender, instance, **kwargs):
 		product=instance, 
 		attribute=Attribute.objects.get(name="brand"),
 		defaults={
-			'value_text': instance.vendor.display_name,
+			'value_text': instance.vendor.name
 			}
 		)
 

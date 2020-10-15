@@ -26,7 +26,7 @@
 	    {% else %}
 	     <tr class="bg-light">
 	    {% endif %}
-	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{product.image_src}}" alt="Card image cap" style="width: 75px; height: 75px" onerror="this.src='{{ MEDIA_URL }}images/size_guides/no-image.png'"></td>
+	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{product.image_src}}" alt="Card image cap" style="width: 75px; height: 75px; object-fit: cover;" onerror="this.src='{{ MEDIA_URL }}images/size_guides/no-image.png'"></td>
 	      <td>{{product.product_type|title}}</td>
 	      <td><a href="{{product.onlineStorePreviewUrl}}" target="_blank">{{product.title|title}}<i class="fas fa-external-link-alt ml-2 fa-xs"></i></a><br>
 	      	<small class="text-muted">Last Synced: {{product.date_modified}}</small></td>

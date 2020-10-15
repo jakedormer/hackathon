@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from apps.product.models import Product
 import json
 
@@ -9,6 +9,7 @@ def cart(request):
 
 		request.session['cart'] = {}
 		request.session['cart'].setdefault('products', [])
+		request.session['cart']['items_in_cart'] = 0
 
 	cart_products = []
 
@@ -16,13 +17,16 @@ def cart(request):
 
 		cart_products.append(product['id'])
 
-	products = Product.objects.filter(id__in=cart_products)
+	products = Product.objects.filter(id__in=cart_products).order_by('vendor__name')
 
 	context = {
 		'products': products,
 	}
 
 	template = 'cart/cart.html'
+
+	for key, value in request.session.items():
+	    print('{} => {}'.format(key, value))
 
 	return render(request,template,context)
 
@@ -70,4 +74,6 @@ def add_to_cart(request):
 	for key, value in request.session.items():
 	    print('{} => {}'.format(key, value))
 
-	return redirect('/')
+	    request.session['cart']['items_in_cart'] = len(request.session['cart']['products'])
+
+	return JsonResponse(data={})
