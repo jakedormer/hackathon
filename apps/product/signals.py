@@ -13,7 +13,7 @@ from .models import SizeGuide, SizeGuideItem, Product, AttributeValue, Attribute
 
 # Create/ update brand attribute where names is equal to the name of vendor
 @receiver(post_save, sender=Product)
-def set_brand(sender, instance, **kwargs):
+def product_signal(sender, instance, **kwargs):
 
 	AttributeValue.objects.update_or_create(
 		product=instance, 
@@ -22,6 +22,18 @@ def set_brand(sender, instance, **kwargs):
 			'value_text': instance.vendor.name
 			}
 		)
+
+	if instance.is_parent:
+
+		for variant in instance.children.all():
+
+			variant.title = instance.title
+			variant.category = instance.category
+			variant.image_src = instance.image_src
+			variant.size_guide = instance.size_guide
+			variant.external_url = instance.external_url
+
+			variant.save()
 
 
 

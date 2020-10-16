@@ -77,3 +77,37 @@ def add_to_cart(request):
 	    request.session['cart']['items_in_cart'] = len(request.session['cart']['products'])
 
 	return JsonResponse(data={})
+
+def remove_from_cart(request):
+
+	for key, value in request.session.items():
+	    print('{} => {}'.format(key, value))
+
+	if request.GET:
+
+		params = request.GET.dict()
+		product_id = params['product_id']
+
+		for i, product in enumerate(request.session['cart']['products']):
+
+			if product['id'] == product_id:
+
+				print(product)
+				del request.session['cart']['products'][i]
+
+				
+
+				request.session.modified = True
+
+				print(request.session['cart']['products'])
+
+				break
+				
+		# Update number of items in cart		
+		request.session['cart']['items_in_cart'] = len(request.session['cart']['products'])
+
+	return JsonResponse(data={})
+
+
+
+

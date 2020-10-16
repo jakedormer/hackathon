@@ -21,20 +21,37 @@
       <!-- Cart Item -->
       {% for product in products %}
       {% ifchanged %}
-      <h3 class="mt-3">Sold By <b>{{product.vendor.display_name}}</b></h3>
+      <h3 class="mt-3"><span class="text-muted h5">Sold By</span> <b>{{product.vendor.display_name}}</b></h3>
       <hr class="">
       {% endifchanged %}
       <div class="row">
         <div class="col-3">
           <img class="img-fluid img-thumbnail cart-img" src="{{product.image_src}}" alt="{{product.title}}" style="width:100px">
         </div>
-        <div class="col-6">
+        <div class="col-5">
           <p class="font-weight-bold">{{product.title}}</p>
           <p class="text-muted">{{product.category}}</p>
-          <p>Size: {{product.}}</p>
+          <p>Size: <b><u>{{product.size}}</u></b></p>
         </div>
-        <div class="col-3">
+        <div class="col-4">
           <p class="font-weight-bold">Quantity</p>
+
+          <form>
+            <div class="form-group">
+                <select class="form-control text-center" id="exampleFormControlSelect1">
+                  <option class="text-center">1</option>
+                  <option>2</option>
+                  <option>3</option>
+                  <option>4</option>
+                  <option>5</option>
+                </select>
+              </div>
+          </form>
+
+          <form action="/remove_from_cart" method="get">
+            <input type="hidden" name="product_id" value="{{product.id}}">
+            <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+          </form>
         </div>
       </div>
       <hr>

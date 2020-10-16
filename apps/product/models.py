@@ -200,7 +200,6 @@ class Product(models.Model):
 		)
 
 	image_src = models.URLField(null=True)
-	size = models.ForeignKey(Size, blank=True, null=True, on_delete=models.SET_NULL)
 	size_guide = models.ForeignKey(SizeGuide, null=True, blank=True, on_delete=models.SET_NULL)
 	attributes = models.ManyToManyField(
 			'product.Attribute',
@@ -268,9 +267,6 @@ class Product(models.Model):
 		if self.parent and not self.parent.is_parent:
 			raise ValidationError(
 				("You can only assign variant products to parent products."))
-		if self.category:
-			raise ValidationError(
-				("A variant product can't have a product class."))
 		if self.slug:
 			raise ValidationError(
 				("A variant product can't have a url slug."))
@@ -327,6 +323,16 @@ class Product(models.Model):
 	def is_variant(self):
 		return self.product_type == self.VARIANT
 
+	@property
+	def size(self):
+		try:
+			return self.attribute_values.filter(attribute__name="size").first().value_option
+
+		except AttributeError:
+
+			pass
+	
+
 
 	def __str__(self):
 		return self.title
@@ -342,10 +348,12 @@ class Product(models.Model):
 			self.image_src = self.parent.image_src
 		# if self.is_parent:
 
-		if self.is_variant or self.is_standalone:
+		if self.is_parent or self.is_standalone:
 			self.slug = slugify(self.title)
 			
 		super(Product, self).save(*args, **kwargs)
+
+
 
 
 class AttributeValue(models.Model):

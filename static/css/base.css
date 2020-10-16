@@ -125,4 +125,21 @@ a:hover {
   letter-spacing: 3px;
 }
 
+.cart-items {
+    font-size: 10px;
+    background: red;
+    color: #fff;
+    padding: 5px;
+    vertical-align: top;
+    margin-left: -10px;
+    margin-bottom: -10px;
+    border-radius: 10px;
+    padding-left: 7px;
+    padding-right: 7px;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+    font-weight: bold;
+    opacity: 85%;
+}
 
