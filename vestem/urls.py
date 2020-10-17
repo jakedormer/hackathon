@@ -37,13 +37,14 @@ urlpatterns = [
     path('oauth/authenticate', views_oauth.authenticate, name='oauth/authenticate'),
     path('<slug:slug>/c/<int:code>', views_product.category, name='category'),
     re_path(r'.+/p/(?P<id>[0-9]+)', views_product.product, name='product'),
-    path('dashboard', views_dashboard.dashboard, name='dashboard'),
-    path('dashboard/products', views_dashboard.dashboard_products, name='dashboard_products'),
 
     # Cart
     path('add_to_cart', views_cart.add_to_cart, name='add_to_cart'),
     path('remove_from_cart', views_cart.remove_from_cart, name='remove_from_cart'),
-    
+
+    #Dashboard
+    path('dashboard', views_dashboard.dashboard, name='dashboard'),
+    path('dashboard/products', views_dashboard.dashboard_products, name='dashboard_products'),
     path('dashboard/settings', views_dashboard.dashboard_settings, name='dashboard_settings'),
     path('dashboard/sizes', views_dashboard.dashboard_sizes, name='dashboard_sizes'),
     path('dashboard/sizes/delete/<int:code>', views_dashboard.dashboard_sizes_delete, name='dashboard_sizes_delete'),
@@ -51,6 +52,7 @@ urlpatterns = [
 
     # Ajax
     path('ajax/apply_size_guide', views_dashboard.apply_size_guide, name='apply_size_guide'),
+    path('ajax/add_to_cart', views_cart.add_to_cart, name='add_to_cart'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

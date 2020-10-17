@@ -25,11 +25,11 @@
    <div class="col-lg-5 col-md-4 col-sm-12 p-0">
       <h3 class="font-weight-bold">{{product|title}}</h3>
       <hr>
-      <h4 class="mb-3"><b>£49.00</b></h4>
+      <h4 class="mb-3"><b>£{{product.children.first.stockrecords.first.price_inc_tax}}</b></h4>
 
 
       <!-- Form  -->
-      <form class="mt-3" method="get" action="/add_to_cart">
+      <form class="mt-3" method="post" action="/ajax/add_to_cart" id="add_to_cart">
          {% csrf_token %}
          <div class="col p-0">
          <p class="font-weight-bold">Size</p>
@@ -37,9 +37,10 @@
          <div class="mb-4">
             {% for size in sizes %}
             <div class="d-inline mr-1 swatch">
+               <!-- <span>{{size.product.stockrecords.first.num_in_stock}}</span> -->
                <input class="form-check-input d-none" type="radio" name="product_id" id="{{size.value_option}}" value="{{size.product.id}}"
-               {% if size.product.stockrecords.first.num_in_stock != 0  %} {% ifchanged %} checked {% endifchanged %} {% endif %}
-               {% if size.product.stockrecords.first.num_in_stock == 0 %} disabled {% endif %}
+               {% if size.product.stockrecords.first.num_in_stock == 0 or size.product.stockrecords.first.num_in_stock == None  %} {% else %} {% ifchanged %} checked {% endifchanged %} {% endif %}
+               {% if size.product.stockrecords.first.num_in_stock == 0 or size.product.stockrecords.first.num_in_stock == None %} disabled {% endif %}
                required>
                <label class="form-check-label border text-center p-2" for="{{size.value_option}}">
                {{size.value_option}}
@@ -50,14 +51,20 @@
        </div>
 
          <div class="col-lg-6 col-sm-12 p-0">
-         <p class="font-weight-bold">Quantity</p>
-            <input type="number" class="form-control text-center w-100" min=1 name="quantity" value=1>
+<!--          <p class="font-weight-bold">Quantity</p>
+            <input type="number" class="form-control text-center w-100" min=1 name="quantity" value=1> -->
 
          <div class="mb-4">
-            <button type="submit" class="btn btn-dark w-100 mt-3"><i class="fas fa-shopping-bag mr-2"></i><b>Add to cart</b></button>
+            <button type="submit" class="btn btn-dark w-100 mt-3" id="add_to_cart_button"><i class="fas fa-shopping-bag mr-2"></i><b>Add to cart</b></button>
          </div>
           </div>
       </form>
+
+      <!-- Stock Alert -->
+
+      <div class="alert alert-danger d-none" id="max_quantity" role="alert">
+        Sorry! We can't reserve any additional items for {{product.title|title}}.
+      </div>
 
 
       <!-- Details -->
@@ -97,4 +104,10 @@
       <hr>
    </div>
 </div>
+{% endblock %}
+
+{% block js %}
+
+<script type="text/javascript" src='{% static "cart/js/add_to_cart.js" %}'></script>
+
 {% endblock %}

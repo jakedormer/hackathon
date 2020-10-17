@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, JsonResponse
 from apps.product.models import Product
 import json
 
 def cart(request):
+
+	# Init cart
 
 	if 'cart' not in request.session:
 
@@ -17,7 +20,8 @@ def cart(request):
 
 		cart_products.append(product['id'])
 
-	products = Product.objects.filter(id__in=cart_products).order_by('vendor__name')
+	products = Product.objects.filter(id__in=cart_products).order_by('vendor__name', 'category__name')
+	print(products)
 
 	context = {
 		'products': products,
@@ -32,7 +36,14 @@ def cart(request):
 
 def add_to_cart(request):
 
-	# request.session.flush()
+	# Init Cart
+	if 'cart' not in request.session:
+
+		request.session['cart'] = {}
+		request.session['cart'].setdefault('products', [])
+		request.session['cart']['items_in_cart'] = 0
+
+	data = {}
 
 	for key, value in request.session.items():
 	    print('{} => {}'.format(key, value))
@@ -43,40 +54,69 @@ def add_to_cart(request):
 		request.session['cart'].setdefault('products', [])
 
 
-	if request.GET:
+	if request.method == "POST":
 
-		params = request.GET.dict()
+		params = request.POST.dict()
 		product_id = params['product_id']
-		quantity = params['quantity']
-		print(product_id)
-		
+		# quantity = params['quantity']
+		quantity = 1
+
+		try:
+			num_in_stock = Product.objects.get(id=product_id).stockrecords.first().num_in_stock
+		except ObjectDoesNotExist:
+			num_in_stock = 0
+
 		exists = False
 
-		# Loop through cart to check object not already in cart
+		# Loop through cart to check object not already in cart.
 		for product in request.session['cart']['products']:
 
 			if product['id'] == product_id:
 
 				exists = True
-				
-				product['quantity'] = int(product['quantity']) + int(quantity)
-				request.session.modified = True
+
+				# Check cart quantity is less than stock levels.
+
+				if int(product['quantity']) + int(quantity) <= num_in_stock:
+
+					product['quantity'] = int(product['quantity']) + int(quantity)
+					request.session.modified = True
+
+					data['add_to_cart'] = True
+
+
+				else:
+
+					data['add_to_cart'] = False
 
 				break
 
 		if not exists:
 
-		# Because sessions dont update sometimes	
+		# Because sessions dont update unless told to.
 
 			request.session['cart']['products'].append({'id': product_id, 'quantity': quantity})
 			request.session.modified = True
 
+			data['add_to_cart'] = True
+
+
 	for key, value in request.session.items():
 	    print('{} => {}'.format(key, value))
 
-	    request.session['cart']['items_in_cart'] = len(request.session['cart']['products'])
+	# Update the number of items in cart
+	    
+	data['items_in_cart'] = 0
+	request.session['cart']['items_in_cart'] = 0
 
-	return JsonResponse(data={})
+	for product in request.session['cart']['products']:
+
+		data['items_in_cart'] = data['items_in_cart'] + int(product['quantity'])
+		request.session['cart']['items_in_cart'] = int(request.session['cart']['items_in_cart']) + int(product['quantity'])
+		request.session.modified = True
+
+
+	return JsonResponse(data=data)
 
 def remove_from_cart(request):
 
@@ -95,18 +135,17 @@ def remove_from_cart(request):
 				print(product)
 				del request.session['cart']['products'][i]
 
-				
+				request.session['cart']['items_in_cart'] = int(request.session['cart']['items_in_cart']) - int(product['quantity']) 
 
 				request.session.modified = True
 
 				print(request.session['cart']['products'])
 
 				break
-				
-		# Update number of items in cart		
-		request.session['cart']['items_in_cart'] = len(request.session['cart']['products'])
 
-	return JsonResponse(data={})
+	# return JsonResponse(data={})
+
+	return redirect('/cart')
 
 
 

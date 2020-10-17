@@ -125,7 +125,7 @@ a:hover {
   letter-spacing: 3px;
 }
 
-.cart-items {
+#cart-items {
     font-size: 10px;
     background: red;
     color: #fff;
