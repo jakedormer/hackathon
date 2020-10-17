@@ -10,8 +10,12 @@ body {
    width: 100%;
 }*/
 
+:root {
+  --vestem-color: #efebe6;
+}
+
 body {
-    min-height: 75rem;
+    min-height: 70rem;
     padding-top: 3.5rem;
     height: 100%
 }
@@ -37,13 +41,14 @@ body {
     height: 100%;
 }
 
-.fa:hover, .fas:hover {
+/*.fa:hover, .fas:hover {
     color: #23272b;
 
-}
+}*/
 
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'mont-light', Fallback, sans-serif;
+    /*letter-spacing: 1px;*/
 }
 
 .breadcrumb {
@@ -69,6 +74,10 @@ a:hover {
   width: 33%;
 }
 
+.w-95 {
+  width: 95%;
+}
+
 .op-9 {
   opacity: 0.95;
 }
@@ -80,3 +89,57 @@ a:hover {
 .help {
   cursor: help;
 }
+
+
+.bg-vestem {
+  background-color: var(--vestem-color);
+}
+
+.text-vestem {
+  color: var(--vestem-color);
+}
+
+.btn-vestem {
+    color: #fff;
+    background-color: var(--vestem-color);
+    border-color: var(--vestem-color);
+}
+
+.btn-vestem:hover {
+    color: #fff;
+    background-color: #efebe1;
+    border-color: #efebe1;
+}
+
+@font-face {
+    font-family: mont-heavy;
+    src: url("../fonts/Mont-ExtraLightDEMO.otf") format("opentype");
+}
+
+@font-face {
+    font-family: mont-light;
+    src: url("../fonts/Mont-ExtraLightDEMO.otf") format("opentype");
+}
+
+.text-sp3 {
+  letter-spacing: 3px;
+}
+
+#cart-items {
+    font-size: 9px;
+    background: red;
+    color: #fff;
+    padding: 5px;
+    vertical-align: top;
+    margin-left: -10px;
+    margin-bottom: -10px;
+    border-radius: 10px;
+    /*padding-left: 7px;*/
+    padding-right: 7px;
+    -webkit-border-radius: 9px;
+    -moz-border-radius: 9px;
+    border-radius: 9px;
+    font-weight: bold;
+    opacity: 85%;
+}
+

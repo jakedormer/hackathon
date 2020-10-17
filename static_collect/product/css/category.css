@@ -22,6 +22,18 @@
 	}
 }
 
+.img-zoom {
+  overflow:hidden;
+}
+.img-zoom img{ 
+    width: 100%; 
+    transition: 0.3s all ease-in-out; 
+} 
+
+.img-zoom:hover img{ 
+  transform: scale(1.6); 
+  } 
+
 /*// Small devices (landscape phones, 576px and up)
 @media (min-width: 576px) { ... }
 

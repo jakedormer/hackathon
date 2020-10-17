@@ -14,7 +14,7 @@ from .querys import *
 from apps.product.models import Product, Category, Size, SizeGuide, SizeGuideItem, Attribute
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.http import JsonResponse, HttpResponse
-from django.db.models import Count
+from django.db.models import Count, Q
 import re
 
 
@@ -179,7 +179,7 @@ def apply_size_guide(request):
 def dashboard_products(request):
 
 	vendor = request.user.profile.vendor
-	products = Product.objects.filter(vendor=vendor).order_by('title',)
+	products = Product.objects.filter(Q(vendor=vendor) & (Q(product_type="parent") | Q(product_type="standalone"))).order_by('title')
 	size_guides = SizeGuide.objects.filter(vendor=vendor).order_by('name')
 
 	context = {

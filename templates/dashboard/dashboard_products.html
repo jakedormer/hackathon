@@ -6,87 +6,94 @@
 <div class="row mt-3">
 	<div class="col-12">
 
-	<table class="table table-hover table-responsive-lg">
+	<table class="table table-hover table-striped table-responsive-lg">
 	  <thead class="bg-vestem">
-	    <tr>
-	      <th scope="col">Image</th>
-	      <th scope="col">Type</th>
-	      <th style="width:50%" scope="col">Title</th>
-	      <th scope="col">Size</th>
-	      <th scope="col">Vestem Category</th>
-	      <th score="col">Stock</th>
-	      <th score="col">Price</th>
-	      <th score="col">Size Guide</th>
-	    </tr>
+		<tr>
+		  <th scope="col"></th>		
+		  <th scope="col">Image</th>
+		  <th scope="col">Type</th>
+		  <th style="" scope="col">Title</th>
+		  <th scope="col">Variants & Stock</th>
+		  <th scope="col">Vestem Category</th>
+		  <th score="col">Price</th>
+		  <th score="col">Size Guide</th>
+		</tr>
 	  </thead>
 	  <tbody>
-	  	{% for product in products %}
-	  	{% if product.product_type == "variant" %}
-	    <tr class="bg-white">
-	    {% else %}
-	     <tr class="bg-light">
-	    {% endif %}
-	      <td><img class="card-img-top img-thumbnail img-fluid" src="{{product.image_src}}" alt="Card image cap" style="width: 75px; height: 75px; object-fit: cover;" onerror="this.src='{{ MEDIA_URL }}images/size_guides/no-image.png'"></td>
-	      <td>{{product.product_type|title}}</td>
-	      <td><a href="{{product.onlineStorePreviewUrl}}" target="_blank">{{product.title|title}}<i class="fas fa-external-link-alt ml-2 fa-xs"></i></a><br>
-	      	<small class="text-muted">Last Synced: {{product.date_modified}}</small></td>
+		{% for product in products %}
+		<tr class="">
 
-	      <!-- Sizes -->
-<!-- 	      {% if product.attribute_values.all.count == 0  %}
-	      <td></td>
-	      {% else %}
-	      {% for attribute in product.attribute_values.all %}
-	      {% if attribute.attribute.name == "size" %}
-	      <td class="font-weight-bold">{{attribute.value_text|default_if_none:""}}</td>
-	      {% endif %}
-	      {% endfor %}
-	      {% endif %} -->
+		  <!-- Num -->
+		  <td>{{forloop.counter}}</td>
 
-	      <!-- Sizes -->
-	      <td>{{product.size|default_if_none:""}}</td>
+		  <!-- Image -->
+		  <td><img class="card-img-top img-thumbnail img-fluid" src="{{product.image_src}}" alt="Card image cap" style="width: 75px; height: 75px; object-fit: cover;" onerror="this.src='{{ MEDIA_URL }}images/size_guides/no-image.png'"></td>
+
+		  <!-- Product Type-->
+		  <td>{{product.product_type|title}}</td>
+
+		  <!-- Title -->
+		  <td><a href="{{product.onlineStorePreviewUrl}}" target="_blank">{{product.title|title}}<i class="fas fa-external-link-alt ml-2 fa-xs"></i></a><br>
+			<small class="text-muted">Last Synced: {{product.date_modified}}</small></td>
+
+		  <!-- Variants & Stock -->
+		  {% if product.children %}
+		  <td>
+		  {% for variant in product.children.all %}
+		  {% for attribute in variant.attribute_values.all %}
+		  {% if attribute.attribute.name == "size" %}
+
+		  {{attribute.value_option}} - 
+		  {{variant.stockrecords.first.num_in_stock}}
+		  </br>
+
+		  {% endif %}
+		  {% endfor %}
+		  {% endfor %}
+		  </td>
+		  {% endif %}
 
 
-	      <!-- Category -->
-	      <td>{{product.category|default_if_none:""}}{{product.parent.category|default_if_none:""}}</td>
-	      
+		  <!-- Category -->
+		  <td>{{product.category|default_if_none:""}}{{product.parent.category|default_if_none:""}}</td>
+		  
 
-	      <!-- Stock -->
-	      {% with product.stockrecords.all|first as stock %}
-	      {% if stock.num_in_stock == 0 or not stock.num_in_stock %}
-	      <td class="text-danger">{{stock.num_in_stock}}</td>
-	      <td></td>
-	      {% else %}
-	      <td class="text-success">{{stock.num_in_stock}}</td>
-	      <td class="text-primary font-weight-bold">£{{stock.price_inc_tax}}</td>
-	      {% endif %}
-	      {% endwith %}
+		  <!-- Stock -->
+<!-- 	      {% with product.stockrecords.all|first as stock %}
+		  {% if stock.num_in_stock == 0 or not stock.num_in_stock %}
+		  <td class="text-danger">{{stock.num_in_stock}}</td>
+		  <td></td>
+		  {% else %}
+		  <td class="text-success">{{stock.num_in_stock}}</td>
+		  <td class="text-primary font-weight-bold">£{{stock.price_inc_tax}}</td>
+		  {% endif %}
+		  {% endwith %} -->
 
-	      <!-- Size Guides -->
-	      {% if product.product_type == "standalone" or product.product_type == "parent" %}
-	      <td>
-	      	<form method="post" action="/ajax/apply_size_guide" id="size_guide_apply_form" class="size_guide_apply_form">
-	      		{% csrf_token %}
-	      	  <div class="form-group">
-	      	    <select name="size_guide_name" class="form-control" id="size_guide_apply">
-	      	    	<option></option>
-	      	    	{% if product.size_guide %}
-	      	    	<option class="bg-vestem" selected="selected">{{product.size_guide.name}}</option>
-	      	    	{% endif %}
-	      	    	{% for size_guide in size_guides %}
-	      	    	{% if size_guide.name == product.size_guide.name %}
-	      	      	
-	      	      	{% else %}
-	      	      	<option class="">{{size_guide.name}}</option>
-	      	      	{% endif %}
-	      	      {% endfor %}
-	      	    </select>
-	      	    <input type="hidden" name="product" value="{{product.id}}">
-	      	  </div>
-	      	</form>
-	      </td>
-	      {% else %}
-	      <td class="text-muted font-italic">Variants will inherit from the parent</td>
-	      {% endif %}
+		  <!-- Price -->
+		  <td></td>
+
+		  <!-- Size Guides -->
+		  <td>
+			<form method="post" action="/ajax/apply_size_guide" id="size_guide_apply_form" class="size_guide_apply_form">
+				{% csrf_token %}
+			  <div class="form-group">
+				<select name="size_guide_name" class="form-control" id="size_guide_apply">
+					<option></option>
+					{% if product.size_guide %}
+					<option class="bg-vestem" selected="selected">{{product.size_guide.name}}</option>
+					{% endif %}
+					{% for size_guide in size_guides %}
+					{% if size_guide.name == product.size_guide.name %}
+					
+					{% else %}
+					<option class="">{{size_guide.name}}</option>
+					{% endif %}
+				  {% endfor %}
+				</select>
+				<input type="hidden" name="product" value="{{product.id}}">
+			  </div>
+			</form>
+		  </td>
 	   
 	   {% endfor %}
 	  </tbody>
