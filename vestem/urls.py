@@ -1,28 +1,21 @@
-"""vestem URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from views import base
 from apps.account import views as views_account
 from apps.cart import views as views_cart
 from apps.product import views as views_product
 from apps.dashboard import views as views_dashboard
 from apps.oauth import views as views_oauth
+from apps.rest_api import views as views_rest_api
 from django.conf import settings
 from django.conf.urls.static import static
+from rest_framework import routers
+from rest_framework.authtoken.views import obtain_auth_token
+
+# router = routers.DefaultRouter()
+# Users will be the name of the url
+
+# router.register(r'users', views_rest_api.UserViewSet)
 
 urlpatterns = [
     path('admin', admin.site.urls),
@@ -42,13 +35,18 @@ urlpatterns = [
     path('add_to_cart', views_cart.add_to_cart, name='add_to_cart'),
     path('remove_from_cart', views_cart.remove_from_cart, name='remove_from_cart'),
 
-    #Dashboard
+    # Dashboard
     path('dashboard', views_dashboard.dashboard, name='dashboard'),
     path('dashboard/products', views_dashboard.dashboard_products, name='dashboard_products'),
     path('dashboard/settings', views_dashboard.dashboard_settings, name='dashboard_settings'),
     path('dashboard/sizes', views_dashboard.dashboard_sizes, name='dashboard_sizes'),
     path('dashboard/sizes/delete/<int:code>', views_dashboard.dashboard_sizes_delete, name='dashboard_sizes_delete'),
     path('dashboard/sizes/create', views_dashboard.dashboard_sizes_create, name='dashboard_sizes'),
+
+    # Rest_API
+    # path('', include(router.urls)),
+    # path('hello/', views_rest_api.HelloView.as_view(), name='hello'),
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 
     # Ajax
     path('ajax/apply_size_guide', views_dashboard.apply_size_guide, name='apply_size_guide'),

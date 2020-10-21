@@ -20,7 +20,11 @@
     <title>Hello, world!</title>
   </head>
   <body class="h-100 d-flex flex-column">
+
+    <!-- Nav -->
+    {% block nav %}
     {% include "nav.html" %}
+    {% endblock %}
 
     <div class="container">
     {% block body %}

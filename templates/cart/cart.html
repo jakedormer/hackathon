@@ -8,6 +8,10 @@
 
 {% block body %}
 
+{% block nav %}
+{% include "nav.html" %}
+{% endblock %}
+
   <!--Grid row-->
   <div class="row">
     {% if request.session.cart.items_in_cart == 0 %}

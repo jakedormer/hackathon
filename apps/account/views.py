@@ -2,12 +2,12 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
-# Create your views here.
-@xframe_options_exempt
 def login_view(request):
+
 
 	context = {}
 	template = 'account/login.html'
@@ -26,7 +26,8 @@ def login_view(request):
 
 				login(request, auth_user)
 
-				return redirect('/dashboard/products')
+				response = render(request, 'dashboard/dashboard_products.html')
+				return response
 
 			else:
 
@@ -42,8 +43,8 @@ def login_view(request):
 
 		else:
 
-			return render(request, template, context)
-
+			response = render(request, template, context)
+			return response
 
 
 @login_required()

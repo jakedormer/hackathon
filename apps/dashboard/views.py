@@ -13,6 +13,7 @@ from json import JSONDecodeError
 from .querys import *
 from apps.product.models import Product, Category, Size, SizeGuide, SizeGuideItem, Attribute
 from django.views.decorators.clickjacking import xframe_options_exempt
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
 from django.db.models import Count, Q
 import re
@@ -26,6 +27,7 @@ def dashboard(request):
 	template = 'dashboard/dashboard.html'
 	return render(request, template, context=locals())
 
+
 @login_required()
 def dashboard_sizes(request):
 
@@ -37,6 +39,7 @@ def dashboard_sizes(request):
 
 	template = 'dashboard/dashboard_sizes.html'
 	return render(request, template, context)
+
 
 @login_required()
 def dashboard_sizes_create(request):
@@ -130,6 +133,7 @@ def dashboard_sizes_create(request):
 
 	return render(request, template, context)
 
+@login_required
 def dashboard_sizes_delete(request, code):
 
 	if request.method == 'POST' and request.POST['form_name'] == 'delete_size_guide':
@@ -146,6 +150,7 @@ def dashboard_sizes_delete(request, code):
 
 	return redirect('/dashboard/sizes')
 
+@login_required
 def apply_size_guide(request):
 	if request.method == "POST":
 
@@ -218,6 +223,7 @@ def api_connect(platform, vendor_name, access_token, query):
 		print(r.content)
 		return [r.status_code, " - Could not connect to shopify, please check your API details are correct. Categories will appear below upon a successful connection"]
 
+@xframe_options_exempt
 @login_required
 def dashboard_settings(request):
 
