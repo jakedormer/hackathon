@@ -5,20 +5,37 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import UserSerializer
+from rest_framework.views import APIView
+from rest_framework.decorators import api_view
+from apps.dashboard.models import APICredential
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
 
 
-# class UserViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows users to be viewed or edited.
-#     """
-#     queryset = User.objects.all().order_by('-date_joined')
-#     serializer_class = UserSerializer
-#     permission_classes = [permissions.IsAuthenticated]
+class CurrentUser(APIView):
+
+	authentication_classes = [TokenAuthentication,]
+
+	def get(self, request):
+		user = request.user
+		serializer = UserSerializer(user)
+		return Response(serializer.data)
 
 
-class HelloView(APIView):
-    permission_classes = (IsAuthenticated,)             # <-- And here
+@api_view(['POST'])
+def update_shopify_token(request):
 
-    def get(self, request):
-        content = {'message': 'Hello, World!'}
-        return Response(content)
+	user = request.user
+	vendor = user.vendor
+
+	obj, created = APICredential.objects.update_or_create(
+		platform__name='shopify',
+		vendor=vendor,
+		defaults = {
+			'access_token': '1',
+		}
+
+	)
+
+	return

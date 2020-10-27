@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 class Platform(models.Model):
 
@@ -31,13 +32,20 @@ class Profile(models.Model):
 	email_pref = models.BooleanField(default=False)
 	sms_pref = models.BooleanField(default=False)
 
+	# Create a profile object when a user is created and create api_token
 	@receiver(post_save, sender=User)
 	def create_user_profile(sender, instance, created, **kwargs):
 		if created:
 			Profile.objects.create(user=instance)
 			instance.email = instance.username
+
+			# Create token is user is a vendor
+			if user.profile.is_vendor == True:
+				Token.objects.create(user=instance)
+				
 			instance.save()
 
+	# Set email to username
 	@receiver(post_save, sender=User)
 	def save_user_profile(sender, instance, **kwargs):
 		instance.email = instance.username

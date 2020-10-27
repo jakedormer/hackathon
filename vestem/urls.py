@@ -45,7 +45,8 @@ urlpatterns = [
 
     # Rest_API
     # path('', include(router.urls)),
-    # path('hello/', views_rest_api.HelloView.as_view(), name='hello'),
+    path('api/current_user/', views_rest_api.CurrentUser.as_view(), name='current_user'),
+    path('update_shopify_token/', views_rest_api.update_shopify_token, name='update_shopify_token'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 
     # Ajax
