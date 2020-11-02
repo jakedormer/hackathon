@@ -14,42 +14,37 @@
 
   <!--Grid row-->
   <div class="row">
-    {% if request.session.cart.items_in_cart == 0 %}
+    {% if not cart or cart.num_items == 0 %}
     <div class="col mt-5 text-center">
       <h1>Your cart is empty</h1>
       <i class="fas fa-4x fa-shopping-bag text-dark"></i>
       <p class="mt-4">Take a look around our shop!</p>
     </div>
     {% else %}
-    <h2 class="my-3 text-center w-100">Cart: {{request.session.cart.items_in_cart}} items</h2>
+    <h2 class="my-3 text-center w-100">Cart: {{cart.num_items}} items</h2>
     <div class="col-lg-8">
 
       <!-- Cart Item -->
-      {% for product in products %}
+      {% for line in cart.cartitem_set.all %}
       {% ifchanged %}
-      <h3 class="mt-3"><span class="text-muted h5">Sold By</span> <b>{{product.vendor.display_name}}</b></h3>
+      <h3 class="mt-3"><span class="text-muted h5">Sold By</span> <b>{{line.product.vendor}}</b></h3>
       <hr class="">
       {% endifchanged %}
       <div class="row">
         <div class="col-3">
           <a href="{% if product.parent %}{{product.parent.slug}}/p/{{product.parent.id}} {% else %} {{product.slug}}/p/{{product.id}} {% endif %}">
-          <img class="img-fluid img-thumbnail cart-img" src="{{product.image_src}}" alt="{{product.title}}" style="width:100px">
+          <img class="img-fluid img-thumbnail cart-img" src="{{line.product.image_src}}" alt="{{line.product.title}}" style="width:100px">
           </a>
         </div>
         <div class="col-5">
-          <p class="font-weight-bold">{{product.title|title}}</p>
-          <p>Size: <b><u>{{product.size}}</u></b></p>
-          <p>Price: £{{product.stockrecords.first.price_inc_tax}}</p>
-          <p>SubTotal: <b><u>£{{product.stockrecords.first.price_inc_tax|mul:2}}</u></b></p>
+          <p class="font-weight-bold">{{line.product}}</p>
+          <p>Size: <b><u>{{line.product.size}}</u></b></p>
+          <p>Price: £{{line.product.stockrecords.first.price_inc_tax}}</p>
+          <p>SubTotal: <b><u>£{{line.product.stockrecords.first.price_inc_tax|mul:line.quantity}}</u></b></p>
         </div>
         <div class="col-4 text-center">
           <p class="font-weight-bold">Quantity</p>
-          {% for item in request.session.cart.products %}
-          {% if item.id|add:"0" == product.id %}
-          <p class="font-weight-bold">{{item.quantity}}</p>
-          {% endif %}
-          {% endfor %}
-
+          <p class="font-weight-bold">{{line.quantity}}</p>
 <!--           <form>
             <div class="form-group">
                 <select class="form-control text-center" id="update" disabled>

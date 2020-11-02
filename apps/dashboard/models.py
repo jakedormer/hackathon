@@ -21,6 +21,7 @@ class Vendor(models.Model):
 	name = models.CharField(max_length=30, unique=True)
 	display_name = models.CharField(max_length=30)
 	platform = models.ManyToManyField(Platform, through="APICredential")
+	enabled = models.BooleanField(default=False)
 
 	def __str__(self):
 		return self.name.title()
