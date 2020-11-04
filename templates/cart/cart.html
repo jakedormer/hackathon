@@ -32,7 +32,7 @@
       {% endifchanged %}
       <div class="row">
         <div class="col-3">
-          <a href="{% if product.parent %}{{product.parent.slug}}/p/{{product.parent.id}} {% else %} {{product.slug}}/p/{{product.id}} {% endif %}">
+          <a href="{{line.product.slug}}/p/{{line.product.parent.id}}">
           <img class="img-fluid img-thumbnail cart-img" src="{{line.product.image_src}}" alt="{{line.product.title}}" style="width:100px">
           </a>
         </div>
@@ -40,7 +40,7 @@
           <p class="font-weight-bold">{{line.product}}</p>
           <p>Size: <b><u>{{line.product.size}}</u></b></p>
           <p>Price: £{{line.product.stockrecords.first.price_inc_tax}}</p>
-          <p>SubTotal: <b><u>£{{line.product.stockrecords.first.price_inc_tax|mul:line.quantity}}</u></b></p>
+          <p>SubTotal: <b><u>£{{line.sub_total}}</u></b></p>
         </div>
         <div class="col-4 text-center">
           <p class="font-weight-bold">Quantity</p>
@@ -58,7 +58,7 @@
           </form> -->
 
           <form action="/remove_from_cart" method="get">
-            <input type="hidden" name="product_id" value="{{product.id}}">
+            <input type="hidden" name="product_id" value="{{line.product.id}}">
             <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
           </form>
         </div>
@@ -96,7 +96,7 @@
     <button type="button" class="btn btn-success w-95"><i class="fas fa-lock mr-2"></i><b>Checkout</b></button>
     </div>
 
-    <div class="text-center my-4 text-dark">
+    <div class="text-center py-3 text-dark">
       <i class="fab fa-cc-visa fa-2x mr-2"></i>
       <i class="fab fa-cc-mastercard fa-2x mr-2"></i>
       <i class="fab fa-stripe fa-2x"></i>

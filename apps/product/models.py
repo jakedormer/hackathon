@@ -267,9 +267,7 @@ class Product(models.Model):
 		if self.parent and not self.parent.is_parent:
 			raise ValidationError(
 				("You can only assign variant products to parent products."))
-		if self.slug:
-			raise ValidationError(
-				("A variant product can't have a url slug."))
+
 		if self.parent and self.vendor != self.parent.vendor:
 			raise ValidationError(
 				("A variant product must have the same vendor as its parent product."))
@@ -339,7 +337,7 @@ class Product(models.Model):
 
 	def save(self, *args, **kwargs):
 		if self.is_variant:
-			self.slug = None
+			self.slug = self.parent.slug
 			# self.title = self.parent.title + " - " + self.attribute_values.filter(attribute__name="size").first().value_text
 			self.title = self.parent.title
 			self.category = self.parent.category

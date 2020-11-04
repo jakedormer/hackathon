@@ -14,7 +14,7 @@ class Cart(models.Model):
 		on_delete=models.CASCADE,
 		)
 
-	session_key = models.CharField(max_length=100)
+	session_key = models.CharField(max_length=100, null=True, blank=True)
 
 	OPEN, MERGED, SAVED, FROZEN, SUBMITTED = (
 		"Open", "Merged", "Saved", "Frozen", "Submitted")
@@ -57,6 +57,10 @@ class Cart(models.Model):
 			   'num_lines': self.num_lines
 			   }
 
+	def clean(self):
+
+		return
+
 class CartItem(models.Model):
 
 	cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
@@ -69,6 +73,11 @@ class CartItem(models.Model):
 
 	class Meta:
 		ordering = ['product__vendor']
+
+	@property
+	def sub_total(self):
+		"""Return sub total"""
+		return self.quantity * self.product.stockrecords.first().price_inc_tax
 
 	def clean(self):
 

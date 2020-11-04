@@ -15,6 +15,7 @@ static_collect/media/*
 development.py
 settings.py
 helpers.txt
+todo.txt
 
 # C extensions
 *.so

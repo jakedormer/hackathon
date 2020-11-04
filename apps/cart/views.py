@@ -8,21 +8,34 @@ import json
 #https://docs.djangoproject.com/en/3.0/ref/django-admin/#django-admin-clearsessions
 #Run as a cron job to clear up the backend
 
-def cart(request):
+def get_cart(request):
 
-	template = 'cart/cart.html'
 
 	if request.user.is_authenticated:
 
-		cart = Cart.objects.filter(owner=request.user, status="open").first()
-
+		user = request.user
 	else:
+		user = None
 
-		cart = Cart.objects.filter(status="open", session_key=request.COOKIES.get('sessionid')).first()
+	cart = Cart.objects.filter(status="open", session_key=request.COOKIES.get('session_key')).first()
 
 	context = {
 		'cart': cart
 	}
+
+	return context
+
+
+def get_random_alphanumeric_string(length):
+    letters_and_digits = string.ascii_letters + string.digits
+    result = ''.join((random.choice(letters_and_digits) for i in range(length)))
+    return result
+
+def cart(request):
+
+	template = 'cart/cart.html'
+
+	context = get_cart(request)
 
 	return render(request,template,context)
 
@@ -47,43 +60,65 @@ def add_to_cart(request):
 
 		if request.user.is_authenticated:
 
-			cart, created = Cart.objects.update_or_create(
-				owner=request.user,
-				status="open",
+			user = request.user
+		else:
+			user = None
+
+		cart, created = Cart.objects.update_or_create(
+			owner=user,
+			status="open",
+			session_key=request.COOKIES.get('session_key'),
+			defaults={
+				'owner': user,
+				'status': 'open',
+				'session_key': request.COOKIES.get('session_key')
+			}
+		)
+
+		# Calculate quantity for cart item
+		try:
+			cart_item = CartItem.objects.get(cart=cart, product=product)
+			current_quantity = cart_item.quantity
+		except ObjectDoesNotExist:
+			current_quantity=0
+
+		# Update or create the cart item
+		if current_quantity + 1 <= num_in_stock and num_in_stock != 0:
+
+			cartitem, created = CartItem.objects.update_or_create(
+				cart=cart,
+				product=Product.objects.get(id=params['product_id']),
 				defaults={
-					'owner': request.user,
-					'status': 'open',
-					'session_key': request.COOKIES.get('sessionid')
+					'quantity': 1 + current_quantity
 				}
 			)
 
-			# Calculate quantity for cart item
-			try:
-				cart_item = CartItem.objects.get(cart=cart, product=product)
-				current_quantity = cart_item.quantity
-			except ObjectDoesNotExist:
-				current_quantity=0
+			data['add_to_cart'] = True
+			data['items_in_cart'] = cart.num_items
 
-			# Update or create the cart item
-			if current_quantity + 1 <= num_in_stock:
-
-				cartitem, created = CartItem.objects.update_or_create(
-					cart=cart,
-					product=Product.objects.get(id=params['product_id']),
-					defaults={
-						'quantity': 1 + current_quantity
-					}
-				)
-
-				data['add_to_cart'] = True
-
-			return JsonResponse(data=data)
+		else:
+			data['add_to_cart'] = False
 
 
+		return JsonResponse(data=data)
 
 
+def remove_from_cart(request):
 
+	cart = get_cart(request)['cart']
 
+	if request.GET:
+
+		params = request.GET.dict()
+
+		cart_item = CartItem.objects.get(
+			cart=cart, 
+			product=Product.objects.get(id=params['product_id'])
+			)
+
+		cart_item.delete()
+
+	return redirect('/cart')
 
 
 # def cart(request):
@@ -200,34 +235,34 @@ def add_to_cart(request):
 
 # 	return JsonResponse(data=data)
 
-def remove_from_cart(request):
+# def remove_from_cart(request):
 
-	for key, value in request.session.items():
-		print('{} => {}'.format(key, value))
+# 	for key, value in request.session.items():
+# 		print('{} => {}'.format(key, value))
 
-	if request.GET:
+# 	if request.GET:
 
-		params = request.GET.dict()
-		product_id = params['product_id']
+# 		params = request.GET.dict()
+# 		product_id = params['product_id']
 
-		for i, product in enumerate(request.session['cart']['products']):
+# 		for i, product in enumerate(request.session['cart']['products']):
 
-			if product['id'] == product_id:
+# 			if product['id'] == product_id:
 
-				print(product)
-				del request.session['cart']['products'][i]
+# 				print(product)
+# 				del request.session['cart']['products'][i]
 
-				request.session['cart']['items_in_cart'] = int(request.session['cart']['items_in_cart']) - int(product['quantity']) 
+# 				request.session['cart']['items_in_cart'] = int(request.session['cart']['items_in_cart']) - int(product['quantity']) 
 
-				request.session.modified = True
+# 				request.session.modified = True
 
-				print(request.session['cart']['products'])
+# 				print(request.session['cart']['products'])
 
-				break
+# 				break
 
-	# return JsonResponse(data={})
+# 	# return JsonResponse(data={})
 
-	return redirect('/cart')
+# 	return redirect('/cart')
 
 
 
