@@ -57,7 +57,7 @@
               </div>
           </form> -->
 
-          <form action="/remove_from_cart" method="get">
+          <form action="/remove_from_cart" method="get" onsubmit="return confirm('Are you sure you want to remove {{line.product.title}} from your cart?');">
             <input type="hidden" name="product_id" value="{{line.product.id}}">
             <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
           </form>
@@ -70,28 +70,11 @@
   <div class="col-lg-4">
 
     <div class="bg-light">
-    <h5 class="my-3 pt-3 pl-3 font-weight-bold">Total</h5>
+    <h5 class="my-3 pt-3 pl-3">Total: <b>£{{cart.total}}</b></h5>
+    <hr>
+    <p class="pl-3">Shipping: <b>TBC</b></p>
     <hr>
 
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item bg-light d-flex justify-content-between font-weight-bold align-items-center border-0">
-        Sub Total
-        <span></span>
-      </li>
-      <li class="list-group-item bg-light d-flex justify-content-between align-items-center">
-        Shipping
-        <span></span>
-      </li>
-<!--       <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
-        <div>
-          <strong>The total amount of</strong>
-          <strong>
-            <p class="mb-0">(including VAT)</p>
-          </strong>
-        </div>
-        <span><strong>£XX.XX</strong></span>
-      </li> -->
-    </ul>
     <div class="text-center">
     <button type="button" class="btn btn-success w-95"><i class="fas fa-lock mr-2"></i><b>Checkout</b></button>
     </div>

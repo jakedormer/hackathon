@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 
 class Cart(models.Model):
 
-	owner = owner = models.ForeignKey(
+	owner = models.ForeignKey(
 		User,
 		null=True,
 		related_name='baskets',
@@ -32,6 +32,7 @@ class Cart(models.Model):
 	date_created = models.DateTimeField(auto_now_add=True)
 	date_merged = models.DateTimeField(null=True, blank=True)
 	date_submitted = models.DateTimeField(null=True, blank=True)
+	date_modified = models.DateTimeField(auto_now=True)
 
 	# ==========
 	# Properties
@@ -46,6 +47,11 @@ class Cart(models.Model):
 	def num_items(self):
 		"""Return number of items"""
 		return sum(line.quantity for line in self.cartitem_set.all())
+
+	@property
+	def total(self):
+		"""Return number of items"""
+		return sum(line.quantity * line.product.stockrecords.first().price_inc_tax for line in self.cartitem_set.all())
 
 
 	def __str__(self):

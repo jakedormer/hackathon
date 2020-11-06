@@ -329,6 +329,19 @@ class Product(models.Model):
 		except AttributeError:
 
 			pass
+
+	@property
+	def price(self):
+		if self.product_type == "parent":
+
+			price = self.children.first().stockrecords.first().price_inc_tax
+
+		elif self.product_type == "standalone":
+
+			price = self.stockrecords.first().price_inc_tax
+
+		return price
+
 	
 
 

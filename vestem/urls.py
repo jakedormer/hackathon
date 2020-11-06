@@ -23,9 +23,14 @@ urlpatterns = [
     path('about', base.about, name='about'),
     path('privacy', base.privacy, name='privacy'),
     path('cart', views_cart.cart, name='cart'),
+    
+    #Account
     path('login', views_account.login_view, name='login'),
+    path('login-vendor', views_account.login_vendor, name='login_vendor'),
     path('logout', views_account.logout_view, name='logout'),
     path('create-account', views_account.create_account, name='create_account'),
+
+    #Oauth
     path('oauth/install', views_oauth.install, name='oauth/install'),
     path('oauth/authenticate', views_oauth.authenticate, name='oauth/authenticate'),
     path('<slug:slug>/c/<int:code>', views_product.category, name='category'),

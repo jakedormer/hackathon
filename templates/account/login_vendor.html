@@ -1,0 +1,25 @@
+{% extends "account/base.html" %}
+{% load static %}
+
+
+
+{% block form %}
+<form class="form-signin" action="/login" method="post" target="_self">
+	{% csrf_token %}
+	<label for="inputUsername" class="sr-only">Username</label>
+	<input type="username" name="inputUsername" class="form-control mb-2" placeholder="Username" {% if username %} value={{username}} {% endif %} required autofocus>
+	<label for="inputPassword" class="sr-only">Password</label>
+	<input type="password" name="inputPassword" class="form-control" placeholder="Password" required>
+	<div class="checkbox mb-3 text-center">
+<!-- 		<label>
+			<input type="checkbox" value="remember-me"> Remember me
+		</label> -->
+	</div>
+	<button class="btn btn-lg btn-dark btn-block" type="submit" name="form_name" value="login">Sign in</button>
+	
+</form>
+<div class="text-center">
+	<img class="img-responsive mt-3" src="{{ MEDIA_URL }}images/logos/shopify.jpg" style="height:80px">
+</div>
+
+{% endblock %}

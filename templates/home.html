@@ -1,8 +1,10 @@
 {% extends "base.html" %}
+{% load tags %}
 {% load static %}
 {% block css %}
 <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
 <link rel="stylesheet" href='{% static "base_static/css/flickity.css" %}'>
+<link rel="stylesheet" href="{% static 'product/css/category.css' %}" crossorigin="anonymous">
 {% endblock %}
 
 {% block body %}
@@ -62,22 +64,22 @@
 
 <div class="carousel mt-3 mb-5" data-flickity='{ "freeScroll": true, "wrapAround": true }'>
   <div class="carousel-cell">
-    <img src="https://via.placeholder.com/200">
+    {% product_card "36020759560358" %}
   </div>
   <div class="carousel-cell">
-    <img src="https://via.placeholder.com/200">
+    {% product_card "36020759560358" %}
   </div>
   <div class="carousel-cell">
-    <img src="https://via.placeholder.com/200">
+    {% product_card "36020759560358" %}
   </div>
   <div class="carousel-cell">
-    <img src="https://via.placeholder.com/200">
+    {% product_card "36020759560358" %}
   </div>
   <div class="carousel-cell">
-    <img src="https://via.placeholder.com/200">
+    {% product_card "36020759560358" %}
   </div>
   <div class="carousel-cell">
-    <img src="https://via.placeholder.com/200">
+    {% product_card "36020759560358" %}
   </div>
 </div>
 

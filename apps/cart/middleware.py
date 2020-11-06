@@ -20,7 +20,8 @@ class CartMiddleware:
 
 		if request.user.is_authenticated:
 
-			print("hi %s", (request.user.username))
+			pass
+			# print("hi %s", (request.user.username))
 
 		else:
 

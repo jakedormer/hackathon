@@ -1,5 +1,10 @@
-from apps.product.models import Category
+from apps.product.models import Category, Product
 from apps.cart.models import Cart
+from django.template.loader import get_template
+from django import template
+
+register = template.Library()
+
 
 def categories(request):
     
@@ -25,3 +30,5 @@ def cart_count(request):
 	return {
 		'cart_count': cart_count
 	}
+
+

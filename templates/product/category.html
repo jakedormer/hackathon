@@ -36,7 +36,6 @@
   </div>
 </div>
 
-{{products}}
 <!-- Facets -->
 <div class="row bg-vestem shadow-sm">
   <form class="w-100" method="get" action="/{{category.name}}/c/{{category.id}}?{{request.GET.urlencode}}">
@@ -89,27 +88,13 @@
       </div>
     </a>
       <div class="p-2">
-        <a class="text-dark font-weight-bold" href="/{{product.slug}}/p/{{product.id}}"><small class="p-1 text-center">{{product.title|title}}</small></a>
-        <hr>
-        <!-- <button class="btn btn-light">View Product</button> -->
-<!--         <div class="row">
-          <div class="col-12 text-center">
-            <small class="p-1 font-weight-bold text-dark">£59</small>
-          </div>
-        </div> -->
-
-        <!-- Sizes and stock levels -->
-
-<!--         <div class="row">
-          {% for variant in product.children.all %}
-          <div class="col text-center">
-            <small class="p-1 font-weight-bold text-dark">{{variant.size}}</small>
-          </div>
-          {% endfor %}
-        </div> -->
+        <a class="text-dark font-weight-bold " href="/{{product.slug}}/p/{{product.id}}"><small class="p-1 text-center">{{product.title|title}}</small></a>
+      </div>
+      <div class="price text-center px-2 font-weight-bold text-muted">
+        £{{product.price}}
       </div>
       <div class="bg-light card-text text-center p-1">
-        <small class="text-muted">{{product.vendor.display_name}}</small>
+        <small class="text-muted"><b>{{product.vendor.display_name}}</b></small>
       </div>
     </div>
   </div>

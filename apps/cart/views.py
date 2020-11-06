@@ -10,12 +10,7 @@ import json
 
 def get_cart(request):
 
-
-	if request.user.is_authenticated:
-
-		user = request.user
-	else:
-		user = None
+	user = request.user if request.user.is_authenticated else None
 
 	cart = Cart.objects.filter(status="open", session_key=request.COOKIES.get('session_key')).first()
 
