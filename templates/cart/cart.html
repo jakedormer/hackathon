@@ -1,6 +1,5 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 {% load static %}
-{% load mathfilters %}
 
 {% block css %}
 <link rel="stylesheet" href="{% static 'cart/css/cart.css' %}" crossorigin="anonymous">
@@ -9,7 +8,7 @@
 {% block body %}
 
 {% block nav %}
-{% include "nav.html" %}
+{% include "base/nav.html" %}
 {% endblock %}
 
   <!--Grid row-->

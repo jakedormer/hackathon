@@ -1,0 +1,54 @@
+.main-carousel {
+  background: #fff;
+}
+
+/*Bootstrap breakpoint for carousels*/
+
+/* XS */
+.carousel-cell {
+  width: 100%;
+  height: ;
+  margin-right: 10px;
+  border-radius: 5px;
+  counter-increment: carousel-cell;
+  } 
+
+@media (min-width: 576px) { 
+.carousel-cell {
+  width: 50%;
+  height: ;
+  margin-right: 10px;
+  border-radius: 5px;
+  counter-increment: carousel-cell;
+  } 
+}
+
+@media (min-width: 768px) { 
+.carousel-cell {
+  width: 33%;
+  height: ;
+  margin-right: 10px;
+  border-radius: 5px;
+  counter-increment: carousel-cell;
+  } 
+}
+
+@media (min-width: 992px) { 
+.carousel-cell {
+  width: 25%;
+  height: ;
+  margin-right: 10px;
+  border-radius: 5px;
+  counter-increment: carousel-cell;
+  } 
+}
+
+
+
+
+
+.carousel-cell:before {
+  display: block;
+  text-align: center;
+  color: white;
+}

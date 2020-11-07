@@ -1,7 +1,10 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 {% load static %}
 
 {% block css %}
+<link rel="stylesheet" href="{% static 'product/css/category.css' %}" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+<link rel="stylesheet" href='{% static "base/css/flickity.css" %}'>
 <link rel="stylesheet" href="{% static 'product/css/product.css' %}" crossorigin="anonymous">
 {% endblock %}
 
@@ -21,7 +24,10 @@
 <div class="row m-1">
   <!-- Image -->
    <div class="col-lg-7 col-md-8 col-sm-12 text-center">
+      <figure class="figure">
       <img src="{{product.image_src}}" class="img-fluid" alt="Responsive image" style="max-height:500px;">
+      <figcaption class="figure-caption text-left">Sold By {{product.vendor.display_name}}</figcaption>
+      </figure>
    </div>
 
    <div class="col-lg-5 col-md-4 col-sm-12 p-0">
@@ -95,21 +101,44 @@
          </div>
       </div>
 
+      <!-- Favourites -->
+      {% if user.is_authenticated %}
+      <form class="form mt-4">
+         {% csrf_token %}
+         <input type="hidden" name="vendor" value="{{product.vendor}}">
+         {% if product.vendor in user.profile.favourites %}
+         <button type="submit" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Remove {{product.vendor.display_name}} from your favourite brands!"><i class="fas fa-star"></i></button>
+         {% else %}
+         <button type="submit" class="btn btn-outline-warning" data-toggle="tooltip" data-placement="bottom" title="Add {{product.vendor.display_name}} to your favourite brands!"><i class="fas fa-star"></i></button>
+
+         {% endif %}
+      </form>
+      {% endif %}
+
 
    </div>
 </div>
 
 <!-- Related Items -->
 <div class="row mt-5">
-   <div class="col text-center">
-      <h3>Related Items</h3>
+   <div class="col-12">
+      <h3 class="text-center w-100">Related Items</h3>
       <hr>
    </div>
 </div>
+
+<div class="main-carousel mt-3 mb-5" data-flickity='{ "freeScroll": false, "wrapAround": true, "cellAlign": "left" }'>
+  {% for item in related_items %}
+        <div class="carousel-cell">
+          {% include 'product/product_card.html' with product=item %}
+        </div>
+      {% endfor %}
+</div>
+
 {% endblock %}
 
 {% block js %}
-
+<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
 <script type="text/javascript" src='{% static "cart/js/add_to_cart.js" %}'></script>
 <script type="text/javascript" src='{% static "product/js/product.js" %}'></script>
 

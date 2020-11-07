@@ -1,0 +1,68 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block bodynoncon %}
+
+
+<div class="container-fluid">
+  <div class="row">
+    <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block d-sm-none bg-light sidebar collapse">
+      <div class="sidebar-sticky pt-3">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/account/orders">
+              <i class="fas fa-gift mr-2"></i>
+              Orders
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/account/favourites">
+              <i class="fas fa-star"></i>
+              Favourites
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-dark" href="/account/details">
+              <i class="fas fa-user mr-2"></i>
+              Details
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+              <h1 class="h3 pb-2 mt-3 border-bottom">Welcome, {{user.get_username}}</h1>
+    {% block account %}
+
+    {% endblock %}
+  </main>
+</div>
+</div>
+
+<div class="fixed-bottom bg-vestem d-sm-block d-md-none p-2">
+  <div class="row">
+    <div class="col-4 text-center">
+      <a class="text-dark" href="/account/orders">
+        <i class="fas fa-tshirt mr-2"></i>
+      </a>
+    </div> 
+    <div class="col-4 text-center">
+      <a class="text-dark" href="/dashboard/sizes">
+        <i class="fas fa-ruler"></i>
+      </a>
+    </div>
+    <div class="col-4 text-center">
+      <a class="text-dark" href="/dashboard/settings">
+        <i class="fas fa-cog mr-2"></i>
+      </a>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+
+<!-- <script src="{% static 'dashboard/js/dashboard.js' %}" ></script> -->
+
+{% endblock %}

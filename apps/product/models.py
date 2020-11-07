@@ -333,12 +333,18 @@ class Product(models.Model):
 	@property
 	def price(self):
 		if self.product_type == "parent":
+			try:
+				price = self.children.first().stockrecords.first().price_inc_tax
 
-			price = self.children.first().stockrecords.first().price_inc_tax
+			except AttributeError:
+				price = None
 
 		elif self.product_type == "standalone":
+			try:
+				price = self.stockrecords.first().price_inc_tax
 
-			price = self.stockrecords.first().price_inc_tax
+			except AttributeError:
+				price = None
 
 		return price
 

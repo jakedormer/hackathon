@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "base/base.html" %}
 {% load tags %}
 {% load static %}
 {% block css %}
@@ -64,25 +64,12 @@
   </div>
 </div>
 
-<div class="carousel mt-3 mb-5" data-flickity='{ "freeScroll": false, "wrapAround": true }'>
-  <div class="carousel-cell">
-    {% product_card "36020759560358" %}
-  </div>
-  <div class="carousel-cell">
-    {% product_card "36020759560358" %}
-  </div>
-  <div class="carousel-cell">
-    {% product_card "36020759560358" %}
-  </div>
-  <div class="carousel-cell">
-    {% product_card "36020759560358" %}
-  </div>
-  <div class="carousel-cell">
-    {% product_card "36020759560358" %}
-  </div>
-  <div class="carousel-cell">
-    {% product_card "36020759560358" %}
-  </div>
+<div class="main-carousel mt-3 mb-5" data-flickity='{ "freeScroll": false, "wrapAround": true }'>
+  {% for item in tshirts %}
+        <div class="carousel-cell">
+          {% include 'product/product_card.html' with product=item %}
+        </div>
+      {% endfor %}
 </div>
 
 
@@ -107,5 +94,4 @@
 
 {% block js %}
 <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
-<script src='{% static "base/js/flickity.js" %}'></script>
 {% endblock %}

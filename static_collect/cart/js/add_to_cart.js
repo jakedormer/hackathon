@@ -17,6 +17,7 @@ $('#add_to_cart').on('submit',function(e){
 
        if (json.add_to_cart == false) {
         $('#max_quantity').attr("style", "display: block!important");
+        $('#max_quantity').fadeOut(speed=6000, easing="linear");
 
         } else {
           $('#max_quantity').attr("style", "display: none!important")
@@ -30,3 +31,4 @@ $('#add_to_cart').on('submit',function(e){
   });
 
 });
+

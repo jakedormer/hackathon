@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, re_path, include
-from views import base
+from apps.base import views as views_base
 from apps.account import views as views_account
 from apps.cart import views as views_cart
 from apps.product import views as views_product
@@ -18,13 +18,21 @@ from rest_framework.authtoken.views import obtain_auth_token
 # router.register(r'users', views_rest_api.UserViewSet)
 
 urlpatterns = [
+
+    # Base
+
     path('admin', admin.site.urls),
-    path('', base.home, name='home'),
-    path('about', base.about, name='about'),
-    path('privacy', base.privacy, name='privacy'),
+    path('', views_base.home, name='home'),
+    path('about', views_base.about, name='about'),
+    path('privacy', views_base.privacy, name='privacy'),
     path('cart', views_cart.cart, name='cart'),
     
     #Account
+    path('account/orders', views_account.account_orders, name='account_orders'),
+    path('account/favourites', views_account.account_favourites, name='account_favourites'),
+
+
+
     path('login', views_account.login_view, name='login'),
     path('login-vendor', views_account.login_vendor, name='login_vendor'),
     path('logout', views_account.logout_view, name='logout'),

@@ -32,6 +32,7 @@ class Profile(models.Model):
 	is_vendor = models.BooleanField(null=True)
 	email_pref = models.BooleanField(default=False)
 	sms_pref = models.BooleanField(default=False)
+	favourites = models.ManyToManyField(Vendor, related_name="favourites")
 
 	# Create a profile object when a user is created and create api_token
 	@receiver(post_save, sender=User)

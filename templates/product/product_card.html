@@ -1,4 +1,4 @@
-  <div class="card shadow mb-2">
+  <div class="card shadow-sm mb-2">
     <a href="/{{product.slug}}/p/{{product.id}}">
       <div class="img-zoom">
         <img class="card-img-top img-responsive img-zoom" src="{{product.image_src}}" alt="Card image cap">
@@ -8,9 +8,13 @@
         <a class="text-dark font-weight-bold " href="/{{product.slug}}/p/{{product.id}}"><small class="p-1 text-center">{{product.title|title}}</small></a>
       </div>
       <div class="price text-center px-2 font-weight-bold text-muted">
-        £{{product.price}}
+        
       </div>
       <div class="bg-light card-text text-center p-1">
         <small class="text-muted"><b>{{product.vendor.display_name}}</b></small>
       </div>
   </div>
+
+<!--   <div class="">
+        <img class="card-img-top" src="{{product.image_src}}" alt="Card image cap">
+  </div> -->

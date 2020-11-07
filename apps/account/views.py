@@ -6,6 +6,25 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required
+def account_orders(request):
+
+	template = "account/account_orders.html"
+
+	context = {}
+
+	return render(request, template, context)
+
+@login_required
+def account_favourites(request):
+
+	template = "account/account_favourites.html"
+
+	context = {}
+
+	return render(request, template, context)
+
+
 def login_view(request):
 
 	context = {}
@@ -27,9 +46,11 @@ def login_view(request):
 
 					login(request, auth_user)
 
+					return redirect("/account/orders")
+
 				else:
 
-					messages.error(request, "This is a customer account and cannot login here", extra_tags="alert-danger")
+					messages.error(request, "This is a vendor account and cannot login here", extra_tags="alert-danger")
 
 			else:
 
@@ -39,13 +60,14 @@ def login_view(request):
 
 		if request.user.is_authenticated:
 
-			return redirect('/dashboard/products')
+			return redirect('/account/orders')
 
 	return render(request, template, context)
 
 
 def login_vendor(request):
 
+	context = {}
 	template = 'account/login_vendor.html'
 
 	if request.POST:
@@ -59,10 +81,9 @@ def login_vendor(request):
 			auth_user = authenticate(request, username=username, password=password)
 
 			if auth_user is not None:
+				print(auth_user.profile.is_vendor)
 
 				if auth_user.profile.is_vendor:
-
-					print("hi")
 
 					login(request, auth_user)
 
@@ -72,7 +93,7 @@ def login_vendor(request):
 
 				else:
 
-					messages.error(request, "This is a vendor account and cannot login here", extra_tags="alert-danger")
+					messages.error(request, "This is a customer account and cannot login here", extra_tags="alert-danger")
 
 			else:
 
@@ -104,6 +125,10 @@ def create_account(request):
 	template = 'account/create-account.html'
 
 	return render(request, template, context=locals())
+
+
+def add_to_favourites(request):
+	return
 
 
 
