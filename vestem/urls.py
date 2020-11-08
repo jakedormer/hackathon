@@ -65,6 +65,7 @@ urlpatterns = [
     # Ajax
     path('ajax/apply_size_guide', views_dashboard.apply_size_guide, name='apply_size_guide'),
     path('ajax/add_to_cart', views_cart.add_to_cart, name='add_to_cart'),
+    path('ajax/add_to_favourites', views_account.add_to_favourites, name='favourite'),
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

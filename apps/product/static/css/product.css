@@ -23,3 +23,10 @@ input:disabled+label {
   cursor: not-allowed;
 }
 
+#add_to_favourites_button {
+    transition: all .5s ease-in-out;
+}
+
+#add_to_favourites_button:hover {
+    transform: scale(1.3);
+}

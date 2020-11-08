@@ -26,7 +26,7 @@
       <!-- Cart Item -->
       {% for line in cart.cartitem_set.all %}
       {% ifchanged %}
-      <h3 class="mt-3"><span class="text-muted h5">Sold By</span> <b>{{line.product.vendor}}</b></h3>
+      <h3 class="mt-3"><span class="text-muted h5">Sold By</span> <b>{{line.product.vendor.display_name}}</b></h3>
       <hr class="">
       {% endifchanged %}
       <div class="row">

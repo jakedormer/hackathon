@@ -1,9 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from django.views.decorators.clickjacking import xframe_options_exempt
-from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.decorators import login_required
+from apps.account.forms import SignUpForm
+from apps.dashboard.models import Vendor
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
+import json
 
 # Create your views here.
 @login_required
@@ -119,16 +123,73 @@ def logout_view(request):
 
 	return redirect('/login')
 
-
 def create_account(request):
 
 	template = 'account/create-account.html'
 
-	return render(request, template, context=locals())
+	if request.method == 'POST':
+		form = SignUpForm(request.POST)
+		if form.is_valid():
+			user = form.save()
+			user.refresh_from_db()  # load the profile instance created by the signal
+			user.profile.email_pref = form.cleaned_data.get('email_pref')
+			user.profile.sms_pref = form.cleaned_data.get('sms_pref')
+			user.save()
 
+			password1 = form.cleaned_data.get('password1')
+
+			user = authenticate(username=user.username, password=password1)
+			login(request, user)
+			messages.success(request, "Account created", extra_tags="alert-success")
+			return redirect('/login')
+
+
+		else:
+			errors = form.errors.as_json()
+			errors = json.loads(errors).items() # Convert string to json dictionary
+			string = ""
+
+			for x in errors:
+				string += x[0].upper() + ": " + x[1][0]['message'] + "\n"
+				print(x[0], x[1][0]['message'])
+
+			messages.error(request, string, extra_tags="alert-danger")
+
+			return render(request, template, {'form': form})
+
+	else:
+
+		form = SignUpForm()
+
+		if request.user.is_authenticated:
+			return redirect('/login')
+
+		else:
+			return render(request, template, {'form': form})
 
 def add_to_favourites(request):
-	return
+
+	if request.method == 'POST':
+
+		data = {}
+		vendor = request.POST['vendor']
+		vendor = Vendor.objects.get(name=vendor)
+
+		if request.user.profile.favourites.all().filter(name=vendor.name).exists():
+
+			data['add_to_favourites'] = False
+
+			request.user.profile.favourites.remove(vendor)
+
+		else:
+
+			request.user.profile.favourites.add(vendor)
+
+			data['add_to_favourites'] = True
+
+		return JsonResponse(data)
+
+	
 
 
 

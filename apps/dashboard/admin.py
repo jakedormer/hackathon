@@ -16,11 +16,17 @@ class VendorAdmin(admin.ModelAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
 
-	list_display = ('profile_username','vendor', 'email_pref')
+	list_display = ('profile_username','vendor', 'email_pref', 'sms_pref')
+	filter_horizontal = ('favourites',)
 
 	def profile_username(self, x):
 		
 		return x.user.username
+
+	# def get_favourites(self, x):
+
+	# 	return " ".join(x for y in x.favourites)
+
 
 admin.site.register(Vendor, VendorAdmin)
 admin.site.register(Profile, ProfileAdmin)

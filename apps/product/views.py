@@ -66,7 +66,7 @@ def category(request, slug, code):
 def product(request, id):
 	product = Product.objects.get(id=id)
 	variants = product.children.all()
-	related_items = Product.objects.filter((Q(product_type="parent") | Q(product_type="standalone")), category=product.category)
+	related_items = Product.objects.filter((Q(product_type="parent") | Q(product_type="standalone")), category=product.category).exclude(id=product.id)
 
 	if variants:
 		sizes = AttributeValue.objects.filter(attribute__name="size", product__in=product.children.all()).order_by('value_option__order')

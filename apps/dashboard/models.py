@@ -24,7 +24,7 @@ class Vendor(models.Model):
 	enabled = models.BooleanField(default=False)
 
 	def __str__(self):
-		return self.name.title()
+		return self.name
 
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -42,7 +42,7 @@ class Profile(models.Model):
 			instance.email = instance.username
 
 			# Create token is user is a vendor
-			if user.profile.is_vendor == True:
+			if instance.profile.is_vendor == True:
 				Token.objects.create(user=instance)
 				
 			instance.save()

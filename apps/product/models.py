@@ -212,6 +212,8 @@ class Product(models.Model):
 
 	date_modified = models.DateTimeField(auto_now=True)
 
+	description = models.TextField(null=True, blank=True)
+
 	def clean(self):
 		"""
 		Validate a product. Those are the rules:

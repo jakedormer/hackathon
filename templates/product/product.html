@@ -23,17 +23,41 @@
 
 <div class="row m-1">
   <!-- Image -->
-   <div class="col-lg-7 col-md-8 col-sm-12 text-center">
-      <figure class="figure">
+   <div class="col-lg-7 col-md-8 col-sm-12 text-center mt-2">
       <img src="{{product.image_src}}" class="img-fluid" alt="Responsive image" style="max-height:500px;">
-      <figcaption class="figure-caption text-left">Sold By {{product.vendor.display_name}}</figcaption>
-      </figure>
    </div>
 
-   <div class="col-lg-5 col-md-4 col-sm-12 p-0">
+   <div class="col-lg-5 col-md-4 col-sm-12 p-0 mt-2">
       <h3 class="font-weight-bold">{{product|title}}</h3>
+      <div class="row">
+         <div class="col-9">
+            <small class="">Sold By {{product.vendor.display_name}}</small>
+         </div>
+         <div class="col-3 text-right">
+
+            <!-- Favourites -->
+            {% if user.is_authenticated %}
+            <form class="form" action="/ajax/add_to_favourites" method="post" id="add_to_favourites">
+               {% csrf_token %}
+               <input type="hidden" name="vendor" value="{{product.vendor}}">
+               {% if product.vendor in user.profile.favourites.all %}
+               <button type="submit" class="btn btn-warning btn-sm" id="add_to_favourites_button" title="Remove {{product.vendor.display_name}} from your favourite brands"><i class="fas fa-star"></i></button>
+               {% else %}
+               <button type="submit" class="btn btn-warning btn-sm op-50" id="add_to_favourites_button" title="Add {{product.vendor.display_name}} to your favourite brands!"><i class="fas fa-star"></i></button>
+
+               {% endif %}
+            </form>
+            {% else %}
+            <button type="submit" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="bottom" title="Create an account to add {{product.vendor.display_name}} to your favourite brands!" disabled><i class="fas fa-star"></i></button>
+            {% endif %}
+
+
+         </div>
+      </div>
+
       <hr>
-      <h4 class="mb-3"><b>£{{product.children.first.stockrecords.first.price_inc_tax}}</b></h4>
+      <h4 class="mb-3"><b>£{{product.price}}</b></h4>
+     
 
 
       <!-- Form  -->
@@ -75,6 +99,9 @@
       </div>
 
 
+      <!-- Description -->
+      <p><small>{{product.description}}</small></p>
+
       <!-- Details -->
       <div id="accordion">
          <div class="card">
@@ -101,19 +128,7 @@
          </div>
       </div>
 
-      <!-- Favourites -->
-      {% if user.is_authenticated %}
-      <form class="form mt-4">
-         {% csrf_token %}
-         <input type="hidden" name="vendor" value="{{product.vendor}}">
-         {% if product.vendor in user.profile.favourites %}
-         <button type="submit" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Remove {{product.vendor.display_name}} from your favourite brands!"><i class="fas fa-star"></i></button>
-         {% else %}
-         <button type="submit" class="btn btn-outline-warning" data-toggle="tooltip" data-placement="bottom" title="Add {{product.vendor.display_name}} to your favourite brands!"><i class="fas fa-star"></i></button>
-
-         {% endif %}
-      </form>
-      {% endif %}
+      
 
 
    </div>
@@ -140,6 +155,7 @@
 {% block js %}
 <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
 <script type="text/javascript" src='{% static "cart/js/add_to_cart.js" %}'></script>
+<script type="text/javascript" src='{% static "account/js/add_to_favourites.js" %}'></script>
 <script type="text/javascript" src='{% static "product/js/product.js" %}'></script>
 
 {% endblock %}
