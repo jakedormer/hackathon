@@ -25,7 +25,7 @@ urlpatterns = [
     path('', views_base.home, name='home'),
     path('about', views_base.about, name='about'),
     path('privacy', views_base.privacy, name='privacy'),
-    path('cart', views_cart.cart, name='cart'),
+    path('bag', views_cart.cart, name='cart'),
     
     #Account
     path('account/orders', views_account.account_orders, name='account_orders'),

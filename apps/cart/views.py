@@ -10,9 +10,11 @@ import json
 
 def get_cart(request):
 
-	user = request.user if request.user.is_authenticated else None
+	if request.user.is_authenticated:
 
-	cart = Cart.objects.filter(status="open", session_key=request.COOKIES.get('session_key')).first()
+		cart = Cart.objects.filter(owner=request.user, status="open").order_by("-date_modified").first()
+	else:
+		cart = Cart.objects.filter(status="open", session_key=request.COOKIES.get("session_key")).order_by("-date_modified").first()
 
 	context = {
 		'cart': cart
@@ -45,30 +47,29 @@ def add_to_cart(request):
 
 		product = Product.objects.get(id=params['product_id'])
 
-		try:
-			num_in_stock = product.stockrecords.first().num_in_stock
-		except ObjectDoesNotExist:
-			num_in_stock = 0
-		
-
 		params = request.POST.dict()
 
 		if request.user.is_authenticated:
 
 			user = request.user
-		else:
-			user = None
 
-		cart, created = Cart.objects.update_or_create(
-			owner=user,
-			status="open",
-			session_key=request.COOKIES.get('session_key'),
-			defaults={
-				'owner': user,
-				'status': 'open',
-				'session_key': request.COOKIES.get('session_key')
-			}
-		)
+			cart, created = Cart.objects.get_or_create(
+				owner=user,
+				status="open",
+			)
+
+		else:
+
+			cart, created = Cart.objects.update_or_create(
+				owner=None,
+				status="open",
+				session_key=request.COOKIES.get('session_key'),
+				defaults={
+					'owner': None,
+					'status': 'open',
+					'session_key': request.COOKIES.get('session_key')
+				}
+			)
 
 		# Calculate quantity for cart item
 		try:
@@ -78,7 +79,7 @@ def add_to_cart(request):
 			current_quantity=0
 
 		# Update or create the cart item
-		if current_quantity + 1 <= num_in_stock and num_in_stock != 0:
+		if current_quantity + 1 <= product.num_in_stock and product.num_in_stock != 0:
 
 			cartitem, created = CartItem.objects.update_or_create(
 				cart=cart,

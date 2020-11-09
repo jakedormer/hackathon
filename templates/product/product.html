@@ -24,7 +24,7 @@
 <div class="row m-1">
   <!-- Image -->
    <div class="col-lg-7 col-md-8 col-sm-12 text-center mt-2">
-      <img src="{{product.image_src}}" class="img-fluid" alt="Responsive image" style="max-height:500px;">
+      <img src="{{product.image_src}}" class="img-fluid img-zoom" alt="Responsive image" style="max-height:500px;">
    </div>
 
    <div class="col-lg-5 col-md-4 col-sm-12 p-0 mt-2">
@@ -48,7 +48,7 @@
                {% endif %}
             </form>
             {% else %}
-            <button type="submit" class="btn btn-warning btn-sm" data-toggle="tooltip" data-placement="bottom" title="Create an account to add {{product.vendor.display_name}} to your favourite brands!" disabled><i class="fas fa-star"></i></button>
+            <button type="submit" class="btn btn-warning btn-sm op-50" data-toggle="tooltip" data-placement="bottom" title="Create an account to add {{product.vendor.display_name}} to your favourite brands!" checked><i class="fas fa-star"></i></button>
             {% endif %}
 
 
@@ -61,7 +61,7 @@
 
 
       <!-- Form  -->
-      <form class="mt-3" method="post" action="/ajax/add_to_cart" id="add_to_cart">
+      <form class="mt-3" method="post" action="/ajax/add_to_bag" id="add_to_cart">
          {% csrf_token %}
          <div class="col p-0">
          <p class="font-weight-bold">Size</p>
@@ -87,7 +87,7 @@
             <input type="number" class="form-control text-center w-100" min=1 name="quantity" value=1> -->
 
          <div class="mb-4">
-            <button type="submit" class="btn btn-dark w-100 mt-3" id="add_to_cart_button"><i class="fas fa-shopping-bag mr-2"></i><b>Add to cart</b></button>
+            <button type="submit" class="btn btn-dark w-100 mt-3" id="add_to_cart_button"><i class="fas fa-shopping-bag mr-2"></i><b>Add to bag</b></button>
          </div>
           </div>
       </form>

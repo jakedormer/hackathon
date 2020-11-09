@@ -13,7 +13,7 @@ class CartItemAdmin(admin.ModelAdmin):
 
 
 class CartAdmin(admin.ModelAdmin):
-    list_display = ('id', 'owner', 'session_key', 'status', 'num_lines', 'date_created', 'date_submitted',)
+    list_display = ('id', 'owner', 'session_key', 'status', 'num_lines', 'date_created', 'date_modified', 'date_submitted',)
     readonly_fields = ('owner', 'date_merged', 'date_submitted')
     inlines = [CartItemInline]
 

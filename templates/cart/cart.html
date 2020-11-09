@@ -15,12 +15,12 @@
   <div class="row">
     {% if not cart or cart.num_items == 0 %}
     <div class="col mt-5 text-center">
-      <h1>Your cart is empty</h1>
+      <h1>Your bag is empty</h1>
       <i class="fas fa-4x fa-shopping-bag text-dark"></i>
       <p class="mt-4">Take a look around our shop!</p>
     </div>
     {% else %}
-    <h2 class="my-3 text-center w-100">Cart: {{cart.num_items}} items</h2>
+    <h2 class="my-3 text-center w-100">Bag: {{cart.num_items}} items</h2>
     <div class="col-lg-8">
 
       <!-- Cart Item -->
@@ -31,7 +31,7 @@
       {% endifchanged %}
       <div class="row">
         <div class="col-3">
-          <a href="{{line.product.slug}}/p/{{line.product.parent.id}}">
+          <a href="{{line.product.slug}}/p/{% if line.product.parent %}{{line.product.parent.id}}{% else %}{{line.product.id}}{% endif %}">
           <img class="img-fluid img-thumbnail cart-img" src="{{line.product.image_src}}" alt="{{line.product.title}}" style="width:100px">
           </a>
         </div>

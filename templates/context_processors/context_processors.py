@@ -17,13 +17,13 @@ def cart_count(request):
 	if request.user.is_authenticated:
 
 		try:
-			cart_count = Cart.objects.filter(owner=request.user, status='open').first().num_items
+			cart_count = Cart.objects.filter(owner=request.user, status='open').order_by("-date_modified").first().num_items
 		except AttributeError:
 			cart_count = 0
 	else:
 
 		try:
-			cart_count = Cart.objects.filter(status='open', session_key=request.COOKIES.get('session_key')).first().num_items
+			cart_count = Cart.objects.filter(status='open', session_key=request.COOKIES.get('session_key')).order_by("date_modified").first().num_items
 		except AttributeError:
 			cart_count = 0
 

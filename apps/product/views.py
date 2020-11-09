@@ -3,6 +3,7 @@ from apps.product.models import *
 from django.db.models import Count, F, Q
 
 
+
 # Create your views here.
 
 def category(request, slug, code):

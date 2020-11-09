@@ -2,6 +2,7 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from apps.dashboard.models import Vendor
 from django.core.exceptions import ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your models here.
 
@@ -331,6 +332,15 @@ class Product(models.Model):
 		except AttributeError:
 
 			pass
+	@property
+	def num_in_stock(self):
+		try:
+			num_in_stock = self.stockrecords.first().num_in_stock
+		except ObjectDoesNotExist:
+			num_in_stock = 0
+
+		return num_in_stock
+	
 
 	@property
 	def price(self):
