@@ -12,7 +12,7 @@ class APICredentialAdmin(admin.TabularInline):
 
 class VendorAdmin(admin.ModelAdmin):
 	inlines = (APICredentialAdmin, )
-	list_display = ('name', 'display_name')
+	list_display = ('id', 'name', 'display_name', 'commission')
 
 class ProfileAdmin(admin.ModelAdmin):
 

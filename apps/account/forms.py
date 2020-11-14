@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import AuthenticationForm
 
 class SignUpForm(UserCreationForm):
 	username = forms.EmailField(max_length=254, required=True, widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email'}))
@@ -18,3 +19,16 @@ class SignUpForm(UserCreationForm):
 
 		self.fields['password1'].widget = forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password'})
 		self.fields['password2'].widget = forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Confirm Password'})
+
+
+class LoginForm(AuthenticationForm):
+
+	username = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control mb-2', 'placeholder': 'Email'}))
+	password = forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control mb-4', 'placeholder': 'Password'}))
+
+	def __init__(self, *args, **kwargs):
+		super(LoginForm, self).__init__(*args, **kwargs)
+
+		self.fields['username'].label = "Email"
+		self.fields['username'].label = False
+		self.fields['password'].label = False

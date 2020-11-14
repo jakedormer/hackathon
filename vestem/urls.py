@@ -3,6 +3,7 @@ from django.urls import path, re_path, include
 from apps.base import views as views_base
 from apps.account import views as views_account
 from apps.cart import views as views_cart
+from apps.checkout import views as views_checkout
 from apps.product import views as views_product
 from apps.dashboard import views as views_dashboard
 from apps.oauth import views as views_oauth
@@ -11,9 +12,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
+from django.views.decorators.csrf import csrf_exempt
 
 # router = routers.DefaultRouter()
 # Users will be the name of the url
+
+# router.register(r'groups', views.GroupViewSet)
 
 # router.register(r'users', views_rest_api.UserViewSet)
 
@@ -30,9 +34,6 @@ urlpatterns = [
     #Account
     path('account/orders', views_account.account_orders, name='account_orders'),
     path('account/favourites', views_account.account_favourites, name='account_favourites'),
-
-
-
     path('login', views_account.login_view, name='login'),
     path('login-vendor', views_account.login_vendor, name='login_vendor'),
     path('logout', views_account.logout_view, name='logout'),
@@ -48,6 +49,10 @@ urlpatterns = [
     path('add_to_cart', views_cart.add_to_cart, name='add_to_cart'),
     path('remove_from_cart', views_cart.remove_from_cart, name='remove_from_cart'),
 
+    #Checkout
+    path('checkout/login', views_checkout.checkout_login, name='checkout_login'),
+    path('checkout/delivery', views_checkout.checkout_delivery, name='checkout_delivery'),
+
     # Dashboard
     path('dashboard', views_dashboard.dashboard, name='dashboard'),
     path('dashboard/products', views_dashboard.dashboard_products, name='dashboard_products'),
@@ -57,10 +62,10 @@ urlpatterns = [
     path('dashboard/sizes/create', views_dashboard.dashboard_sizes_create, name='dashboard_sizes'),
 
     # Rest_API
-    # path('', include(router.urls)),
     path('api/current_user/', views_rest_api.CurrentUser.as_view(), name='current_user'),
     path('update_shopify_token/', views_rest_api.update_shopify_token, name='update_shopify_token'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path('api/access_token/', views_rest_api.AccessToken.as_view(), name="access_token"),
 
     # Ajax
     path('ajax/apply_size_guide', views_dashboard.apply_size_guide, name='apply_size_guide'),

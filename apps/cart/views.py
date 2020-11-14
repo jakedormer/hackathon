@@ -114,7 +114,7 @@ def remove_from_cart(request):
 
 		cart_item.delete()
 
-	return redirect('/cart')
+	return redirect('/bag')
 
 
 # def cart(request):

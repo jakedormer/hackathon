@@ -31,7 +31,24 @@
     </nav>
 
     <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-              <h1 class="h3 pb-2 mt-3 border-bottom">Welcome, {{user.get_username}}</h1>
+      <h1 class="h3 pb-2 mt-3 border-bottom">Welcome, {{user.get_username}}</h1>
+
+      <!-- Messages -->
+      {% if messages %}
+      {% for message in messages %}
+      <div class="row justify-content-center">
+        <div class="col">
+          <div class="alert {{message.extra_tags}} alert-dismissible fade show mt-2 text-center" role="alert">
+            {{message}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% endif %}
+      
     {% block account %}
 
     {% endblock %}

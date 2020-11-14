@@ -28,91 +28,6 @@ def account_favourites(request):
 
 	return render(request, template, context)
 
-
-def login_view(request):
-
-	context = {}
-	template = 'account/login.html'
-	
-	if request.POST:
-		name = request.POST['form_name']
-
-		if name == "login":
-			context['username'] = request.POST['inputUsername']
-			username = request.POST['inputUsername']
-			password = request.POST['inputPassword']
-
-			auth_user = authenticate(request, username=username, password=password)
-
-			if auth_user is not None:
-
-				if not auth_user.profile.is_vendor:
-
-					login(request, auth_user)
-
-					return redirect("/account/orders")
-
-				else:
-
-					messages.error(request, "This is a vendor account and cannot login here", extra_tags="alert-danger")
-
-			else:
-
-				messages.error(request, "Incorrect username or password", extra_tags="alert-danger")
-
-	else:
-
-		if request.user.is_authenticated:
-
-			return redirect('/account/orders')
-
-	return render(request, template, context)
-
-
-def login_vendor(request):
-
-	context = {}
-	template = 'account/login_vendor.html'
-
-	if request.POST:
-		name = request.POST['form_name']
-
-		if name == "login":
-			context['username'] = request.POST['inputUsername']
-			username = request.POST['inputUsername']
-			password = request.POST['inputPassword']
-
-			auth_user = authenticate(request, username=username, password=password)
-
-			if auth_user is not None:
-				print(auth_user.profile.is_vendor)
-
-				if auth_user.profile.is_vendor:
-
-					login(request, auth_user)
-
-					response = render(request, 'dashboard/dashboard_products.html', context)
-
-					return response
-
-				else:
-
-					messages.error(request, "This is a customer account and cannot login here", extra_tags="alert-danger")
-
-			else:
-
-				messages.error(request, "Incorrect username or password", extra_tags="alert-danger")
-
-	else:
-
-		if request.user.is_authenticated:
-
-			return redirect('/dashboard/products')
-
-	return render(request, template, context)
-
-
-
 @login_required()
 def logout_view(request):
 
@@ -122,6 +37,110 @@ def logout_view(request):
 	messages.warning(request, "You are now logged out", extra_tags="alert-warning")
 
 	return redirect('/login')
+
+
+def login_view_(request, template, context, redirect_url, vendor, form_type):
+
+	if not context:
+		context = {}
+	# template = 'account/login.html'
+	
+	if request.POST and request.POST['form_name'] == "login":
+
+		username = request.POST['username']
+		password = request.POST['password']
+
+		context['username'] = username
+
+		auth_user = authenticate(request, username=username, password=password)
+
+		if auth_user is not None:
+
+			vendor = True if auth_user.profile.is_vendor else False
+
+			if not vendor:
+
+				login(request, auth_user)
+
+				return redirect(redirect_url)
+
+			else:
+
+				messages.error(request, "This is a vendor account and cannot login here", extra_tags="alert-danger")
+
+		else:
+
+			messages.error(request, "Incorrect username or password", extra_tags="alert-danger")
+
+		context['type'] = form_type
+		
+	else:
+
+		if request.user.is_authenticated and vendor:
+
+			return redirect(redirect_url)
+
+	return render(request, template, context)
+
+def login_view(request):
+
+	return login_view_(request, template='account/login.html', context={}, redirect_url='/account/orders', vendor=False, form_type="login")
+
+
+def login_vendor(request):
+
+	data = {}
+
+	context = {
+		'hide_nav': True,
+		'hide_cart': True,
+	}
+
+	template = 'account/login_vendor.html'
+
+	if request.POST:
+
+		context['username'] = request.POST['username']
+		username = request.POST['username']
+		password = request.POST['password']
+
+		auth_user = authenticate(request, username=username, password=password)
+
+		if auth_user is not None:
+
+			if auth_user.profile.is_vendor:
+
+				login(request, auth_user)
+				
+				data = {
+					'token': str(auth_user.auth_token)
+				}
+
+			else:
+
+				data['error'] = "This is a customer account and cannot login here"
+
+		else:
+
+			data['error'] = "Incorrect username or password"
+
+		return JsonResponse(data)
+
+	else:
+
+		if request.user.is_authenticated and request.user.profile.is_vendor:
+
+			data = {
+				'token': str(request.user.auth_token)
+			}
+
+			return JsonResponse(data)
+
+	return render(request, template, context)
+
+
+
+
 
 def create_account(request):
 

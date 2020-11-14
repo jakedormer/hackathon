@@ -4,22 +4,34 @@
 
 
 {% block form %}
-<form class="form-signin" action="/login" method="post" target="_self">
+<!-- Form -->
+<form class="form-signin" action="/login-vendor" method="post" target="_self" id="vendor_login">
+
 	{% csrf_token %}
-	<label for="inputUsername" class="sr-only">Username</label>
-	<input type="username" name="inputUsername" class="form-control mb-2" placeholder="Username" {% if username %} value={{username}} {% endif %} required autofocus>
-	<label for="inputPassword" class="sr-only">Password</label>
-	<input type="password" name="inputPassword" class="form-control" placeholder="Password" required>
-	<div class="checkbox mb-3 text-center">
-<!-- 		<label>
-			<input type="checkbox" value="remember-me"> Remember me
-		</label> -->
-	</div>
-	<button class="btn btn-lg btn-dark btn-block" type="submit" name="form_name" value="login">Sign in</button>
+	<label for="username" class="sr-only">Username</label>
+	<input type="username" name="username" class="form-control mb-2" placeholder="Email" {% if username %} value={{username}} {% endif %} required autofocus>
+	<label for="password" class="sr-only">Password</label>
+	<input type="password" name="password" class="form-control" placeholder="Password" required>
+	<button class="btn btn-lg btn-dark btn-block" type="submit" name="form_name" value="login_vendor">Sign in</button>
 	
 </form>
+
+<!-- Image -->
 <div class="text-center">
 	<img class="img-responsive mt-3" src="{{ MEDIA_URL }}images/logos/shopify.jpg" style="height:80px">
 </div>
 
+<!-- Alerts -->
+<div class="row justify-content-center">
+	<div class="col">
+		<div class="alert {{message.extra_tags}} alert-dismissible alert-danger fade show mt-2 text-center" role="alert" id="alert_login" style="display: none">
+			Jake
+		</div>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src='{% static "account/js/login_vendor.js" %}'></script>
 {% endblock %}

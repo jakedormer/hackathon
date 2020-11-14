@@ -1,0 +1,7 @@
+.list-group-item-dark.active {
+    background-color: #1b1e21!important;
+}
+
+.list-group-item-dark:not(:active) {
+    background-color: #fff;
+}

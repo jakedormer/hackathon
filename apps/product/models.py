@@ -332,6 +332,7 @@ class Product(models.Model):
 		except AttributeError:
 
 			pass
+
 	@property
 	def num_in_stock(self):
 		try:
@@ -359,6 +360,19 @@ class Product(models.Model):
 				price = None
 
 		return price
+
+	@property
+	def total_in_stock(self):
+		if self.is_parent:
+			quantity = 0
+			for x in self.children.all():
+				for y in x.stockrecords.all():
+					quantity += y.num_in_stock
+		else:
+			quantity = self.num_in_stock
+
+		return quantity
+
 
 	
 

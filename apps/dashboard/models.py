@@ -18,10 +18,11 @@ class Platform(models.Model):
 
 class Vendor(models.Model):
 
-	name = models.CharField(max_length=30, unique=True)
+	name = models.CharField(max_length=30, unique=True, help_text="The store name within the shopify url")
 	display_name = models.CharField(max_length=30)
 	platform = models.ManyToManyField(Platform, through="APICredential")
 	enabled = models.BooleanField(default=False)
+	commission = models.DecimalField(max_digits=10, decimal_places=4, help_text="The vendor commission rate, set it as a decimal e.g. 15% = 0.15")
 
 	def __str__(self):
 		return self.name
@@ -32,7 +33,7 @@ class Profile(models.Model):
 	is_vendor = models.BooleanField(null=True)
 	email_pref = models.BooleanField(default=False)
 	sms_pref = models.BooleanField(default=False)
-	favourites = models.ManyToManyField(Vendor, related_name="favourites")
+	favourites = models.ManyToManyField(Vendor, related_name="favourites", blank=True)
 
 	# Create a profile object when a user is created and create api_token
 	@receiver(post_save, sender=User)
@@ -40,18 +41,14 @@ class Profile(models.Model):
 		if created:
 			Profile.objects.create(user=instance)
 			instance.email = instance.username
-
-			# Create token is user is a vendor
-			if instance.profile.is_vendor == True:
-				Token.objects.create(user=instance)
-				
 			instance.save()
 
-	# Set email to username
-	@receiver(post_save, sender=User)
-	def save_user_profile(sender, instance, **kwargs):
-		instance.email = instance.username
-		instance.profile.save()
+		# Create token if user is a vendor
+		if instance.profile.is_vendor == True:
+			
+			Token.objects.get_or_create(user=instance)
+
+			
 
 	def __str__(self):
 		return self.user.first_name

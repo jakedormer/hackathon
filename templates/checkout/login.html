@@ -1,0 +1,123 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'checkout/css/checkout.css' %}" crossorigin="anonymous">
+{% endblock %}
+
+{% block body %}
+<h1 class="text-center mt-3">Checkout</h1>
+
+<div class="row">
+	<div class="col-md-12 col-lg-8 col-sm-12 offset-lg-2">
+		<div class="row">
+			<div class="col text-center py-2 text-white bg-dark m-1 rounded">
+				Login
+			</div>
+			<div class="col text-center py-2 m-1 rounded bg-vestem text-dark">
+				Delivery
+			</div>
+			<div class="col text-center py-2 m-1 rounded bg-vestem text-dark">
+				Payment
+			</div>
+			<div class="col text-center py-2 m-1 rounded bg-vestem text-dark">
+				Confirm
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="row my-3 mx-1">
+	<div class="col-md-12 col-lg-8 col-sm-12 offset-lg-2 border rounded-sm p-0 shadow-sm border-top-0">
+		<div class="list-group list-group-horizontal-lg " id="list-tab" role="tablist">
+		  <a class="list-group-item list-group-item-action list-group-item-dark" id="list-home-list" data-toggle="list" href="#list-home" role="tab" aria-controls="home">New to Aveste?</a>
+		  <a class="list-group-item list-group-item-action list-group-item-dark active" id="list-profile-list" data-toggle="list" href="#list-profile" role="tab" aria-controls="profile">Already Registered?</a>
+		</div>
+
+		<!-- Register -->
+		<div class="tab-content" id="nav-tabContent">
+		  <div class="tab-pane fade" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
+		  	<h1 class="display-3 font-weight-normal text-center font-weight-bold fade-in mt-3 pt-4">A</h1>
+		  	<h5 class="text-center text-muted mb-2">Sign in with emaiil</h5>
+		  <form class="form-signin col-md-12 col-lg-6 col-sm-12 offset-lg-3 my-2 mb-2" action="/create-account" method="post">
+		  	<p class="text-center">Track your orders, input your perfect sizes, and save your favourite brands!</p>
+		  	{% csrf_token %}
+		  	<div class="form-group">
+		  		{{signup_form.first_name}}
+		  	</div>
+		  	<div class="form-group">
+		  		{{signup_form.last_name}}
+		  	</div>
+		  	<div class="form-group">
+		  		{{signup_form.username}}
+		  	</div>
+		  	<div class="form-group">
+		  		{{signup_form.password1}}
+		  	</div>
+		  	<div class="">
+		  		{{signup_form.password2}}
+		  	</div>
+		  	<div class="mb-2 text-center">
+		  		{{signup_form.email_pref}}
+		  		<small class="d-inline ml-2">{{signup_form.email_pref.help_text}}<i class="far fa-envelope ml-2 text-secondary"></i></small>
+		  	</div>
+		  	<div class="mb-3 text-center">
+		  		{{signup_form.sms_pref}}
+		  		<small class="d-inline ml-2">{{signup_form.sms_pref.help_text}}<i class="fas fa-mobile-alt ml-2 text-secondary"></i></small>
+		  	</div>
+		  	<div class="text-center">										
+		  		<button type="submit" class="btn btn-success btn-lg btn-block" name="form_name" value="create_account">Create Account</button>
+		  	</div>
+		  </form>
+
+		  <hr>
+		  <p class="text-center"> Or continue as a guest</p>
+		  <div class="text-center mb-4">
+		  	<a class="btn btn-success" href="/checkout/delivery"><i class="fas fa-lock mr-2"></i><b>Checkout</b></a>
+		  </div>
+		</div>
+
+		<!-- Login -->
+		<div class="tab-pane fade show active" id="list-profile" role="tabpanel" aria-labelledby="list-profile-list">
+			<h1 class="display-3 font-weight-normal text-center font-weight-bold fade-in mt-3 pt-4">A</h1>
+			<h5 class="text-center text-muted mb-2">Sign in with emaiil</h5>
+
+		<form class="form col-md-12 col-lg-6 col-sm-12 offset-lg-3 my-2 mb-5" method="POST" action="/checkout/login">
+			{% csrf_token %}
+			{{login_form}}
+		<button type="submit" class="btn btn-success btn-lg btn-block mt-2 mb-4" name="form_name" value="login">Sign in</button>
+		</form>
+		</div>
+
+
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-12 col-lg-8 col-sm-12 offset-lg-2">
+		{% if messages %}
+		{% for message in messages %}
+		<div class="row justify-content-center">
+			<div class="col">
+				<div class="alert {{message.extra_tags}} alert-dismissible fade show mt-2 text-center" role="alert">
+					{{message}}
+					<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}
+
+<script type="text/javascript">
+	$('#list-tab a').on('click', function (e) {
+	  e.preventDefault()
+	  $(this).tab('show')
+	})
+</script>

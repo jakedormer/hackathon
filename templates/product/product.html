@@ -20,7 +20,7 @@
    </ol>
 </nav>
 
-
+{{product.total_in_stock}}
 <div class="row m-1">
   <!-- Image -->
    <div class="col-lg-7 col-md-8 col-sm-12 text-center mt-2">
@@ -87,7 +87,11 @@
             <input type="number" class="form-control text-center w-100" min=1 name="quantity" value=1> -->
 
          <div class="mb-4">
+            {% if product.total_in_stock != 0 %}
             <button type="submit" class="btn btn-dark w-100 mt-3" id="add_to_cart_button"><i class="fas fa-shopping-bag mr-2"></i><b>Add to bag</b></button>
+            {% else %}
+            <button type="submit" class="btn btn-dark w-100 mt-3" id="add_to_cart_button" disabled><b>Out of stock</b></button>
+            {% endif %}
          </div>
           </div>
       </form>

@@ -1,0 +1,1 @@
+default_app_config = 'apps.rest_api.apps.RestApiConfig'
