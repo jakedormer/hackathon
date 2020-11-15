@@ -89,8 +89,6 @@ def login_view(request):
 
 def login_vendor(request):
 
-	data = {}
-
 	context = {
 		'hide_nav': True,
 		'hide_cart': True,
@@ -112,33 +110,30 @@ def login_vendor(request):
 
 				login(request, auth_user)
 				
-				data = {
-					'token': str(auth_user.auth_token)
-				}
+				context['token'] = request.user.auth_token.key
+
+				messages.error(request, "Login successful, you can now close this window", extra_tags="alert-success")
+
 
 			else:
 
-				data['error'] = "This is a customer account and cannot login here"
+				messages.error(request, "This is a customer account and cannot login here", extra_tags="alert-danger")
 
 		else:
 
-			data['error'] = "Incorrect username or password"
+			messages.error(request, "Incorrect username or password", extra_tags="alert-danger")
 
-		return JsonResponse(data)
-
+		
 	else:
 
 		if request.user.is_authenticated and request.user.profile.is_vendor:
 
-			data = {
-				'token': str(request.user.auth_token)
-			}
+			context['token'] = request.user.auth_token.key
 
-			return JsonResponse(data)
+			messages.error(request, "You are already logged in, please close this window", extra_tags="alert-success")
+
 
 	return render(request, template, context)
-
-
 
 
 

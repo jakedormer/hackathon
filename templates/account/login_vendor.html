@@ -9,10 +9,10 @@
 
 	{% csrf_token %}
 	<label for="username" class="sr-only">Username</label>
-	<input type="username" name="username" class="form-control mb-2" placeholder="Email" {% if username %} value={{username}} {% endif %} required autofocus>
+	<input type="username" name="username" class="form-control mb-2" placeholder="Email" {% if username %} value={{username}} {% endif %} required autofocus {% if token %} disabled {% endif %}>
 	<label for="password" class="sr-only">Password</label>
-	<input type="password" name="password" class="form-control" placeholder="Password" required>
-	<button class="btn btn-lg btn-dark btn-block" type="submit" name="form_name" value="login_vendor">Sign in</button>
+	<input type="password" name="password" class="form-control" placeholder="Password" required {% if token %} disabled {% endif %}>
+	<button class="btn btn-lg btn-dark btn-block" type="submit" name="form_name" value="login_vendor" {% if token %} disabled {% endif %}>{% if token %} You are logged in {% else %} Sign in {% endif %}</button>
 	
 </form>
 
@@ -21,17 +21,30 @@
 	<img class="img-responsive mt-3" src="{{ MEDIA_URL }}images/logos/shopify.jpg" style="height:80px">
 </div>
 
-<!-- Alerts -->
-<div class="row justify-content-center">
-	<div class="col">
-		<div class="alert {{message.extra_tags}} alert-dismissible alert-danger fade show mt-2 text-center" role="alert" id="alert_login" style="display: none">
-			Jake
-		</div>
-	</div>
-</div>
 
 {% endblock %}
 
 {% block js %}
 <script type="text/javascript" src='{% static "account/js/login_vendor.js" %}'></script>
+
+{% if token %}
+<script type="text/javascript">
+
+	var token = "{{token}}";
+	console.log(token);
+	// localStorage.setItem('aveste_token', token);
+	
+	const params = window.location.search;
+
+	  if (window.opener) {
+	    // send them to the opening window
+	    window.opener.postMessage("{{token}}", "https://b52bcab5e6ff.ngrok.io/account");
+	    // close the popup
+	    // window.close();
+	  }
+
+
+</script>
+{% endif %}
+
 {% endblock %}
