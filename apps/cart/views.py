@@ -12,15 +12,27 @@ def get_cart(request):
 
 	if request.user.is_authenticated:
 
-		cart = Cart.objects.filter(owner=request.user, status="open").order_by("-date_modified").first()
+		owner = request.user
 	else:
-		cart = Cart.objects.filter(status="open", session_key=request.COOKIES.get("session_key")).order_by("-date_modified").first()
 
-	context = {
-		'cart': cart
-	}
+		owner = None
 
-	return context
+	session_key = request.COOKIES.get('session_key')
+
+	if session_key:
+
+		cart, created = Cart.objects.get_or_create(
+			owner=owner,
+			status="open",
+			session_key=request.COOKIES.get('session_key'),
+			defaults={
+				'owner': owner,
+				'status': 'open',
+				'session_key': request.COOKIES.get('session_key')
+			}
+		)
+
+		return cart
 
 
 def get_random_alphanumeric_string(length):
@@ -32,7 +44,11 @@ def cart(request):
 
 	template = 'cart/cart.html'
 
-	context = get_cart(request)
+	cart = get_cart(request)
+
+	context = {
+		'cart': cart,
+	}
 
 	return render(request,template,context)
 
@@ -49,27 +65,7 @@ def add_to_cart(request):
 
 		params = request.POST.dict()
 
-		if request.user.is_authenticated:
-
-			user = request.user
-
-			cart, created = Cart.objects.get_or_create(
-				owner=user,
-				status="open",
-			)
-
-		else:
-
-			cart, created = Cart.objects.update_or_create(
-				owner=None,
-				status="open",
-				session_key=request.COOKIES.get('session_key'),
-				defaults={
-					'owner': None,
-					'status': 'open',
-					'session_key': request.COOKIES.get('session_key')
-				}
-			)
+		cart = get_cart(request)
 
 		# Calculate quantity for cart item
 		try:
@@ -101,7 +97,7 @@ def add_to_cart(request):
 
 def remove_from_cart(request):
 
-	cart = get_cart(request)['cart']
+	cart = get_cart(request)
 
 	if request.GET:
 

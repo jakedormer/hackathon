@@ -10,7 +10,8 @@ class Cart(models.Model):
 	owner = models.ForeignKey(
 		User,
 		null=True,
-		related_name='baskets',
+		blank=True,
+		related_name='carts',
 		on_delete=models.CASCADE,
 		)
 
@@ -57,10 +58,12 @@ class Cart(models.Model):
 	def __str__(self):
 
 		return (
-			"%(status)s basket (owner: %(owner)s, lines: %(num_lines)d)") \
+			"%(status)s basket (owner: %(owner)s, session_key: %(session_key)s, lines: %(num_lines)d), items: %(num_items)s") \
 			% {'status': self.status,
 			   'owner': self.owner,
-			   'num_lines': self.num_lines
+			   'session_key': self.session_key,
+			   'num_lines': self.num_lines,
+			   'num_items': self.num_items
 			   }
 
 	def clean(self):

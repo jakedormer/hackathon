@@ -1,0 +1,47 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'checkout/css/checkout.css' %}" crossorigin="anonymous">
+{% endblock %}
+
+{% block body %}
+
+<h1 class="text-center mt-3">{{name}}</h1>
+
+<div class="row">
+	<div class="col-md-12 col-lg-8 col-sm-12 offset-lg-2">
+		<div class="row">
+			<div class="col text-center py-2 m-1 rounded {% if name == 'Login' %} text-white bg-dark {% else %} text-dark bg-vestem {% endif %}">
+				Login
+			</div>
+			<div class="col text-center py-2 m-1 rounded {% if name == 'Delivery' %} text-white bg-dark {% else %} text-dark bg-vestem {% endif %}">
+				Delivery
+			</div>
+			<div class="col text-center py-2 m-1 rounded bg-vestem text-dark">
+				Payment
+			</div>
+			<div class="col text-center py-2 m-1 rounded bg-vestem text-dark">
+				Confirm
+			</div>
+		</div>
+	</div>
+</div>
+
+
+{% block checkout %}
+
+{% endblock %}
+
+{% endblock %}
+
+{% block js %}
+
+<script type="text/javascript">
+	$('#list-tab a').on('click', function (e) {
+	  e.preventDefault()
+	  $(this).tab('show')
+	})
+</script>
+
+{% endblock %}

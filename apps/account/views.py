@@ -4,9 +4,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from apps.account.forms import SignUpForm
 from apps.dashboard.models import Vendor
+from apps.cart.models import Cart
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
+from apps.cart.views import get_cart
 import json
 
 # Create your views here.
@@ -38,8 +40,43 @@ def logout_view(request):
 
 	return redirect('/login')
 
+def login_cart_logic(request, user):
+
+	"""
+	If user goes from unauth to auth, we need to make sure that the existing cart 
+	is removed and replaced with the new one. We might even add the products to a
+	wishlist in future.
+	"""
+	print("hi")
+	print(request.COOKIES.get('session_key'))
+	print(user)
+
+	auth_bag = Cart.objects.get(owner=user, status="open")
+
+
+	print(auth_bag)
+
+	unauth_bag = Cart.objects.get(owner=None, status="open", session_key=request.COOKIES.get('session_key'))
+	
+
+	print(unauth_bag)
+
+	if unauth_bag and auth_bag:
+
+		auth_bag.delete()
+
+	# Mark the unauth bag with its owner
+	unauth_bag.owner = user
+	unauth_bag.save()
+
 
 def login_view_(request, template, context, redirect_url, vendor, form_type):
+
+	"""
+	Used as a general login view for both cart login and standard login
+
+	"""
+
 
 	if not context:
 		context = {}
@@ -56,11 +93,11 @@ def login_view_(request, template, context, redirect_url, vendor, form_type):
 
 		if auth_user is not None:
 
-			vendor = True if auth_user.profile.is_vendor else False
-
-			if not vendor:
+			if not auth_user.profile.is_vendor:
 
 				login(request, auth_user)
+
+				login_cart_logic(request, auth_user)
 
 				return redirect(redirect_url)
 
@@ -126,11 +163,13 @@ def login_vendor(request):
 		
 	else:
 
-		if request.user.is_authenticated and request.user.profile.is_vendor:
+		# if request.user.is_authenticated and request.user.profile.is_vendor:
 
-			context['token'] = request.user.auth_token.key
+		# 	context['token'] = request.user.auth_token.key
 
-			messages.error(request, "You are already logged in, please close this window", extra_tags="alert-success")
+		# 	messages.error(request, "You are already logged in, please close this window", extra_tags="alert-success")
+
+		pass
 
 
 	return render(request, template, context)

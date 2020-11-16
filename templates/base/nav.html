@@ -3,22 +3,18 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-vestem fixed-top op-9 shadow-sm">
     <a class="navbar-brand font-weight-bold fade-in text-sp3" href="/">AVESTE</a>
     <div class="d-flex order-lg-1 ml-auto pr-3">
+        {% if not hide_nav %}
         {% if user.is_authenticated %}
         <a href="/logout" class="navbar-text mr-4"><i class="fas fa-lg fa-sign-out-alt" data-toggle="tooltip" data-placement="bottom" title="Logout"></i></i></a>
         {% else %}
         <a href="/login" class="navbar-text mr-4"><i class="fa fa-lg fa-user" data-toggle="tooltip" data-placement="bottom" title="My Account"></i></i></a>
+        {% endif %}
         {% endif %}
 
         {% if not hide_cart %}
         <a href="/bag" class="navbar-text mr-1 text-center"><i class="fas fa-lg fa-shopping-bag" data-toggle="tooltip" data-placement="bottom" title="Bag"></i><span id="cart-items">{% if cart_count %} {{cart_count}} {% else %} 0 {% endif %}</span></a>
         {% endif %}
         
-        
-        <ul class="navbar-nav flex-row">
-            <li class="nav-item">
-          
-            </li>
-        </ul>
     </div>
 
     {% if not hide_nav %}
@@ -31,7 +27,7 @@
         <ul class="navbar-nav">
             {% for category in all_categories %}
             <li class="nav-item ">
-                <a class="nav-link text-dark font-weight-200" href="/{{category.name}}/c/{{category.id}}">{{category|upper}}</a>
+                <a class="nav-link text-dark font-weight-200" href="/{{category.slug}}/c/{{category.id}}">{{category|upper}}</a>
             </li>
             {% endfor %}
 

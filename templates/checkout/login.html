@@ -1,31 +1,7 @@
-{% extends "base/base.html" %}
-{% load static %}
+{% extends "checkout/base.html" %}
 
-{% block css %}
-<link rel="stylesheet" href="{% static 'checkout/css/checkout.css' %}" crossorigin="anonymous">
-{% endblock %}
 
-{% block body %}
-<h1 class="text-center mt-3">Checkout</h1>
-
-<div class="row">
-	<div class="col-md-12 col-lg-8 col-sm-12 offset-lg-2">
-		<div class="row">
-			<div class="col text-center py-2 text-white bg-dark m-1 rounded">
-				Login
-			</div>
-			<div class="col text-center py-2 m-1 rounded bg-vestem text-dark">
-				Delivery
-			</div>
-			<div class="col text-center py-2 m-1 rounded bg-vestem text-dark">
-				Payment
-			</div>
-			<div class="col text-center py-2 m-1 rounded bg-vestem text-dark">
-				Confirm
-			</div>
-		</div>
-	</div>
-</div>
+{% block checkout %}
 
 <div class="row my-3 mx-1">
 	<div class="col-md-12 col-lg-8 col-sm-12 offset-lg-2 border rounded-sm p-0 shadow-sm border-top-0">
@@ -38,7 +14,6 @@
 		<div class="tab-content" id="nav-tabContent">
 		  <div class="tab-pane fade" id="list-home" role="tabpanel" aria-labelledby="list-home-list">
 		  	<h1 class="display-3 font-weight-normal text-center font-weight-bold fade-in mt-3 pt-4">A</h1>
-		  	<h5 class="text-center text-muted mb-2">Sign in with emaiil</h5>
 		  <form class="form-signin col-md-12 col-lg-6 col-sm-12 offset-lg-3 my-2 mb-2" action="/create-account" method="post">
 		  	<p class="text-center">Track your orders, input your perfect sizes, and save your favourite brands!</p>
 		  	{% csrf_token %}
@@ -85,8 +60,14 @@
 		<form class="form col-md-12 col-lg-6 col-sm-12 offset-lg-3 my-2 mb-5" method="POST" action="/checkout/login">
 			{% csrf_token %}
 			{{login_form}}
-		<button type="submit" class="btn btn-success btn-lg btn-block mt-2 mb-4" name="form_name" value="login">Sign in</button>
+		<button type="submit" class="btn btn-success btn-lg btn-block mt-2 mb-2" name="form_name" value="login">Sign in</button>
 		</form>
+
+		<!-- Icons -->
+		<div class="mb-3">
+			{% include 'cart/payment_methods.html' %}
+		</div>
+
 		</div>
 
 
@@ -115,9 +96,3 @@
 
 {% endblock %}
 
-<script type="text/javascript">
-	$('#list-tab a').on('click', function (e) {
-	  e.preventDefault()
-	  $(this).tab('show')
-	})
-</script>

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from apps.account.forms import LoginForm, SignUpForm
 from apps.account.views import login_view_
 
@@ -6,9 +6,14 @@ from apps.account.views import login_view_
 
 def checkout_login(request):
 
+	if request.user.is_authenticated:
+
+		return redirect("/checkout/delivery")
+
 	template = 'checkout/login.html'
 
 	context = {
+		'name': "Login",
 		'login_form': LoginForm,
 		'signup_form': SignUpForm,
 		'hide_nav': True,
@@ -30,7 +35,9 @@ def checkout_delivery(request):
 	template = 'checkout/delivery.html'
 
 	context = {
-		'checkout': True,
+		'name': "Delivery",
+		'hide_nav': True,
+		'hide_cart': True,
 	}
 
 	return render(request, template, context)

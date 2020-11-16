@@ -2,6 +2,7 @@ from apps.product.models import Category, Product
 from apps.cart.models import Cart
 from django.template.loader import get_template
 from django import template
+from apps.cart.views import get_cart
 
 register = template.Library()
 
@@ -14,18 +15,15 @@ def categories(request):
 
 def cart_count(request):
 
-	if request.user.is_authenticated:
+	cart = get_cart(request)
 
-		try:
-			cart_count = Cart.objects.filter(owner=request.user, status='open').order_by("-date_modified").first().num_items
-		except AttributeError:
-			cart_count = 0
+	if cart:
+
+		cart_count = cart.num_items
+
 	else:
-
-		try:
-			cart_count = Cart.objects.filter(status='open', session_key=request.COOKIES.get('session_key')).order_by("date_modified").first().num_items
-		except AttributeError:
-			cart_count = 0
+		
+		cart_count = 0
 
 	return {
 		'cart_count': cart_count

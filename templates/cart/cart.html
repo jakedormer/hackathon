@@ -78,11 +78,10 @@
     <a class="btn btn-success w-95" href="/checkout/login"><i class="fas fa-lock mr-2"></i><b>Checkout</b></a>
     </div>
 
-    <div class="text-center py-3 text-dark">
-      <i class="fab fa-cc-visa fa-2x mr-2"></i>
-      <i class="fab fa-cc-mastercard fa-2x mr-2"></i>
-      <i class="fab fa-stripe fa-2x"></i>
+    <div class="my-3 pb-2">
+      {% include 'cart/payment_methods.html' %}
     </div>
+    
 
   </div>
 </div>

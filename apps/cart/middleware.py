@@ -18,28 +18,22 @@ class CartMiddleware:
 
 		response = self.get_response(request)
 
-		if request.user.is_authenticated:
 
+		if request.COOKIES.get('session_key'):
+
+			# print("Has cookie")
 			pass
-			# print("hi %s", (request.user.username))
 
 		else:
 
-			if request.COOKIES.get('session_key'):
+			response.set_cookie(
+				'session_key', 
+				value=self.get_random_alphanumeric_string(64),
+				expires=None, 
+				max_age=60*60*24*30,
+				domain='127.0.0.1',
 
-				# print("Has cookie")
-				pass
-
-			else:
-
-				response.set_cookie(
-					'session_key', 
-					value=self.get_random_alphanumeric_string(64),
-					expires=None, 
-					max_age=60*60*24*30,
-					domain='127.0.0.1',
-
-				)
+			)
 
 		# Code to be executed for each request/response after
 		# the view is called.
