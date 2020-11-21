@@ -5,13 +5,13 @@
 <link rel="stylesheet" href="{% static 'checkout/css/checkout.css' %}" crossorigin="anonymous">
 {% endblock %}
 
-{% block body %}
+{% block bodynoncon %}
 
 <h1 class="text-center mt-3">{{name}}</h1>
 
 <div class="row">
-	<div class="col-md-12 col-lg-8 col-sm-12 offset-lg-2">
-		<div class="row">
+	<div class="col-md-8 col-lg-6 col-sm-12 offset-lg-3 offset-md-2">
+		<div class="row font-sm">
 			<div class="col text-center py-2 m-1 rounded {% if name == 'Login' %} text-white bg-dark {% else %} text-dark bg-vestem {% endif %}">
 				Login
 			</div>

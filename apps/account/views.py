@@ -51,13 +51,21 @@ def login_cart_logic(request, user):
 	print(request.COOKIES.get('session_key'))
 	print(user)
 
-	auth_bag = Cart.objects.get(owner=user, status="open")
+	try:
+		auth_bag = Cart.objects.get(owner=user, status="open")
+
+	except ObjectDoesNotExist:
+
+		auth_bag = None
 
 
-	print(auth_bag)
+	try:
 
-	unauth_bag = Cart.objects.get(owner=None, status="open", session_key=request.COOKIES.get('session_key'))
+		unauth_bag = Cart.objects.get(owner=None, status="open", session_key=request.COOKIES.get('session_key'))
 	
+	except ObjectDoesNotExist:
+
+		unauth_bag = None
 
 	print(unauth_bag)
 

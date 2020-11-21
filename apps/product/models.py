@@ -215,6 +215,8 @@ class Product(models.Model):
 
 	description = models.TextField(null=True, blank=True)
 
+	published = models.BooleanField(default=False)
+
 	def clean(self):
 		"""
 		Validate a product. Those are the rules:

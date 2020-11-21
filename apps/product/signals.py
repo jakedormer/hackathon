@@ -33,6 +33,7 @@ def product_signal(sender, instance, **kwargs):
 			variant.image_src = instance.image_src
 			variant.size_guide = instance.size_guide
 			variant.external_url = instance.external_url
+			variant.published = instance.published
 
 			variant.save()
 

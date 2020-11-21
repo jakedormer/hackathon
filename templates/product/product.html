@@ -39,7 +39,7 @@
             {% if user.is_authenticated %}
             <form class="form" action="/ajax/add_to_favourites" method="post" id="add_to_favourites">
                {% csrf_token %}
-               <input type="hidden" name="vendor" value="{{product.vendor}}">
+               <input type="hidden" name="vendor" value="{{product.vendor.name}}">
                {% if product.vendor in user.profile.favourites.all %}
                <button type="submit" class="btn btn-warning btn-sm" id="add_to_favourites_button" title="Remove {{product.vendor.display_name}} from your favourite brands"><i class="fas fa-star"></i></button>
                {% else %}
@@ -66,7 +66,7 @@
          {% csrf_token %}
          {% endif %}
          <div class="col p-0">
-         <p class="font-weight-bold">Size</p>
+         <p class="font-weight-bold">Sizes</p>
 
          <div class="mb-4">
             {% for size in sizes %}

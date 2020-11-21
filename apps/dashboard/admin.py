@@ -1,17 +1,13 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Vendor, Profile, Platform, APICredential
+from .models import Vendor, Profile, Platform
 
 
 admin.site.register(Platform)
 
-class APICredentialAdmin(admin.TabularInline):
-	model = APICredential
-	extra = 0
 
 class VendorAdmin(admin.ModelAdmin):
-	inlines = (APICredentialAdmin, )
 	list_display = ('id', 'name', 'display_name', 'commission')
 
 class ProfileAdmin(admin.ModelAdmin):

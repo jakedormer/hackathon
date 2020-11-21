@@ -1,6 +1,9 @@
 from django.contrib import admin
 from django.forms import CheckboxSelectMultiple
 from django.db import models
+from django.utils.translation import ngettext
+from django.contrib import messages
+
 
 # Register your models here.
 
@@ -19,10 +22,11 @@ class AttributeValueAdmin(admin.TabularInline):
 
 class ProductAdmin(admin.ModelAdmin):
 
-	list_display = ('id', 'external_id', 'attr_count', 'vendor', 'get_product_category', 'title', 'get_size', 'product_type', 'date_created')
+	list_display = ('id', 'published', 'external_id', 'attr_count', 'vendor', 'get_product_category', 'title', 'get_size', 'product_type', 'date_created')
 	list_filter = ('vendor', 'category', 'product_type')
 	inlines = (AttributeValueAdmin,)
 	ordering = ('vendor', 'title', '-product_type')
+	actions = ["publish"]
 
 	def attr_count(self, x):
 			
@@ -37,6 +41,16 @@ class ProductAdmin(admin.ModelAdmin):
 		except:
 
 			return None
+
+	def publish(self, request, queryset):
+
+		updated = queryset.update(published=True)
+		self.message_user(request, ngettext(
+            '%d product was successfully marked as published.',
+            '%d products were successfully marked as published.',
+            updated,
+        ) % updated, messages.SUCCESS)
+
 
 
 class AttributeAdmin(admin.ModelAdmin):

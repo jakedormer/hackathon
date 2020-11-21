@@ -18,14 +18,16 @@ class Platform(models.Model):
 
 class Vendor(models.Model):
 
-	name = models.CharField(max_length=30, unique=True, help_text="The store name within the shopify url")
-	display_name = models.CharField(max_length=30)
-	platform = models.ManyToManyField(Platform, through="APICredential")
-	enabled = models.BooleanField(default=False)
-	commission = models.DecimalField(max_digits=10, decimal_places=4, help_text="The vendor commission rate, set it as a decimal e.g. 15% = 0.15")
+	name = 				models.CharField(max_length=30, unique=True, help_text="The store name within the shopify url")
+	display_name = 		models.CharField(max_length=30)
+	platform = 			models.OneToOneField(Platform, on_delete=models.PROTECT, null=True, blank=True)
+	api_access_token = 	models.CharField(max_length=200, null=True, blank=True)
+	enabled = 			models.BooleanField(default=False)
+	commission = 		models.DecimalField(max_digits=10, decimal_places=4, help_text="The vendor commission rate, set it as a decimal e.g. 15% = 0.15")
+	free_shipping = 	models.DecimalField(max_digits=10, decimal_places=4, null=True, help_text="The vendors current free shipping threshold")
 
 	def __str__(self):
-		return self.name
+		return self.display_name
 
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -34,6 +36,7 @@ class Profile(models.Model):
 	email_pref = models.BooleanField(default=False)
 	sms_pref = models.BooleanField(default=False)
 	favourites = models.ManyToManyField(Vendor, related_name="favourites", blank=True)
+
 
 	# Create a profile object when a user is created and create api_token
 	@receiver(post_save, sender=User)
@@ -53,23 +56,6 @@ class Profile(models.Model):
 	def __str__(self):
 		return self.user.first_name
 
-class APICredential(models.Model):
-
-	vendor 						= models.ForeignKey(Vendor, on_delete=models.CASCADE)
-	platform 					= models.ForeignKey(Platform, on_delete=models.CASCADE)
-	nonce						= models.CharField(max_length=200, null=True, blank=True)
-	access_token 				= models.CharField(max_length=200, null=True, blank=True)
-	storefront_access_token 	= models.CharField(max_length=200, null=True, blank=True)
-	categories 					= models.CharField(max_length=500, null=True, blank=True)
-	scopes	 					= models.CharField(max_length=500, null=True, blank=True)
-	date_modified 				= models.DateTimeField(auto_now=True)
-
-	def __str__(self):
-		return self.vendor.name.title() + "-" + self.platform.name.title()
-
-
-	class Meta:
-		unique_together = ('vendor', 'platform')
  
 
 

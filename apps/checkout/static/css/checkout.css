@@ -5,3 +5,13 @@
 .list-group-item-dark:not(:active) {
     background-color: #fff;
 }
+
+@media (max-width: 450px) { 
+	.font-sm {
+		font-size: 0.6rem;
+	}
+}
+
+/*body {
+	background: linear-gradient(90deg, #fff 66%, #f8f9fa 34%);
+}*/

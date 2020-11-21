@@ -8,11 +8,12 @@ import json
 #https://docs.djangoproject.com/en/3.0/ref/django-admin/#django-admin-clearsessions
 #Run as a cron job to clear up the backend
 
-def get_cart(request):
+def get_cart(request, create=False):
 
 	if request.user.is_authenticated:
 
 		owner = request.user
+	
 	else:
 
 		owner = None
@@ -21,16 +22,31 @@ def get_cart(request):
 
 	if session_key:
 
-		cart, created = Cart.objects.get_or_create(
-			owner=owner,
-			status="open",
-			session_key=request.COOKIES.get('session_key'),
-			defaults={
-				'owner': owner,
-				'status': 'open',
-				'session_key': request.COOKIES.get('session_key')
-			}
-		)
+		try:
+
+			cart = Cart.objects.get(owner=owner, status="open", session_key=session_key)
+
+		except ObjectDoesNotExist:
+
+			if create:
+
+				cart = Cart(owner=owner, status="open", session_key=session_key)
+				cart.save()
+				
+			else:
+
+				cart = None
+
+		# cart, created = Cart.objects.get_or_create(
+		# 	owner=owner,
+		# 	status="open",
+		# 	session_key=request.COOKIES.get('session_key'),
+		# 	defaults={
+		# 		'owner': owner,
+		# 		'status': 'open',
+		# 		'session_key': request.COOKIES.get('session_key')
+		# 	}
+		# )
 
 		return cart
 
@@ -65,7 +81,7 @@ def add_to_cart(request):
 
 		params = request.POST.dict()
 
-		cart = get_cart(request)
+		cart = get_cart(request, True)
 
 		# Calculate quantity for cart item
 		try:
