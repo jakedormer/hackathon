@@ -8,7 +8,7 @@ admin.site.register(Platform)
 
 
 class VendorAdmin(admin.ModelAdmin):
-	list_display = ('id', 'name', 'display_name', 'commission')
+	list_display = ('id', 'name', 'display_name', 'commission', 'num_items', 'num_items_published')
 
 class ProfileAdmin(admin.ModelAdmin):
 

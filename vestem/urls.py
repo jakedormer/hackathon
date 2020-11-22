@@ -63,7 +63,7 @@ urlpatterns = [
 
     # Rest_API
     path('api/current_user/', views_rest_api.CurrentUser.as_view(), name='current_user'),
-    path('api/update_vendor/', views_rest_api.Vendor.as_view(), name='update_vendor'),
+    path('api/update_vendor/', views_rest_api.VendorAPI.as_view(), name='update_vendor'),
     # path('api-token-auth/', obtain_auth_token, name='api_token_auth'),ss
 
     # Ajax

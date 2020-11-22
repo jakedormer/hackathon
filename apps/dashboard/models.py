@@ -23,11 +23,20 @@ class Vendor(models.Model):
 	platform = 			models.OneToOneField(Platform, on_delete=models.PROTECT, null=True, blank=True)
 	api_access_token = 	models.CharField(max_length=200, null=True, blank=True)
 	enabled = 			models.BooleanField(default=False)
-	commission = 		models.DecimalField(max_digits=10, decimal_places=4, help_text="The vendor commission rate, set it as a decimal e.g. 15% = 0.15")
+	commission = 		models.DecimalField(max_digits=10, decimal_places=4, null=True, help_text="The vendor commission rate, set it as a decimal e.g. 15% = 0.15")
 	free_shipping = 	models.DecimalField(max_digits=10, decimal_places=4, null=True, help_text="The vendors current free shipping threshold")
 
 	def __str__(self):
 		return self.display_name
+
+	@property
+	def num_items(self):
+		return len(self.product_set.all())
+
+	@property
+	def num_items_published(self):
+		return len(self.product_set.filter(published=True))
+	
 
 class Profile(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE)
