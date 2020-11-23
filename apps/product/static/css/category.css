@@ -35,6 +35,13 @@
   transform: scale(1.6); 
   } 
 
+.page-item.active1 .page-link {
+    z-index: 3;
+     color: #fff; 
+     background-color: #343a40; 
+    border-color: #343a40;
+}
+
 /*// Small devices (landscape phones, 576px and up)
 @media (min-width: 576px) { ... }
 

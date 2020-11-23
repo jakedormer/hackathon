@@ -3,7 +3,7 @@ $('#add_to_cart').on('submit',function(e){
   e.preventDefault();
 
   var data = $(this).serialize()
-  console.log(data)
+  // console.log(data)
 
   $.ajax({
    url : "/ajax/add_to_cart", // the endpoint
@@ -12,8 +12,8 @@ $('#add_to_cart').on('submit',function(e){
 
    // Handle a successful response
    success : function(json) {
-       console.log(json);
-       console.log("success");
+       // console.log(json);
+       // console.log("success");
 
        if (json.add_to_cart == false) {
         $('#max_quantity').attr("style", "display: block!important");

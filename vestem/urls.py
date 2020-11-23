@@ -14,6 +14,8 @@ from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from django.views.decorators.csrf import csrf_exempt
 
+# handler404 = 'apps.base.views.view_404'
+# handler500 = 'apps.base.views.view_500'
 # router = routers.DefaultRouter()
 # Users will be the name of the url
 
@@ -39,11 +41,13 @@ urlpatterns = [
     path('logout', views_account.logout_view, name='logout'),
     path('create-account', views_account.create_account, name='create_account'),
 
-    # #Oauth
+    # Oauth
     # path('oauth/install', views_oauth.install, name='oauth/install'),
     # path('oauth/authenticate', views_oauth.authenticate, name='oauth/authenticate'),
-    # path('<slug:slug>/c/<int:code>', views_product.category, name='category'),
-    # re_path(r'.+/p/(?P<id>[0-9]+)', views_product.product, name='product'),
+
+    # Product
+    path('<slug:slug>/c/<int:code>', views_product.category, name='category'),
+    re_path(r'.+/p/(?P<id>[0-9]+)', views_product.product, name='product'),
 
     # Cart
     path('add_to_cart', views_cart.add_to_cart, name='add_to_cart'),

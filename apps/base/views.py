@@ -42,3 +42,11 @@ def privacy(request):
 	template = 'base/privacy.html'
 
 	return render(request,template,context)
+
+
+# def view_404(request, exception=None):
+# 	return
+
+def view_500(request):
+	return
+

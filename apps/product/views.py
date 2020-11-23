@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from apps.product.models import *
 from django.db.models import Count, F, Q
+from django.core.paginator import Paginator
 
 
 
@@ -44,9 +45,14 @@ def category(request, slug, code):
 	print(products)
 	print(attribute_values.values())
 
+	products = products.filter(Q(product_type="parent") | Q(product_type="standalone"))
+	paginator = Paginator(products, 2)
+	page_number = request.GET.get('page')
+	products = paginator.get_page(page_number)
+
 	context = {
 		'category': category,
-		'products': products.filter(Q(product_type="parent") | Q(product_type="standalone")),
+		'products': products,
 		'facet_list': {
 			'brands': attribute_values.filter(Q(product__product_type="parent") | Q(product__product_type="standalone"), attribute__name="brand").values('value_text').distinct().order_by('value_text').annotate(count=Count('value_text'), name=F('value_text')),
 			'sizes':  attribute_values.filter(attribute__name="size").values('attribute__name').order_by('value_text').annotate(count=Count('value_text'), name=F('value_text')),

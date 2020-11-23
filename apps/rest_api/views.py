@@ -80,7 +80,7 @@ class VendorAPI(APIView):
 
 		data = JSONParser().parse(request)
 		user = request.user
-
+		
 		try:
 			vendor = Vendor.objects.get(name=data['name'])
 
