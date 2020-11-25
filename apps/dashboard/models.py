@@ -25,6 +25,7 @@ class Vendor(models.Model):
 	enabled = 			models.BooleanField(default=False)
 	commission = 		models.DecimalField(max_digits=10, decimal_places=4, null=True, help_text="The vendor commission rate, set it as a decimal e.g. 15% = 0.15")
 	free_shipping = 	models.DecimalField(max_digits=10, decimal_places=4, null=True, help_text="The vendors current free shipping threshold")
+	instagram = 		models.CharField(max_length=100, null=True, blank=True)
 
 	def __str__(self):
 		return self.display_name

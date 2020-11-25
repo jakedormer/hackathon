@@ -5,7 +5,9 @@
 
 <div class="row mt-3">
 	<div class="col">
-		<p>Parlez</p>
+		{% for favourite in favourites %}
+		<p>{{favourite.display_name}}</p>
+		{% endfor %}
 	</div>
 </div>
 

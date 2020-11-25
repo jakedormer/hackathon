@@ -24,9 +24,13 @@ def account_orders(request):
 @login_required
 def account_favourites(request):
 
+
+
 	template = "account/account_favourites.html"
 
-	context = {}
+	context = {
+		'favourites': request.user.profile.favourites.all()
+	}
 
 	return render(request, template, context)
 
@@ -47,14 +51,14 @@ def login_cart_logic(request, user):
 	is removed and replaced with the new one. We might even add the products to a
 	wishlist in future.
 	"""
-	print("hi")
-	print(request.COOKIES.get('session_key'))
-	print(user)
+	# print("hi")
+	# print(request.COOKIES.get('session_key'))
+	# print(user)
 
 	try:
 		auth_bag = Cart.objects.get(owner=user, status="open")
 
-	except ObjectDoesNotExist:
+	except (ObjectDoesNotExist, AttributeError):
 
 		auth_bag = None
 
@@ -63,28 +67,34 @@ def login_cart_logic(request, user):
 
 		unauth_bag = Cart.objects.get(owner=None, status="open", session_key=request.COOKIES.get('session_key'))
 	
-	except ObjectDoesNotExist:
+	except (ObjectDoesNotExist, AttributeError):
 
 		unauth_bag = None
 
-	print(unauth_bag)
+	# print(unauth_bag)
 
-	if unauth_bag and auth_bag:
+	if unauth_bag:
+		if auth_bag:
 
-		auth_bag.delete()
+			auth_bag.delete()
+		
+		else:
+
+			unauth_bag.owner = user
+			unauth_bag.save()
+
 
 	# Mark the unauth bag with its owner
-	unauth_bag.owner = user
-	unauth_bag.save()
+	
+	
 
 
-def login_view_(request, template, context, redirect_url, vendor, form_type):
+def login_view_(request, template, context, redirect_url, form_type):
 
 	"""
 	Used as a general login view for both cart login and standard login
 
 	"""
-
 
 	if not context:
 		context = {}
@@ -121,7 +131,7 @@ def login_view_(request, template, context, redirect_url, vendor, form_type):
 		
 	else:
 
-		if request.user.is_authenticated and vendor:
+		if request.user.is_authenticated:
 
 			return redirect(redirect_url)
 
@@ -129,7 +139,7 @@ def login_view_(request, template, context, redirect_url, vendor, form_type):
 
 def login_view(request):
 
-	return login_view_(request, template='account/login.html', context={}, redirect_url='/account/orders', vendor=False, form_type="login")
+	return login_view_(request, template='account/login.html', context={}, redirect_url='/account/orders', form_type="login")
 
 
 def login_vendor(request):
