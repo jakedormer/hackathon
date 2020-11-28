@@ -41,9 +41,9 @@ def category(request, slug, code):
 
 	
 	attribute_values = AttributeValue.objects.filter(product__in=products)
-	print("filter", filters_applied)
-	print(products)
-	print(attribute_values.values())
+	# print("filter", filters_applied)
+	# print(products)
+	# print(attribute_values.values())
 
 	products = products.filter(Q(product_type="parent") | Q(product_type="standalone"))
 	paginator = Paginator(products, 2)

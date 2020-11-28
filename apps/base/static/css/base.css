@@ -82,6 +82,10 @@ a:hover {
   opacity: 0.95;
 }
 
+.op-8 {
+  opacity: 0.8;
+}
+
 .op-50 {
   opacity: 0.5;
 }

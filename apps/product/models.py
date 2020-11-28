@@ -3,6 +3,7 @@ from django.template.defaultfilters import slugify
 from apps.dashboard.models import Vendor
 from django.core.exceptions import ValidationError
 from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 
 # Create your models here.
 
@@ -20,6 +21,11 @@ class Category(models.Model):
 	def save(self, *args, **kwargs):
 		self.slug = slugify(self.name)
 		super(Category, self).save(*args, **kwargs)
+
+	@property
+	def count(self):
+		return self.product_set.filter(Q(product_type="parent") | Q(product_type="standalone")).count()
+	
 
 class AttributeOptionGroup(models.Model):
 	"""

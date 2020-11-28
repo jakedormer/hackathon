@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from apps.account.forms import LoginForm, SignUpForm
 from apps.account.views import login_view_
+from apps.cart.views import get_cart
 
 # Create your views here.
 
@@ -18,6 +19,7 @@ def checkout_login(request):
 		'signup_form': SignUpForm,
 		'hide_nav': True,
 		'hide_cart': True,
+		'cart': get_cart(request),
 	}
 
 
@@ -26,7 +28,6 @@ def checkout_login(request):
 		template='checkout/login.html', 
 		context=context, 
 		redirect_url='/checkout/delivery', 
-		vendor=False, 
 		form_type="login"
 	)
 
@@ -38,6 +39,7 @@ def checkout_delivery(request):
 		'name': "Delivery",
 		'hide_nav': True,
 		'hide_cart': True,
+		'cart': get_cart(request),
 	}
 
 	return render(request, template, context)

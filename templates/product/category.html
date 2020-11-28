@@ -10,11 +10,12 @@
 
 
 <h1 class="text-bold display-5 text-center fade-in mt-3 text-sp3">{{category.name|upper}}</h1>
+<h5 class="text-center mt-1 text-secondary">({{category.count}} products)</h5>
 <p class="text-center fade-in"><small class="text-muted">{{category.description}}</small></p>
 <hr>
 
 <!-- Find your perfect fit -->
-<div class="mb-3" id="accordion">
+<!-- <div class="mb-3" id="accordion">
   <div class="card">
     <div class="text-center" id="headingOne">
       <h5 class="mb-0">
@@ -34,10 +35,10 @@
       </div>
     </div>
   </div>
-</div>
+</div> -->
 
 <!-- Facets -->
-<div class="row bg-vestem shadow-sm">
+<!-- <div class="row bg-vestem shadow-sm">
   <form class="w-100" method="get" action="/{{category.name}}/c/{{category.id}}?{{request.GET.urlencode}}">
     {% csrf_token %}
   <div class="row">
@@ -49,7 +50,7 @@
         <span><i class="fas fa-angle-down float-right"></i></span>
       </button>
       <div class="dropdown-menu bg-light w-100 shadow-sm" aria-labelledby="dropdownMenuButton">
-        <!-- <h6 class="dropdown-header">X Selected</h6> -->
+        <h6 class="dropdown-header">X Selected</h6>
         {{value}}
         {% for x in value %}
         <label for="{{key}}|{{x.name}}" class="w-95 ">
@@ -69,7 +70,7 @@
   {% endfor %}
 </div>
 </form>
-</div>
+</div> -->
 
 
 <form method="get" action="">

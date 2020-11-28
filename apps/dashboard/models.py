@@ -45,7 +45,9 @@ class Profile(models.Model):
 	is_vendor = models.BooleanField(null=True)
 	email_pref = models.BooleanField(default=False)
 	sms_pref = models.BooleanField(default=False)
+	mobile_number = models.CharField(max_length=11, unique=True, help_text="Number must be in format 0xxxxxxxxxx. 11 Digits allowed")
 	favourites = models.ManyToManyField(Vendor, related_name="favourites", blank=True)
+
 
 
 	# Create a profile object when a user is created and create api_token
