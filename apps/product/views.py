@@ -46,7 +46,7 @@ def category(request, slug, code):
 	# print(attribute_values.values())
 
 	products = products.filter(Q(product_type="parent") | Q(product_type="standalone"))
-	paginator = Paginator(products, 2)
+	paginator = Paginator(products, 4)
 	page_number = request.GET.get('page')
 	products = paginator.get_page(page_number)
 

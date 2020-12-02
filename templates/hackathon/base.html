@@ -1,0 +1,179 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href='{% static "base/css/flickity.min.css" %}'>
+<link rel="stylesheet" href='{% static "base/css/flickity.css" %}'>
+{% endblock %}
+
+
+{% block body %}
+<!-- Welcome -->
+
+<!-- <div class="bd-example mt-3">
+  <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">
+    <ol class="carousel-indicators">
+      <li data-target="#carouselExampleCaptions" data-slide-to="0" class="active"></li>
+    </ol>
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{{ MEDIA_URL }}images/logos/bt_hero.png" class="d-block w-100" alt="...">
+        <div class="carousel-caption d-none d-md-block">
+          <h5>Welcome Pier</h5>
+          <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+        </div>
+      </div> -->
+   <!--  <a class="carousel-control-prev" href="#carouselExampleCaptions" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#carouselExampleCaptions" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Next</span>
+    </a> -->
+<!--   </div>
+</div> -->
+
+<div class="row mt-3">
+	<div class="col">
+		<div class="jumbotron">
+		  <h1 class="display-5">Welcome, Pier</h1>
+		  <img class="img-responsive" src="{{ MEDIA_URL }}images/logos/{{account}}_hero.png" style="width: 95%">
+		  <!-- <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p> -->
+		  <hr class="my-4">
+		  <p>Check out the latest <b>{{rec}}</b> now.</p>
+		  <div class="text-center">
+		  <a class="btn btn-primary btn-lg text-center" href="#" role="button" style="
+    background-color: #{{color}}!important; color: #{{text}}!important;">Learn more</a>
+		</div>
+		</div>
+
+	</div>
+</div>
+<!-- Account notifications -->
+<h5 class="text-center my-3">Account Notifications</h5>
+<div class="row mb-5">
+	<div class="col-6 text-center">
+		<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="false">
+		  <div class="toast-header">
+		    <img src="https://via.placeholder.com/10/563d7c" class="rounded mr-2" alt="...">
+		    <strong class="mr-auto">BT</strong>
+		    <small>10 mins ago</small>
+		    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+		      <span aria-hidden="true">&times;</span>
+		    </button>
+		  </div>
+		  <div class="toast-body">
+		    Your December 2020 bill is ready
+		  </div>
+		</div>
+	</div>
+
+	<div class="col-6 text-center">
+		<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="false">
+		  <div class="toast-header">
+		    <img src="https://via.placeholder.com/10/563d7c" class="rounded mr-2" alt="...">
+		    <strong class="mr-auto">BT</strong>
+		    <small>Yesterday</small>
+		    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+		      <span aria-hidden="true">&times;</span>
+		    </button>
+		  </div>
+		  <div class="toast-body">
+		    It's time to upgrade Pier!
+		  </div>
+		</div>
+	</div>
+
+	<div class="col-6 mt-1 text-center">
+		<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-autohide="false">
+		  <div class="toast-header">
+		    <img src="https://via.placeholder.com/10/007b85" class="rounded mr-2" alt="...">
+		    <strong class="mr-auto">EE</strong>
+		    <small>Last week</small>
+		    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+		      <span aria-hidden="true">&times;</span>
+		    </button>
+		  </div>
+		  <div class="toast-body">
+		    You could save money by...
+		  </div>
+		</div>
+	</div>
+
+
+
+</div>
+
+{% block getmore %}
+
+
+{% endblock %}
+
+<!-- My Products -->
+<h5 class="text-center mt-5 mb-3">My {{account|upper}} products</h3>
+<div class="row container mr-0 pr-0 mb-5 text-center text-dark ">
+	<div class="col-6 card border text-center py-2 mt-1 w-9">
+		<i class="fas fa-wifi fa-3x mb-2"></i>
+		<p>Broadband</p>
+	</div>
+	<div class="col-6 card border text-center py-2 mt-1">
+		<i class="fas fa-phone fa-3x"></i>
+		<p>Mobile</p>
+	</div>
+	<div class="col-6 card border text-center py-2 mt-1">
+		<i class="fas fa-futbol fa-3x"></i>
+		<p>Sport</p>
+	</div>
+	<div class="col-6 card border text-center py-2 mt-1">
+		<i class="fas fa-tv fa-3x"></i>
+		<p>TV</p>
+	</div>
+</div>
+
+
+
+
+<!-- Footer -->
+<div class="fixed-bottom bg-dark text-white d-sm-block d-md-none p-2">
+  <div class="row">
+    <div class="col-3 text-center">
+      <a class="text-white" href="/account/orders">
+        <i class="fas fa-cog mr-2"></i>
+        <small class="d-block">Account</small>
+      </a>
+    </div> 
+    <div class="col-3 text-center">
+      <a class="text-white" href="/dashboard/settings">
+        <i class="fas fa-file-invoice mr-2"></i>
+        <small class="d-block">Billing</small>
+      </a>
+    </div>
+    <div class="col-3 text-center">
+      <a class="text-white" href="/dashboard/settings">
+        <i class="fas fa-gift mr-2"></i>
+        <small class="d-block">Offers</small>
+      </a>
+    </div>
+    <div class="col-3 text-center">
+      <a class="text-white" href="/dashboard/settings">
+        <i class="fas fa-cog mr-2"></i>
+        <small class="d-block">Settings</small>
+      </a>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+
+{% block js %}
+<script>
+	$(document).ready(function() {
+        $(".toast").toast('show');
+        $(".toast").toast('autohide', 'false');
+    });
+</script>
+<script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+{% endblock %}
+

@@ -21,8 +21,10 @@
 					   <div class="card">
 					      <div class="bg-light" id="headingOne">
 					         <h5 class="mb-0">
-					            <button class="btn w-100 btn-link text-dark py-3" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-					            <span class="float-center text-dark"><i class="fas fa-sm fa-shopping-bag mr-3"></i>View your bag<i class="fas fa-chevron-down fa-xs ml-2"></i></span>
+					            <button class="btn w-100 btn-link text-dark py-3" id="bag-button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+					            <span class="float-center text-dark">
+					            	<i class="fas fa-sm fa-shopping-bag mr-3"></i><span id="bag-button-span">View your bag</span><i class="fas fa-chevron-down fa-xs ml-2" id="bag-button-icon"></i>
+					            </span>
 					            <span class="float-right mt-1 mr-2 font-weight-bold">£{{cart.total}}</span>
 					            </button>
 					            
@@ -151,12 +153,6 @@
 {% endblock %}
 
 {% block js %}
-
-<script type="text/javascript">
-	$('#list-tab a').on('click', function (e) {
-	  e.preventDefault()
-	  $(this).tab('show')
-	})
-</script>
+<script type="text/javascript" src='{% static "checkout/js/checkout.js" %}'></script>
 
 {% endblock %}

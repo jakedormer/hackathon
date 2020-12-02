@@ -1,35 +1,34 @@
 {% load tags %}
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-vestem fixed-top op-9 shadow-sm">
-    <a class="navbar-brand font-weight-bold fade-in text-sp3" href="/">AVESTE</a>
+<nav class="navbar navbar-expand-lg fixed-top op-9 shadow-sm" style="
+    background-color: #{{color}}!important; color: #{{text}}!important;">
+    <a class="navbar-brand font-weight-bold fade-in text-sp3" style="color: #{{text}}!important" href="/hackathon/login"><i class="fas fa-key mr-2"></i>BT Key</a>
+    
     <div class="d-flex order-lg-1 ml-auto pr-3">
-        {% if not hide_nav %}
-        {% if user.is_authenticated %}
-        <a href="/logout" class="navbar-text mr-4"><i class="fas fa-lg fa-sign-out-alt" data-toggle="tooltip" data-placement="bottom" title="Logout"></i></i></a>
-        {% endif %}
-        <a href="/login" class="navbar-text mr-4"><i class="fa fa-lg fa-user" data-toggle="tooltip" data-placement="bottom" title="My Account"></i></i></a>
         
-        {% endif %}
-
-        {% if not hide_cart %}
-        <a href="/bag" class="navbar-text mr-1 text-center"><i class="fas fa-lg fa-shopping-bag" data-toggle="tooltip" data-placement="bottom" title="Bag"></i><span id="cart-items">{% if cart_count %} {{cart_count}} {% else %} 0 {% endif %}</span></a>
-        {% endif %}
         
     </div>
 
     {% if not hide_nav %}
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" style="color: #{{text}}!important" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <i class="fas fa-bars"></i>
         <!-- <span class="navbar-toggler-icon"></span> -->
     </button>
     
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
         <ul class="navbar-nav">
-            {% for category in all_categories %}
             <li class="nav-item ">
-                <a class="nav-link text-dark font-weight-200" href="/{{category.slug}}/c/{{category.id}}">{{category|upper}}</a>
+                <img class="img-responsive d-inline rounded-circle" src="{{ MEDIA_URL }}images/logos/bt.jpg" style="height:20px; width: 20px">
+                <a class="nav-link text-white font-weight-200 d-inline" href="/hackathon/dashboard/bt">BT</a>
             </li>
-            {% endfor %}
+            <li class="nav-item ">
+                <img class="img-responsive mt-3 d-inline rounded-circle" src="{{ MEDIA_URL }}images/logos/ee.jpg" style="height:20px">
+                <a class="nav-link text-white font-weight-200 d-inline" href="/hackathon/dashboard/ee">EE</a>
+            </li>
+            <li class="nav-item ">
+                <img class="img-responsive mt-3 d-inline rounded-circle" src="{{ MEDIA_URL }}images/logos/plusnet.jpeg" style="height:20px">
+                <a class="nav-link text-white font-weight-200 d-inline" href="/{{category.slug}}/c/{{category.id}}">Plusnet</a>
+            </li>
         </ul>
     </div>
     {% endif %}

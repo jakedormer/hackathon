@@ -6,6 +6,7 @@ from apps.cart import views as views_cart
 from apps.checkout import views as views_checkout
 from apps.product import views as views_product
 from apps.dashboard import views as views_dashboard
+from apps.hackathon import views as views_hackathon
 from apps.oauth import views as views_oauth
 from apps.rest_api import views as views_rest_api
 from django.conf import settings
@@ -64,6 +65,13 @@ urlpatterns = [
     # path('dashboard/sizes', views_dashboard.dashboard_sizes, name='dashboard_sizes'),
     # path('dashboard/sizes/delete/<int:code>', views_dashboard.dashboard_sizes_delete, name='dashboard_sizes_delete'),
     # path('dashboard/sizes/create', views_dashboard.dashboard_sizes_create, name='dashboard_sizes'),
+
+    # Hackathon
+    path('hackathon/login', views_hackathon.hackathon_login, name='current_user'),
+    path('hackathon/welcome', views_hackathon.hackathon_welcome, name='current_user'),
+    path('hackathon/dashboard/bt', views_hackathon.hackathon_dashboard_bt, name='current_user'),
+    path('hackathon/dashboard/ee', views_hackathon.hackathon_dashboard_ee, name='current_user'),
+
 
     # Rest_API
     path('api/current_user/', views_rest_api.CurrentUser.as_view(), name='current_user'),

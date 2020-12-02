@@ -11,13 +11,12 @@ body {
 }*/
 
 :root {
-  --vestem-color: #efebe6;
+  --vestem-color: #9aa5cc;
 }
 
 body {
-    min-height: 70rem;
+    min-height: 50rem;
     padding-top: 3.5rem;
-    height: 100%
 }
 
 .btn:after {
@@ -100,7 +99,7 @@ a:hover {
 
 
 .bg-vestem {
-  background-color: var(--vestem-color);
+  background: linear-gradient(90deg, rgba(49,13,150,1) 0%, rgba(0,239,255,1) 100%);
 }
 
 .text-vestem {

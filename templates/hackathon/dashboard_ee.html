@@ -1,0 +1,19 @@
+{% extends "hackathon/base.html" %}
+
+{% block getmore %}
+
+<!-- Get more -->
+<h5 class="text-center my-1">Get more from your {{account|upper}} Account</h3>
+<small>Buy products from any of our brands easily and get discount!</small>
+<div class="main-carousel mt-3 mb-5" data-flickity='{ "freeScroll": false, "wrapAround": true }'>
+	{% for image in images %}
+    <div class="carousel-cell text-center">
+      <img class="img-fluid" src="{{image}}" style="height: 200px;">
+    </div>
+    {% endfor %}
+   
+</div>
+
+{% endblock %}
+
+{% load static %}
